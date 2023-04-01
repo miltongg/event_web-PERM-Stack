@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Event from "../../models/Event";
 import randomId from "../../libs/randomId";
+import {StatusCodes} from "http-status-codes";
 
 const createEvent = async (req: Request, res: Response) => {
 
@@ -22,7 +23,9 @@ const createEvent = async (req: Request, res: Response) => {
     res.json(event);
 
   } catch (error: any) {
-    res.status(500).json({ message: error?.message });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: error?.message
+    });
   }
 };
 

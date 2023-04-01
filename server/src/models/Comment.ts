@@ -8,6 +8,7 @@ class Comment extends Model {
   public comment!: string;
   public userId!: string;
   public eventId!: string;
+  public username!: string;
   public userImg!: string;
 }
 
@@ -36,6 +37,10 @@ Comment.init(
         model: Event,
         key: 'id',
       },
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false
     },
     userImg: {
       type: DataTypes.STRING,

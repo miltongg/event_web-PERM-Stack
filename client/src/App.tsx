@@ -24,7 +24,7 @@ function App() {
   
   const dispatch = useDispatch();
   
-  const {id, userImg} = useSelector((state: IRootState) => state.user.user)
+  const {id, username, userImg} = useSelector((state: IRootState) => state.user.user)
   
   // if (!id) {
   //   localStorage.removeItem('token');
@@ -69,8 +69,8 @@ function App() {
                 <Route path="/signup" element={<SignupScreen />} />
                 <Route path="/signin" element={<SigninScreen />} />
                 <Route path="/recover" element={<RecoverPasswordScreen />} />
-                <Route path="/event/:id" element={<EventScreen id={id}/>} />
-                <Route path="/event/add" element={<AddEventScreen id={id}/>} />
+                <Route path="/event/:id" element={<EventScreen userId={id}/>} />
+                <Route path="/event/add" element={<AddEventScreen id={id} />} />
                 <Route path={"/profile/:id"} element={id ? <ProfileScreen userId={id} /> : <SigninScreen />} />
               </Routes>
             </Grid>

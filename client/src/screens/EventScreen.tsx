@@ -13,7 +13,7 @@ import Comments from "../components/Comments";
 import {toast} from "react-toastify";
 import {getError} from "../helpers/handleErrors";
 import {webApi} from "../helpers/animeApi";
-import {Camera, CameraAlt, CameraAltOutlined, CameraAltRounded, Done, Edit} from "@mui/icons-material";
+import {CameraAltRounded, Done, Edit} from "@mui/icons-material";
 import moment from "moment";
 import {StaticDatePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
@@ -43,7 +43,12 @@ const editButtonStyle = {
   }
 }
 
-const EventScreen = () => {
+interface Props {
+  userId: string
+}
+
+const EventScreen = ({userId}: Props) => {
+  
   const token = localStorage.getItem('token');
   const {id} = useParams();
   const long = 300;
@@ -52,7 +57,6 @@ const EventScreen = () => {
     id: '', name: '', date: '', description: '', mainImage: ''
   });
   
-  console.log(event)
   const [edit, setEdit] = useState({
     name: false, date: false, description: false, mainImage: false
   });
@@ -236,7 +240,7 @@ const EventScreen = () => {
        
         <Divider />
   
-        <Comments userId={'undefined'} username={'username'}/>
+        <Comments userId={userId} username={username}/>
       </Paper>
     : <CircularProgress />
 

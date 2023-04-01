@@ -22,3 +22,5 @@ export const TOKEN = 'token';
 export const ALLOWED_IMG = ['jpg', 'png', 'jpeg'];
 
 export const IMG_PREFIX = ['user_', 'event_', 'captures_']
+
+export const COMMENT_PREFIX = 'comment_';
