@@ -1,0 +1,25 @@
+* {
+  margin: 0;
+}
+
+.footer {
+  width: 100%;
+  height: 150px;
+  background-color: coral;
+  font-family: Roboto, "Courier New", Courier, monospace;
+}
+
+.profileImg {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.listWidth a {
+  margin: 25px;
+}
+
+.main {
+  min-height: 100vh;
+}
