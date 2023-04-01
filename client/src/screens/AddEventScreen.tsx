@@ -10,6 +10,7 @@ import {
   Paper, Typography, ListItem, CircularProgress,
 } from "@mui/material";
 import {useState, FormEvent, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 import { webApi } from "../helpers/animeApi";
 import { toast } from "react-toastify";
 import { getError } from "../helpers/handleErrors";
@@ -26,8 +27,8 @@ const AddEventScreen = ({ id }: Props) => {
   const [date, setDate] = useState(null);
   const [description, setDescription] = useState("");
   const [mainImage, setMainImage] = useState<File | null>(null);
-  const [eventImages, setEventImages] = useState<FileList | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
 
@@ -62,6 +63,7 @@ const AddEventScreen = ({ id }: Props) => {
       });
 
       toast.success("Evento añadido satisfactoriamente");
+      navigate(`/event/${data.id}`)
 
     } catch (error) {
       setLoading(false);
@@ -75,6 +77,7 @@ const AddEventScreen = ({ id }: Props) => {
       sx={{ padding: 2, marginY: 5 }}
       onSubmit={handleSubmit}
     >
+      
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
@@ -86,6 +89,7 @@ const AddEventScreen = ({ id }: Props) => {
             fullWidth
           />
         </Grid>
+        
         <Grid item xs={12}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <MobileDatePicker sx={{width: 1}}
@@ -94,8 +98,8 @@ const AddEventScreen = ({ id }: Props) => {
               format="DD-MM-YYYY"
             />
           </LocalizationProvider>
-
         </Grid>
+        
         <Grid item xs={12}>
           <TextField
             required
@@ -108,6 +112,7 @@ const AddEventScreen = ({ id }: Props) => {
             rows={4}
           />
         </Grid>
+        
         <Grid item xs={12}>
           <Button
             startIcon={<AddPhotoAlternate />}
@@ -127,28 +132,8 @@ const AddEventScreen = ({ id }: Props) => {
           {
             mainImage ? <ListItem><Image /><Typography>{mainImage?.name}</Typography></ListItem> : ''
           }
-
-
-          {/*<TextField>{mainImage.name}</TextField>*/}
         </Grid>
-        {/*<Grid item xs={12}>*/}
-        {/*  <Button*/}
-        {/*    startIcon={<PermMedia />}*/}
-        {/*    variant="contained"*/}
-        {/*    component="label"*/}
-        {/*  >*/}
-        {/*    Subir imágenes del evento*/}
-        {/*    <input*/}
-        {/*      type="file"*/}
-        {/*      name="files"*/}
-        {/*      multiple*/}
-        {/*      hidden*/}
-        {/*      onChange={(e) =>*/}
-        {/*        setEventImages(e.target.files ? e.target.files : null)*/}
-        {/*      }*/}
-        {/*    />*/}
-        {/*  </Button>*/}
-        {/*</Grid>*/}
+        
         <Grid item xs={12}>
           <Button
             startIcon={ !loading ? <AddCircle /> : <CircularProgress size={20}/>}
@@ -160,7 +145,9 @@ const AddEventScreen = ({ id }: Props) => {
             Agregar evento
           </Button>
         </Grid>
+        
       </Grid>
+      
     </Paper>
   );
 };

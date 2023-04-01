@@ -1,6 +1,8 @@
 import {DataTypes} from "sequelize";
 import {sequelize} from "../database/database";
 import OTP from "./OTP";
+import Comment from "./Comment";
+import Event from "./Event";
 
 const User = sequelize.define("users", {
   
@@ -67,15 +69,20 @@ User.hasOne(OTP, {
   sourceKey: 'id'
 })
 
-// User.hasMany(Comment, {
-//   foreignKey: 'userId',
-//   sourceKey: 'id'
-// })
-//
-// Comment.belongsTo(User, {
-//   foreignKey: 'userId',
-//   targetKey: 'id'
-// })
+User.hasMany(Comment, {
+  foreignKey: 'userId',
+  sourceKey: 'id'
+})
+
+Comment.belongsTo(User, {
+  foreignKey: 'userId',
+  targetKey: 'id'
+})
+
+Comment.belongsTo(Event, {
+  foreignKey: 'eventId',
+  targetKey: 'id'
+})
 
 OTP.belongsTo(User, {
   foreignKey: 'userId',
