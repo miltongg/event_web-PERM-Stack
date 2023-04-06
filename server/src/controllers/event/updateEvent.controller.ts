@@ -4,7 +4,7 @@ import Event from "../../models/Event";
 const updateEvent = async (req: Request, res: Response) => {
   try {
 
-    let { name, description, date, image, images } = req.body
+    let { name, description, date, image, images, commentsCount, rating } = req.body
     const paramId = req.params.id;
     const headerId = req.headers.id;
   
@@ -19,7 +19,9 @@ const updateEvent = async (req: Request, res: Response) => {
     await Event.update({
       name, description, date,
       mainImage: image,
-      eventImages: images
+      eventImages: images,
+      commentsCount,
+      rating
     }, {
       where: {id}
     })

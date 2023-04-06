@@ -9,6 +9,8 @@ const createComment = async (req: Request, res: Response) => {
   const { eventId, comment } = req.body
   const { id, username, userImg } = req.user
   
+  console.log(req.body)
+  
   try {
     
     if (!eventId || !comment)
@@ -24,6 +26,8 @@ const createComment = async (req: Request, res: Response) => {
       eventId,
       userImg
     });
+  
+    console.log(newComment)
     
     res.json(newComment)
   

@@ -10,6 +10,6 @@ const router = Router();
 router.post('/event', verifyToken, isAdmin, createEvent);
 router.get('/event', getEventsList);
 router.get('/event/:id', getEvent);
-router.put('/event/:id', verifyToken, isAdmin, updateEvent);
+router.put('/event/:id', verifyToken, updateEvent);
 
 export default router;

@@ -34,7 +34,7 @@ const User = sequelize.define("users", {
   
   role: {
     type: DataTypes.STRING,
-    defaultValue: 'user'
+    defaultValue: 'admin'
   },
   
   token: {

@@ -6,13 +6,13 @@ class Event extends Model {
   public userId!: string
   public name!: string;
   public date!: Date;
-  public location!: string;
+  public location?: string;
   public description!: string;
+  public rating!: number;
   public mainImage!: string;
-  public eventImages!: string[];
+  public eventImages?: string[];
+  public commentsCount!: number;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
 }
 
 Event.init(
@@ -38,15 +38,28 @@ Event.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    location: {
+      type: DataTypes.STRING
+    },
+    commentsCount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    rating: {
+      type: DataTypes.DOUBLE,
+      defaultValue: 0
+    },
     mainImage: {
       type: DataTypes.STRING
     },
     eventImages: {
       type: DataTypes.ARRAY(DataTypes.STRING)
-    },
+    }
+    
   },
   {
     tableName: 'events',
+    timestamps: true,
     sequelize,
   },
 );

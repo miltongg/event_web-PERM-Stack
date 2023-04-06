@@ -17,6 +17,7 @@ import SigninScreen from "./screens/SigninScreen";
 import RecoverPasswordScreen from "./screens/RecoverPasswordScreen";
 import AddEventScreen from "./screens/AddEventScreen";
 import EventScreen from "./screens/EventScreen";
+import {webApi} from "./helpers/animeApi";
 
 function App() {
   
@@ -24,16 +25,13 @@ function App() {
   
   const dispatch = useDispatch();
   
-  const {id, username, userImg} = useSelector((state: IRootState) => state.user.user)
-  
-  // if (!id) {
-  //   localStorage.removeItem('token');
-  // }
+  const {id, username, userImg, role} = useSelector((state: IRootState) => state.user.user)
   
   useEffect(() => {
     async function call() {
-      if (token)
+      if (token) {
         dispatch(setUser({user: await decodeToken(token)}))
+      }
     }
     call();
     
@@ -69,7 +67,9 @@ function App() {
                 <Route path="/signup" element={<SignupScreen />} />
                 <Route path="/signin" element={<SigninScreen />} />
                 <Route path="/recover" element={<RecoverPasswordScreen />} />
-                <Route path="/event/:id" element={<EventScreen userId={id}/>} />
+                <Route path="/event/:id" element={
+                  <EventScreen userId={id} role={role}/>
+                } />
                 <Route path="/event/add" element={<AddEventScreen id={id} />} />
                 <Route path={"/profile/:id"} element={id ? <ProfileScreen userId={id} /> : <SigninScreen />} />
               </Routes>

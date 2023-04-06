@@ -9,7 +9,7 @@ class Comment extends Model {
   public userId!: string;
   public eventId!: string;
   public username!: string;
-  public userImg!: string;
+  public userImg?: string;
 }
 
 Comment.init(
@@ -43,11 +43,11 @@ Comment.init(
       allowNull: false
     },
     userImg: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
+      type: DataTypes.STRING
+    }
   },
   {
+    tableName: 'comments',
     timestamps: true,
     sequelize,
   }

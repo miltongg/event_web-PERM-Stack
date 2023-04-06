@@ -508,7 +508,7 @@ const ProfileScreen = ({ userId }: Props) => {
                     />
                   </>
                 ) : (
-                  <Typography>+{cell}</Typography>
+                  <Typography>{cell}</Typography>
                 )}
                 {userId === id ? (
                   <Edit

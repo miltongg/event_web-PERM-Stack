@@ -1,9 +1,9 @@
 import {
- CircularProgress,
+  CircularProgress, Typography,
 } from "@mui/material";
 import moment from "moment";
 import { webApi } from "../helpers/animeApi";
-import {useState, useEffect, lazy} from "react";
+import {useState, useEffect} from "react";
 import { getError } from "../helpers/handleErrors";
 import { toast } from "react-toastify";
 import EventList from "../components/EventList";
@@ -12,6 +12,7 @@ const HomeScreen = () => {
   const [events, setEvents] = useState([]);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     try {
@@ -25,16 +26,23 @@ const HomeScreen = () => {
         }
 
         setEvents(data);
+        setLoading(false)
       };
 
       getEvents();
     } catch (error) {
+      setLoading(false)
       toast.error(getError(error));
     }
   }, []);
 
   return (
-    events?.length !== 0 ? <EventList events={events} /> : <CircularProgress/>
+    
+    loading
+      ? <CircularProgress/>
+      : events?.length !== 0
+        ? <EventList events={events} />
+        : <Typography variant="h4" sx={{textAlign: 'center', mt: 10}}>No hay elemetos que mostrar</Typography>
   );
 };
 

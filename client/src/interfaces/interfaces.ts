@@ -7,7 +7,7 @@ export interface IRootState {
       role: string,
       email: string,
       cell: string,
-      userImg: string | null
+      userImg?: string | null | undefined
     }
   },
   isLoading: boolean

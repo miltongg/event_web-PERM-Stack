@@ -13,6 +13,8 @@ const decodeToken = async (token: string) => {
     return data
     
   } catch (error: any) {
+    localStorage.removeItem('token')
+    location.reload()
     console.log(error)
   }
   

@@ -18,7 +18,7 @@ import moment from "moment";
 import {StaticDatePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {setUserImg} from "../store/slices/user/userSlice";
+import comments from "../components/Comments";
 
 const doneButtonStyle = {
   color: 'orange',
@@ -44,17 +44,18 @@ const editButtonStyle = {
 }
 
 interface Props {
-  userId: string
+  userId: string,
+  role: string,
 }
 
-const EventScreen = ({userId}: Props) => {
+const EventScreen = ({userId, role}: Props) => {
   
   const token = localStorage.getItem('token');
   const {id} = useParams();
   const long = 300;
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [event, setEvent] = useState<any>({
-    id: '', name: '', date: '', description: '', mainImage: ''
+    id: '', name: '', date: '', description: '', commentCount: 0, rating: 0, mainImage: ''
   });
   
   const [edit, setEdit] = useState({
@@ -76,7 +77,7 @@ const EventScreen = ({userId}: Props) => {
       }
     }
     getEvent();
-  },[reload]);
+  },[reload, event.commentsCount]);
   
   const handleUpdate = async () => {
     try {
@@ -182,9 +183,13 @@ const EventScreen = ({userId}: Props) => {
                   </>
                 : <Typography variant="h4">{event?.name}</Typography>
             }
-            <Edit sx={editButtonStyle}
-              onClick={() => setEdit({...edit, name: !edit.name})}
-            />
+            {
+              role === 'admin'
+                ? <Edit sx={editButtonStyle}
+                    onClick={() => setEdit({...edit, name: !edit.name})}
+                /> : ''
+            }
+            
           </ListItem>
           <ListItem>
             {
@@ -201,9 +206,14 @@ const EventScreen = ({userId}: Props) => {
                 
                 : <Typography>{date}</Typography>
             }
-            <Edit sx={editButtonStyle}
-                  onClick={() => setEdit({...edit, date: !edit.date})}
-            />
+            {
+              role === 'admin'
+              ? <Edit sx={editButtonStyle}
+                      onClick={() => setEdit({...edit, date: !edit.date})}
+                />
+              : ''
+            }
+            
           </ListItem>
           <Divider sx={{ marginY: 2 }} />
           <ListItem sx={{width: 1}}>
@@ -231,16 +241,26 @@ const EventScreen = ({userId}: Props) => {
                     </Collapse>
                   </Box>
             }
-            <Edit sx={editButtonStyle}
-                  onClick={() => setEdit({...edit, description: !edit.description})}
-            />
+            {
+              role === 'admin'
+              ? <Edit sx={editButtonStyle}
+                      onClick={() => setEdit({...edit, description: !edit.description})}
+                />
+              : ''
+            }
+            
           </ListItem>
           
         </Box>
        
         <Divider />
   
-        <Comments userId={userId} username={username}/>
+        <Comments
+          userId={userId}
+          token={token}
+          commentsCount={event.commentCount}
+        />
+        
       </Paper>
     : <CircularProgress />
 
