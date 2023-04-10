@@ -7,7 +7,7 @@ const updateUser = async (req: Request, res: Response) => {
   try {
     
     const {id} = req.params
-    let { name, email, cell, socials, userImg } = req.body;
+    let { name, username, email, cell, socials, userImg } = req.body;
     const userId = req.user.id
 
     if (userId !== id) {
@@ -52,7 +52,7 @@ const updateUser = async (req: Request, res: Response) => {
   
     // console.log('el social', req.body)
     
-    await User.update({email, cell, name, socials, userImg}, {
+    await User.update({email, cell, name, username, socials, userImg}, {
       where: {id}
     })
     
@@ -60,10 +60,10 @@ const updateUser = async (req: Request, res: Response) => {
       message: "Has actualizado tu perfil satisfactoriamente"
     })
     
-  } catch ({message}) {
+  } catch (error: any) {
     
     res.status(500).json({
-      message
+      message: error.message
     })
     
   }

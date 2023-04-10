@@ -74,6 +74,7 @@ User.hasMany(Comment, {
   sourceKey: 'id'
 })
 
+
 Comment.belongsTo(User, {
   foreignKey: 'userId',
   targetKey: 'id'

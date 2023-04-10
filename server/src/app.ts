@@ -9,6 +9,7 @@ const app: Application = express()
 import authRoute from "./routes/auth.route";
 import commentRoute from "./routes/comment.route";
 import eventRoute from "./routes/event.route";
+import replyRoute from "./routes/reply.route";
 import sendMailRoute from "./routes/sendMail.route";
 import uploadRoute from "./routes/upload.route";
 import userRoute from "./routes/user.route";
@@ -28,6 +29,7 @@ app.use(express.static('public'));
 app.use('/api/', authRoute);
 app.use('/api/', commentRoute);
 app.use('/api/', eventRoute);
+app.use('/api/', replyRoute);
 app.use('/api/', sendMailRoute);
 app.use('/api/', uploadRoute);
 app.use('/api/', userRoute);

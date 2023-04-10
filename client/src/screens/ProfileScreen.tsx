@@ -93,7 +93,6 @@ const ProfileScreen = ({ userId }: Props) => {
     addSocial,
   } = toggle;
 
-  
   // GET USER
   useEffect(() => {
     try {
@@ -151,7 +150,7 @@ const ProfileScreen = ({ userId }: Props) => {
         break;
     }
   };
-  
+
   const handleEdit = async () => {
     if (textData) setUser({ ...user, socials: [...user.socials!, textData] });
 
@@ -171,6 +170,7 @@ const ProfileScreen = ({ userId }: Props) => {
           `/user/${id}`,
           {
             name,
+            username,
             cell,
             socials,
             userImg,
@@ -182,6 +182,19 @@ const ProfileScreen = ({ userId }: Props) => {
             },
           }
         );
+
+        if (username) {
+          webApi.put(
+            `comment/${id}`,
+            {
+              username,
+            },
+            {
+              headers: { token },
+            }
+          );
+        }
+
         setToggle({
           ...toggle,
           editName: false,
@@ -264,21 +277,34 @@ const ProfileScreen = ({ userId }: Props) => {
         // const imgName = nameEntry instanceof File ? nameEntry.name : "";
 
         try {
-          const {data} = await webApi.post("/iupload", fileData, {
+          const { data } = await webApi.post("/iupload", fileData, {
             headers: {
               token,
-              folder: 'avatar/',
-              id: userId
+              folder: "avatar/",
+              id: userId,
             },
           });
 
-          await webApi.put(`/user/${id}`, {userImg: data.image}, {
-            headers: {id, token}
-          });
+          await webApi.put(
+            `/user/${id}`,
+            { userImg: data.image },
+            {
+              headers: { id, token },
+            }
+          );
+
+          await webApi.put(
+            `/comment/${id}`,
+            {
+              userImg: data.image,
+            },
+            {
+              headers: { token },
+            }
+          );
 
           dispatch(setUserImg({ userImg: data.image }));
           setUser({ ...user, userImg: data.image });
-
         } catch (error) {
           toast.error(getError(error));
         }
@@ -344,7 +370,7 @@ const ProfileScreen = ({ userId }: Props) => {
               <>
                 <TextField
                   variant="standard"
-                  focused
+                  autoFocus
                   sx={{
                     marginY: 1,
                     input: { color: "white", fontSize: "24px" },
@@ -397,7 +423,7 @@ const ProfileScreen = ({ userId }: Props) => {
             {editUsername ? (
               <>
                 <TextField
-                  focused
+                  autoFocus
                   variant="standard"
                   sx={{
                     marginY: 1,

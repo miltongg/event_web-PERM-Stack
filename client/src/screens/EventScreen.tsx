@@ -46,14 +46,15 @@ const editButtonStyle = {
 interface Props {
   userId: string,
   role: string,
+  userImg: string | null | undefined
 }
 
-const EventScreen = ({userId, role}: Props) => {
+const EventScreen = ({userId, role, userImg}: Props) => {
   
   const token = localStorage.getItem('token');
   const {id} = useParams();
   const long = 300;
-  const [showFullDesc, setShowFullDesc] = useState(false);
+  const [showFullDesc, setShowFullDesc] = useState<boolean>(false);
   const [event, setEvent] = useState<any>({
     id: '', name: '', date: '', description: '', commentCount: 0, rating: 0, mainImage: ''
   });
@@ -259,6 +260,7 @@ const EventScreen = ({userId, role}: Props) => {
           userId={userId}
           token={token}
           commentsCount={event.commentCount}
+          userImg={userImg}
         />
         
       </Paper>

@@ -7,11 +7,6 @@ const deleteComment = async (req: Request, res: Response) => {
   try {
     const {id} = req.params;
     
-    if (req.user.id !== id)
-      return res.status(StatusCodes.UNAUTHORIZED).json({
-        message: 'No puedes borrar este comentario'
-      })
-    
     await Comment.destroy({where: {id}})
     
     res.json('Has borrado tu comentario')

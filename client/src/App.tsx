@@ -68,7 +68,7 @@ function App() {
                 <Route path="/signin" element={<SigninScreen />} />
                 <Route path="/recover" element={<RecoverPasswordScreen />} />
                 <Route path="/event/:id" element={
-                  <EventScreen userId={id} role={role}/>
+                  <EventScreen userId={id} role={role} userImg={userImg}/>
                 } />
                 <Route path="/event/add" element={<AddEventScreen id={id} />} />
                 <Route path={"/profile/:id"} element={id ? <ProfileScreen userId={id} /> : <SigninScreen />} />

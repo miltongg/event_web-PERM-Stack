@@ -30,9 +30,9 @@ const getImg = async (req: Request, res: Response) => {
 
         res.sendFile(pathFile);
 
-    } catch ({message}) {
+    } catch (error: any) {
         res.status(500).json({
-            message
+            message: error.message
         })
     }
 

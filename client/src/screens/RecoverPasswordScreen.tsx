@@ -200,7 +200,7 @@ const RecoverPasswordScreen = () => {
               },
             }}
           >
-            Registrar
+            Enviar
           </Button>
         </Box>
       </FormControl>
