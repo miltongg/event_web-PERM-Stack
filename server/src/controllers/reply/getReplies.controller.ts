@@ -1,19 +1,19 @@
 import {Response, Request} from "express";
-import Comment from "../../models/Comment";
+import Reply from "../../models/Reply";
 import {StatusCodes} from "http-status-codes";
 
-const getComments = async (req: Request, res: Response): Promise<Response> => {
+const getReplies = async (req: Request, res: Response): Promise<Response> => {
   
   try {
     const {id} = req.params;
     
-    const comments = await Comment.findAll({
+    const replies = await Reply.findAll({
       where: {
-        eventId: id
+        commentId: id
       }
     })
     
-    return res.json(comments);
+    return res.json(replies);
     
   } catch (error: any) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -22,4 +22,4 @@ const getComments = async (req: Request, res: Response): Promise<Response> => {
   }
 }
 
-export default getComments;
+export default getReplies;

@@ -1,12 +1,12 @@
 import {Request, Response} from "express";
 import Reply from "../../models/Reply";
 import {StatusCodes} from "http-status-codes";
-import {COMMENT_PREFIX} from "../../helpers/defineConsts";
+import {REPLY_PREFIX} from "../../helpers/defineConsts";
 import randomId from "../../libs/randomId";
 
 const createReply = async (req: Request, res: Response) => {
   
-  const { commentId, reply } = req.body
+  const { commentId, reply, repliedTo } = req.body
   const { id, username, userImg } = req.user
   
   console.log(req.body)
@@ -19,16 +19,15 @@ const createReply = async (req: Request, res: Response) => {
       })
   
     const newReply = await Reply.create({
-      id: COMMENT_PREFIX + randomId(),
+      id: REPLY_PREFIX + randomId(),
       reply,
       username,
       userId: id,
       commentId,
+      repliedTo,
       userImg
     });
-  
-    console.log(newReply)
-    
+      
     res.json(newReply)
   
   } catch (error: any) {

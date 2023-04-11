@@ -10,6 +10,7 @@ class Comment extends Model {
   public eventId!: string;
   public username!: string;
   public userImg?: string;
+  public repliesCount?: number;
 }
 
 Comment.init(
@@ -21,6 +22,10 @@ Comment.init(
     comment: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    repliesCount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     },
     userId: {
       type: DataTypes.STRING,

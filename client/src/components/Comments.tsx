@@ -1,6 +1,13 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Comment, Done, Edit } from "@mui/icons-material";
+import {
+  Comment,
+  Done,
+  Edit,
+  ExpandLess,
+  ExpandMore,
+  ViewModule,
+} from "@mui/icons-material";
 import { doneButtonStyle, editButtonStyle } from "../helpers/customStyles";
 import {
   Avatar,
@@ -15,6 +22,7 @@ import {
 import { toast } from "react-toastify";
 import { getError } from "../helpers/handleErrors";
 import { webApi } from "../helpers/animeApi";
+import Replies from "./Replies";
 
 interface Props {
   userId: string | undefined;
@@ -22,6 +30,16 @@ interface Props {
   token: string | null;
   commentsCount: number;
   userImg: string | null | undefined;
+}
+
+interface IReplies {
+  id: "";
+  username: "";
+  reply: "";
+  createdAt: "";
+  userImg: "";
+  commentId: "";
+  repliedTo: "";
 }
 
 const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
@@ -32,6 +50,7 @@ const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
       userId: "",
       comment: "",
       userImg: "",
+      repliesCount: 0,
       createdAt: "",
     },
   ]);
@@ -51,19 +70,17 @@ const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
     text: "",
   });
 
+  const [replies, setReplies] = useState<IReplies[]>([]);
+  const [arrIndex, setArrIndex] = useState<string>("");
   const [reload, setReload] = useState<boolean>(false);
-  const [show, setShow] = useState<boolean>(false);
 
   const { id } = useParams<string>();
-
   useEffect(() => {
     try {
       const callComments = async () => {
         const { data } = await webApi.get(`/comment/${id}`);
-
         setComments(data);
       };
-
       callComments();
     } catch (error) {
       console.log(error);
@@ -137,6 +154,57 @@ const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
     }
   };
 
+  // POST REPLY //
+  const handleReply = async (
+    commentId: string,
+    replyText: string,
+    index: number,
+    repliedTo: string
+  ) => {
+    try {
+      await webApi.post(
+        "/reply",
+        {
+          commentId,
+          reply: replyText,
+          repliedTo,
+        },
+        {
+          headers: { token },
+        }
+      );
+
+      await webApi.put(
+        `/comment/${commentId}`,
+        {
+          repliesCount: comments[index].repliesCount + 1,
+        },
+        {
+          headers: { token },
+        }
+      );
+      setReload(!reload);
+      toast.success("Respondido");
+      setReply({ ...reply, index: null });
+
+      handleGetReplies(commentId);
+    } catch (error) {
+      toast.error(getError(error));
+    }
+  };
+
+  // GET REPLIES //
+  const handleGetReplies = async (commentId: string) => {
+    try {
+      const { data } = await webApi.get(`/reply/${commentId}`);
+      setReplies(data);
+      setArrIndex(commentId);
+      setReload(!reload)
+    } catch (error) {
+      toast.error(getError(error));
+    }
+  };
+
   return (
     <>
       {userId ? (
@@ -176,8 +244,12 @@ const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
         </>
       )}
 
+      {/* RENDER COMMENTS */}
+
       {comments.length === 0 ? (
-        <Typography sx={{textAlign: 'center'}}>No hay comentarios de este evento</Typography>
+        <Typography sx={{ textAlign: "center" }}>
+          No hay comentarios de este evento
+        </Typography>
       ) : (
         comments.map((comment, index) => (
           <Paper key={comment.id} sx={{ position: "relative", mb: 3 }}>
@@ -243,21 +315,60 @@ const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
             )}
 
             <Divider />
-            <Box sx={{ pl: 1 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                w: 1,
+                justifyContent: "space-between",
+              }}
+            >
               <Button
+                onClick={
+                  comment.repliesCount !== 0
+                    ? () => handleGetReplies(comment.id)
+                    : () => null
+                }
                 variant="text"
-                sx={{ textTransform: "capitalize" }}
-                onClick={() =>
-                  setReply({
-                    index,
-                    commentId: comment.id,
-                    text: ` `,
-                  })
+                sx={{ px: 1, textTransform: "lowercase" }}
+                startIcon={
+                  comment.id === arrIndex ? <ExpandLess /> : <ExpandMore />
                 }
               >
-                replyer
+                {comment.repliesCount <= 1
+                  ? `${comment.repliesCount} respuesta`
+                  : `${comment.repliesCount} respuestas`}
               </Button>
+              <Box sx={{ pl: 1 }}>
+                <Button
+                  variant="text"
+                  sx={{ textTransform: "capitalize" }}
+                  onClick={() =>
+                    setReply({
+                      index,
+                      commentId: comment.id,
+                      text: "",
+                    })
+                  }
+                >
+                  Responder
+                </Button>
+              </Box>
             </Box>
+            <Divider />
+
+            {/* RENDER REPLIES */}
+
+            <Replies
+              comment={comment}
+              replies={replies}
+              userImg={userImg}
+              token={token}
+              handleGetReplies={handleGetReplies}
+            />
+
+            {/* REPLY FORM */}
+
             {reply.index === index && reply.commentId === comment.id ? (
               <Paper>
                 <Divider />
@@ -286,9 +397,9 @@ const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
                     value={`${reply.text}`}
                     InputProps={{
                       startAdornment: (
-                        <span
-                          style={{ color: "#4682B4" }}
-                        >{`${comment.username} `}</span>
+                        <span style={{ color: "#4682B4" }}>
+                          {`${comment.username}`}&nbsp;
+                        </span>
                       ),
                     }}
                     onChange={(e) =>
@@ -299,8 +410,18 @@ const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
                 <Box
                   sx={{ display: "flex", justifyContent: "flex-end", pr: 1 }}
                 >
-                  <Button sx={{ textTransform: "capitalize" }}>
-                    replyer
+                  <Button
+                    onClick={() =>
+                      handleReply(
+                        comment.id,
+                        reply.text!,
+                        index,
+                        comment.username
+                      )
+                    }
+                    sx={{ textTransform: "capitalize" }}
+                  >
+                    Responder
                   </Button>
                   <Button
                     onClick={() => setReply({ ...reply, index: null })}

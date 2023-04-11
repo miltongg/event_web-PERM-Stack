@@ -10,6 +10,7 @@ class Reply extends Model {
   public commentId!: string;
   public username!: string;
   public userImg?: string;
+  public repliedTo?: string;
 }
 
 Reply.init(
@@ -18,7 +19,7 @@ Reply.init(
       type: DataTypes.STRING,
       primaryKey: true
     },
-    comment: {
+    reply: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -39,6 +40,10 @@ Reply.init(
       },
     },
     username: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    repliedTo: {
       type: DataTypes.STRING,
       allowNull: false
     },
