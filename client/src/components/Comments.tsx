@@ -33,13 +33,15 @@ interface Props {
 }
 
 interface IReplies {
-  id: "";
-  username: "";
-  reply: "";
-  createdAt: "";
-  userImg: "";
-  commentId: "";
-  repliedTo: "";
+  id: string;
+  username: string;
+  reply: string;
+  createdAt: string;
+  userId: string;
+  userImg: string | null;
+  commentId: string;
+  repliedToName: string;
+  repliedToId: string;
 }
 
 const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
@@ -88,6 +90,8 @@ const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
     }
   }, [reload]);
 
+
+  // POST COMMENT //
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -127,6 +131,8 @@ const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
     }
   };
 
+
+  // EDIT COMMENT //
   const handleEditComment = (index: number, value: string) => {
     const comment = [...comments];
     comment[index].comment = value;
@@ -134,6 +140,7 @@ const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
     setComments(comment);
   };
 
+  // UPDATE COMMENT //
   const handleUpdatedComment = async (commentId: string) => {
     try {
       await webApi.put(
@@ -159,7 +166,8 @@ const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
     commentId: string,
     replyText: string,
     index: number,
-    repliedTo: string
+    repliedToName: string,
+    repliedToId: string
   ) => {
     try {
       await webApi.post(
@@ -167,7 +175,8 @@ const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
         {
           commentId,
           reply: replyText,
-          repliedTo,
+          repliedToName,
+          repliedToId
         },
         {
           headers: { token },
@@ -416,7 +425,8 @@ const Comments = ({ userId, userImg, token, commentsCount }: Props) => {
                         comment.id,
                         reply.text!,
                         index,
-                        comment.username
+                        comment.username,
+                        comment.userId
                       )
                     }
                     sx={{ textTransform: "capitalize" }}

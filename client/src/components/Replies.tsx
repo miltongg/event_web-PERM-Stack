@@ -27,10 +27,12 @@ interface Props {
     id: string;
     username: string;
     reply: string;
+    userId: string;
     createdAt: string;
-    userImg: string;
+    userImg: string | null;
     commentId: string;
-    repliedTo: string;
+    repliedToName: string;
+    repliedToId: string
   }[];
   userImg: string | undefined | null;
   token: string | null;
@@ -53,7 +55,8 @@ const Replies = ({ comment, replies, userImg, token, handleGetReplies }: Props) 
     commentId: string,
     replyText: string,
     index: number,
-    repliedTo: string
+    repliedToName: string,
+    repliedToId: string
   ) => {
     try {
       await webApi.post(
@@ -61,7 +64,8 @@ const Replies = ({ comment, replies, userImg, token, handleGetReplies }: Props) 
         {
           commentId,
           reply: replyText,
-          repliedTo,
+          repliedToName,
+          repliedToId
         },
         {
           headers: { token },
@@ -116,7 +120,7 @@ const Replies = ({ comment, replies, userImg, token, handleGetReplies }: Props) 
                     {rep.createdAt}
                   </Typography>
                   <Typography sx={{ pl: 1, mt: 1 }}>
-                    <span style={{ color: "#4682B4" }}>{rep.repliedTo}</span>{" "}
+                    <span style={{ color: "#4682B4" }}>{rep.repliedToName}</span>{" "}
                     {rep.reply}
                   </Typography>
                 </Box>
@@ -169,7 +173,7 @@ const Replies = ({ comment, replies, userImg, token, handleGetReplies }: Props) 
                       InputProps={{
                         startAdornment: (
                           <span style={{ color: "#4682B4" }}>
-                            {`${comment.username}`}&nbsp;
+                            {`${rep.username}`}&nbsp;
                           </span>
                         ),
                       }}
@@ -187,7 +191,8 @@ const Replies = ({ comment, replies, userImg, token, handleGetReplies }: Props) 
                           comment.id,
                           reply.text!,
                           index,
-                          rep.username
+                          rep.username,
+                          rep.userId
                         )
                       }
                       sx={{ textTransform: "capitalize" }}

@@ -166,6 +166,7 @@ const ProfileScreen = ({ userId }: Props) => {
 
     const update = async () => {
       try {
+        // UPDATE USER DATA //
         await webApi.put(
           `/user/${id}`,
           {
@@ -183,8 +184,9 @@ const ProfileScreen = ({ userId }: Props) => {
           }
         );
 
+        // UPDATE COMMENT USERNAME IF USERNAME CHANGE //
         if (username) {
-          webApi.put(
+          await webApi.put(
             `comment/${id}`,
             {
               username,
@@ -193,6 +195,22 @@ const ProfileScreen = ({ userId }: Props) => {
               headers: { token },
             }
           );
+
+          // UPDATE REPLIES USERNAME //
+          await webApi.put(`reply/${id}`, {
+            username,
+          }, {
+            headers: {token}
+          })
+
+          // UPDATE REPLIES REPLIEDTONAME
+          await webApi.put(`reply/${id}`, {
+            repliedToName: username,
+          }, {
+            headers: {token}
+          })
+
+          
         }
 
         setToggle({
@@ -277,6 +295,7 @@ const ProfileScreen = ({ userId }: Props) => {
         // const imgName = nameEntry instanceof File ? nameEntry.name : "";
 
         try {
+          // UPLOAD PHOTO //
           const { data } = await webApi.post("/iupload", fileData, {
             headers: {
               token,
@@ -285,6 +304,7 @@ const ProfileScreen = ({ userId }: Props) => {
             },
           });
 
+          // UPDATE USER PHOTO //
           await webApi.put(
             `/user/${id}`,
             { userImg: data.image },
@@ -293,6 +313,7 @@ const ProfileScreen = ({ userId }: Props) => {
             }
           );
 
+          // UPDATE COMMENT PHOTO //
           await webApi.put(
             `/comment/${id}`,
             {

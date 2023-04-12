@@ -134,9 +134,17 @@ const SigninScreen = () => {
             underline="none"
             sx={{ mt: 4 }}
             component="button"
+            onClick={() => navigate("/signup")}
+          >
+            ¿No tienes una cuenta? ¡Create una!
+          </Link>
+          <Link
+            underline="none"
+            sx={{ mt: 2 }}
+            component="button"
             onClick={() => navigate("/recover")}
           >
-            ¿Olvidaste tu contraseña?
+            ¿Olvidé mi contraseña?
           </Link>
         </Box>
       </FormControl>

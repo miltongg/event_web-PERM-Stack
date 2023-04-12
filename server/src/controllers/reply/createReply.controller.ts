@@ -6,7 +6,7 @@ import randomId from "../../libs/randomId";
 
 const createReply = async (req: Request, res: Response) => {
   
-  const { commentId, reply, repliedTo } = req.body
+  const { commentId, reply, repliedToName, repliedToId } = req.body
   const { id, username, userImg } = req.user
   
   console.log(req.body)
@@ -24,7 +24,8 @@ const createReply = async (req: Request, res: Response) => {
       username,
       userId: id,
       commentId,
-      repliedTo,
+      repliedToName,
+      repliedToId,
       userImg
     });
       
