@@ -6,13 +6,13 @@ import { Op } from "sequelize";
 const updateComment = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { comment, userImg, username, repliesCount } = req.body;
+    const { comment, userImg, username, rating, repliesCount } = req.body;
 
     console.log(req.body);
 
     // if (userImg)
       await Comment.update(
-        { userImg, comment, username, repliesCount },
+        { userImg, comment, username, rating, repliesCount },
         {
           where: {
             [Op.or]: [{ userId: id }, {id}],

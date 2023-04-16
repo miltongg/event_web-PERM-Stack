@@ -11,6 +11,15 @@ import { useState } from "react";
 import { webApi } from "../helpers/animeApi";
 import { toast } from "react-toastify";
 import { getError } from "../helpers/handleErrors";
+import { Delete, Done, Edit } from "@mui/icons-material";
+import {
+  deleteButtonStyle,
+  doneButtonStyle,
+  editButtonStyle,
+} from "../helpers/customStyles";
+import { USER_IMG_URL } from "../helpers/url";
+import { Confirm } from "notiflix/build/notiflix-confirm-aio";
+import moment from "moment";
 
 interface Props {
   comment: {
@@ -18,7 +27,7 @@ interface Props {
     username: string;
     userId: string;
     comment: string;
-    userImg: string;
+    userImg: string | null;
     repliesCount: number;
     createdAt: string;
   };
@@ -32,14 +41,24 @@ interface Props {
     userImg: string | null;
     commentId: string;
     repliedToName: string;
-    repliedToId: string
+    repliedToId: string;
   }[];
   userImg: string | undefined | null;
+  userId: string | undefined;
   token: string | null;
-  handleGetReplies: any
+  role: string | null;
+  handleGetReplies: any;
 }
 
-const Replies = ({ comment, replies, userImg, token, handleGetReplies }: Props) => {
+const Replies = ({
+  comment,
+  replies,
+  userImg,
+  token,
+  handleGetReplies,
+  userId,
+  role,
+}: Props) => {
   const [reply, setReply] = useState<{
     index?: number | null;
     commentId?: string;
@@ -49,6 +68,55 @@ const Replies = ({ comment, replies, userImg, token, handleGetReplies }: Props) 
     commentId: "",
     text: "",
   });
+
+  const [editedReply, setEditedReply] = useState<string>("");
+  const [edit, setEdit] = useState<{ index?: number | null; edit: boolean }>({
+    index: null,
+    edit: false,
+  });
+
+  // UPDATE REPLY //
+  const handleUpdatedReply = async (replyId: string) => {
+    try {
+      await webApi.put(
+        `/reply/${replyId}`,
+        {
+          reply: editedReply,
+        },
+        {
+          headers: { token },
+        }
+      );
+
+      toast.success("Has actualizado tu comentario");
+      setEdit({ edit: false });
+    } catch (error: any) {
+      console.error(error);
+      toast.error(getError(error));
+    }
+  };
+
+  // EDIT REPLY //
+  const handleEditReply = (index: number, value: string) => {
+    const reply = [...replies];
+    reply[index].reply = value;
+    setEditedReply(reply[index].reply);
+  };
+
+  // TOGGLE EDIT //
+  const editToggle = (index: number) => {
+    if (edit.index !== index) {
+      setEdit({
+        index,
+        edit: true,
+      });
+      setEditedReply(replies[index].reply);
+    } else {
+      setEdit({
+        edit: false,
+      });
+    }
+  };
 
   // POST REPLY //
   const handleReply = async (
@@ -65,26 +133,45 @@ const Replies = ({ comment, replies, userImg, token, handleGetReplies }: Props) 
           commentId,
           reply: replyText,
           repliedToName,
-          repliedToId
+          repliedToId,
         },
         {
           headers: { token },
         }
       );
 
-      await webApi.put(
-        `/comment/${commentId}`,
-        {
-          repliesCount: comment.repliesCount + 1,
-        },
-        {
-          headers: { token },
-        }
-      );
-      handleGetReplies(commentId)
+      handleGetReplies(commentId);
       toast.success("Respondido");
       setReply({ ...reply, index: null });
     } catch (error) {
+      toast.error(getError(error));
+    }
+  };
+
+  // DELETE REPLY //
+  const handleDeleteReply = async (id: string, commentId: string) => {
+    try {
+      Confirm.show(
+        `¿Deseas borrar el comentario?`,
+        ``,
+        "Si",
+        "No",
+        async () => {
+          await webApi.delete(`/reply/${id}`, {
+            headers: { token },
+          });
+          toast.success("Has borrado el comentario");
+          handleGetReplies(commentId);
+        },
+        () => {},
+        {
+          titleColor: "black",
+          okButtonBackground: "orange",
+          titleFontSize: "20px",
+          messageFontSize: "16px",
+        }
+      );
+    } catch (error: any) {
       toast.error(getError(error));
     }
   };
@@ -95,7 +182,7 @@ const Replies = ({ comment, replies, userImg, token, handleGetReplies }: Props) 
         <Box key={rep.id}>
           {rep.commentId === comment.id ? (
             <Paper elevation={0}>
-              <Box sx={{ display: "flex", ml: 3, my: 2 }}>
+              <Box sx={{ display: "flex", ml: 3, pt: 2 }}>
                 <Box sx={{ display: "flex", pl: 2 }}>
                   {rep?.userImg ? (
                     <Paper
@@ -108,26 +195,83 @@ const Replies = ({ comment, replies, userImg, token, handleGetReplies }: Props) 
                         borderRadius: "50%",
                         mr: 1,
                       }}
-                      src={`http://localhost:4000/api/uploads/img/avatar/${rep?.userImg}`}
+                      src={USER_IMG_URL + rep?.userImg}
                     />
                   ) : (
                     <Avatar sx={{ width: 36, height: 36 }} />
                   )}
                 </Box>
-                <Box sx={{ width: 1 }}>
-                  <Typography sx={{ pl: 1 }}>{rep.username}</Typography>
-                  <Typography sx={{ pl: 1, fontSize: 11 }}>
-                    {rep.createdAt}
-                  </Typography>
-                  <Typography sx={{ pl: 1, mt: 1 }}>
-                    <span style={{ color: "#4682B4" }}>{rep.repliedToName}</span>{" "}
-                    {rep.reply}
-                  </Typography>
+                <Box
+                  sx={{
+                    width: 1,
+                    p: 1,
+                    borderRadius: "5px",
+                    backgroundColor: "#f5f5f5",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      pr: 1,
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Box>
+                      <Typography>{rep.username}</Typography>
+                      <Typography sx={{ fontSize: 11 }}>
+                        {moment(rep.createdAt).fromNow()}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      {userId === rep.userId || role === "admin" ? (
+                        <Edit
+                          sx={editButtonStyle}
+                          onClick={() => editToggle(index)}
+                        />
+                      ) : (
+                        ""
+                      )}
+                      {edit.index === index && edit.edit ? (
+                        <>
+                          <Done
+                            sx={doneButtonStyle}
+                            onClick={() => handleUpdatedReply(rep.id)}
+                          />
+                          <Delete
+                            sx={deleteButtonStyle}
+                            onClick={() =>
+                              handleDeleteReply(rep.id, rep.commentId)
+                            }
+                          />
+                        </>
+                      ) : (
+                        ""
+                      )}
+                    </Box>
+                  </Box>
+                  {edit.index === index && edit.edit ? (
+                    <TextField
+                      variant="standard"
+                      autoFocus
+                      fullWidth
+                      sx={{ pl: 2 }}
+                      value={rep.reply}
+                      onChange={(e) => handleEditReply(index, e.target.value)}
+                    />
+                  ) : (
+                    <Typography sx={{ pl: 1, mt: 1 }}>
+                      <span style={{ color: "#4682B4" }}>
+                        {rep.repliedToName}
+                      </span>{" "}
+                      {rep.reply}
+                    </Typography>
+                  )}
                 </Box>
               </Box>
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 <Button
                   sx={{ textTransform: "capitalize", pr: 1 }}
+                  size="small"
                   variant="text"
                   onClick={() =>
                     setReply({
@@ -140,14 +284,14 @@ const Replies = ({ comment, replies, userImg, token, handleGetReplies }: Props) 
                   Responder
                 </Button>
               </Box>
-              <Divider />
+              {/* <Divider /> */}
 
               {/* REPLY */}
 
               {reply.index === index && reply.commentId === comment.id ? (
-                <Paper>
-                  <Divider />
-                  <Box sx={{ display: "flex", pl: 2, pt: 1 }}>
+                <Paper elevation={0}>
+                  {/* <Divider /> */}
+                  <Box sx={{ display: "flex", pl: 5, pt: 1 }}>
                     {userImg ? (
                       <Paper
                         elevation={5}
@@ -159,7 +303,7 @@ const Replies = ({ comment, replies, userImg, token, handleGetReplies }: Props) 
                           borderRadius: "50%",
                           mr: 1,
                         }}
-                        src={`http://localhost:4000/api/uploads/img/avatar/${userImg}`}
+                        src={USER_IMG_URL + userImg}
                       />
                     ) : (
                       <Avatar sx={{ width: 36, height: 36 }} />
@@ -195,13 +339,15 @@ const Replies = ({ comment, replies, userImg, token, handleGetReplies }: Props) 
                           rep.userId
                         )
                       }
-                      sx={{ textTransform: "capitalize" }}
+                      size="small"
+                      sx={{ textTransform: "capitalize", color: "#50C878" }}
                     >
                       Responder
                     </Button>
                     <Button
                       onClick={() => setReply({ ...reply, index: null })}
-                      sx={{ textTransform: "capitalize" }}
+                      sx={{ textTransform: "capitalize", color: "#50C878" }}
+                      size="small"
                     >
                       Cancelar
                     </Button>

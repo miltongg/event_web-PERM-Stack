@@ -6,6 +6,7 @@ import Event from "./Event";
 class Comment extends Model {
   public id!: string;
   public comment!: string;
+  public rating!: number;
   public userId!: string;
   public eventId!: string;
   public username!: string;
@@ -22,6 +23,10 @@ Comment.init(
     comment: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    rating: {
+      type: DataTypes.DOUBLE,
+      defaultValue: 0
     },
     repliesCount: {
       type: DataTypes.INTEGER,

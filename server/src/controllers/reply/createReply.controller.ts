@@ -3,6 +3,7 @@ import Reply from "../../models/Reply";
 import {StatusCodes} from "http-status-codes";
 import {REPLY_PREFIX} from "../../helpers/defineConsts";
 import randomId from "../../libs/randomId";
+import Comment from "../../models/Comment";
 
 const createReply = async (req: Request, res: Response) => {
   
@@ -28,6 +29,8 @@ const createReply = async (req: Request, res: Response) => {
       repliedToId,
       userImg
     });
+
+    await Comment.increment('repliesCount', {where: {id: commentId}})
       
     res.json(newReply)
   

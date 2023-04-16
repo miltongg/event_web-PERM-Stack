@@ -22,6 +22,8 @@ import moment from "moment";
 import { StaticDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { EVENT_IMG_URL } from "../helpers/url";
+import Carousel from "../components/Carousel";
 
 const doneButtonStyle = {
   color: "orange",
@@ -45,6 +47,21 @@ const editButtonStyle = {
     color: "block",
   },
 };
+
+const images = [
+  // {
+  //   original: "https://picsum.photos/id/1018/1000/600/",
+  //   thumbnail: "https://picsum.photos/id/1018/250/150/",
+  // },
+  // {
+  //   original: "https://picsum.photos/id/1015/1000/600/",
+  //   thumbnail: "https://picsum.photos/id/1015/250/150/",
+  // },
+  // {
+  //   original: "https://picsum.photos/id/1019/1000/600/",
+  //   thumbnail: "https://picsum.photos/id/1019/250/150/",
+  // },
+];
 
 interface Props {
   userId: string;
@@ -77,6 +94,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
   const [img, setImg] = useState<any>(null);
   const [reload, setReload] = useState(false);
 
+  // GET EVENT //
   useEffect(() => {
     const getEvent = async () => {
       try {
@@ -168,7 +186,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
     <Paper elevation={0} sx={{ marginY: 5 }}>
       <Card sx={{ position: "relative" }}>
         <CardMedia
-          image={`http://localhost:4000/api/uploads/img/event/${event.mainImage}`}
+          image={EVENT_IMG_URL + event.mainImage}
           component="img"
           alt={event.name}
           height="350"
@@ -185,7 +203,14 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
             id="imgFile"
             onChange={handleImgChange}
           />
-          <CameraAltRounded sx={{ color: "white" }} />
+          <CameraAltRounded
+            sx={{
+              color: "black",
+              border: "2px solid white",
+              backgroundColor: "white",
+              borderRadius: "5px",
+            }}
+          />
         </IconButton>
       </Card>
       <Box sx={{ paddingY: 2 }}>
@@ -238,7 +263,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
           )}
         </ListItem>
         <Divider sx={{ marginY: 2 }} />
-        <ListItem sx={{ alignItems: 'initial' }}>
+        <ListItem sx={{ alignItems: "initial" }}>
           {edit?.description ? (
             <>
               <TextField
@@ -261,7 +286,17 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
               onClick={() => setShowFullDesc(!showFullDesc)}
             >
               <Collapse in={showFullDesc} collapsedSize={85}>
-                <Typography>{event?.description}</Typography>
+                <Typography
+                  component="div"
+                  display="block"
+                  sx={{
+                    whiteSpace: "pre-line",
+                    textAlign: "justify",
+                    "&:hover": { backgroundColor: "#fcfcfc" },
+                  }}
+                >
+                  {event?.description}
+                </Typography>
               </Collapse>
             </Box>
           )}
@@ -280,20 +315,27 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
 
       <Divider />
 
+      {images.length === 0 ? (
+        ""
+      ) : (
+        <Box sx={{ marginY: 5 }}>
+          {/* <Carousel images={images} /> */}
+        </Box>
+      )}
+
+      <Divider />
+
       <Comments
         userId={userId}
         token={token}
         commentsCount={event.commentCount}
         userImg={userImg}
+        role={role}
       />
     </Paper>
   ) : (
     <CircularProgress />
   );
 };
-
-{
-  /* <Collapse in={checked}>{icon}</Collapse> */
-}
 
 export default EventScreen;

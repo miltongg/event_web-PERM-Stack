@@ -27,7 +27,7 @@ export const verifyToken = async (
     req.user = user?.dataValues;
 
     next();
-  } catch ({ message }) {
+  } catch ({ message }: any) {
     res.status(500).json({
       message,
     });

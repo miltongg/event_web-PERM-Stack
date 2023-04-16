@@ -10,14 +10,25 @@ const updateReply = async (req: Request, res: Response) => {
 
     console.log(req.body);
 
-    await Reply.update(
-      { userImg, reply, username, repliedToName },
-      {
-        where: {
-          [Op.or]: [{repliedToId: id}, { userId: id }, { id }],
-        },
-      }
-    );
+    if (repliedToName) {
+      await Reply.update(
+        { repliedToName },
+        {
+          where: {
+            [Op.or]: [{ repliedToId: id }],
+          },
+        }
+      );
+    } else {
+      await Reply.update(
+        { userImg, reply, username },
+        {
+          where: {
+            [Op.or]: [{ userId: id }, { id }],
+          },
+        }
+      );
+    }
 
     res.json("Has actualizado tu respuesta");
   } catch (error: any) {

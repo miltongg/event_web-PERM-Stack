@@ -114,6 +114,8 @@ const ProfileScreen = ({ userId }: Props) => {
     }
   }, [id]);
 
+
+  // EDIT TOGGLE //
   const handleEditToggle = (key: string) => {
     switch (key) {
       case "email":
@@ -151,6 +153,8 @@ const ProfileScreen = ({ userId }: Props) => {
     }
   };
 
+
+  // EDIT USER //
   const handleEdit = async () => {
     if (textData) setUser({ ...user, socials: [...user.socials!, textData] });
 
@@ -203,7 +207,7 @@ const ProfileScreen = ({ userId }: Props) => {
             headers: {token}
           })
 
-          // UPDATE REPLIES REPLIEDTONAME
+          // UPDATE REPLIES REPLIED TO USERNAME
           await webApi.put(`reply/${id}`, {
             repliedToName: username,
           }, {
@@ -234,6 +238,8 @@ const ProfileScreen = ({ userId }: Props) => {
     update();
   }, [update]);
 
+
+  // EDIT SOCIALS //
   const handleEditSocials = async (
     item?: string,
     newItem?: string,
@@ -249,6 +255,7 @@ const ProfileScreen = ({ userId }: Props) => {
     }
   };
 
+  // DELETE SOCIAL //
   const handleDelete = async (social: string) => {
     Confirm.show(
       `¿Deseas borrar el enlace?`,
@@ -273,17 +280,19 @@ const ProfileScreen = ({ userId }: Props) => {
     };
   };
 
+  // CHANGE IMG //
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) setImg(file);
   };
 
+  // EDIT SOCIAL //
   const editSingleSocial = (index: number, item: string) => {
     setEditData({ ...editData, socialsTextData: item });
     handleEditSocials("", "", index);
   };
 
-  // UPLOAD IMG
+  // UPLOAD IMG AND UPDATE //
   useEffect(() => {
     if (img) {
       const uploadImg = async () => {
@@ -323,6 +332,13 @@ const ProfileScreen = ({ userId }: Props) => {
               headers: { token },
             }
           );
+
+          // UPDATE REPLIED PHOTO //
+          await webApi.put(`reply/${id}`, {
+            userImg: data.image
+          }, {
+            headers: {token}
+          })
 
           dispatch(setUserImg({ userImg: data.image }));
           setUser({ ...user, userImg: data.image });

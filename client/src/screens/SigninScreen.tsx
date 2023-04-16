@@ -132,7 +132,7 @@ const SigninScreen = () => {
           </Button>
           <Link
             underline="none"
-            sx={{ mt: 4 }}
+            sx={{ mt: 4, '&:hover': {color: 'darkslateblue'} }}
             component="button"
             onClick={() => navigate("/signup")}
           >
@@ -140,7 +140,7 @@ const SigninScreen = () => {
           </Link>
           <Link
             underline="none"
-            sx={{ mt: 2 }}
+            sx={{ mt: 2, '&:hover': {color: 'darkslateblue'} }}
             component="button"
             onClick={() => navigate("/recover")}
           >

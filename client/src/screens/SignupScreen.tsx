@@ -199,7 +199,7 @@ const SignupScreen = () => {
               </Button>
               <Link
                 underline="none"
-                sx={{'&:hover': {cursor: 'pointer', color: 'blue'}}}
+                sx={{'&:hover': {cursor: 'pointer', color: 'darkslateblue'}}}
                 onClick={() => navigate('/signin')}
               >
                 ¿Ya tienes una cuenta?

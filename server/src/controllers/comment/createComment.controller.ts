@@ -6,7 +6,7 @@ import randomId from "../../libs/randomId";
 
 const createComment = async (req: Request, res: Response) => {
   
-  const { eventId, comment } = req.body
+  const { eventId, comment, rating } = req.body
   const { id, username, userImg } = req.user
   
   console.log(req.body)
@@ -24,7 +24,8 @@ const createComment = async (req: Request, res: Response) => {
       username,
       userId: id,
       eventId,
-      userImg
+      userImg,
+      rating
     });
   
     console.log(newComment)
