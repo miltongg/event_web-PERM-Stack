@@ -24,6 +24,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { EVENT_IMG_URL } from "../helpers/url";
 import Carousel from "../components/Carousel";
+import UploadImages from "../components/UploadImages";
 
 const doneButtonStyle = {
   color: "orange",
@@ -72,7 +73,6 @@ interface Props {
 const EventScreen = ({ userId, role, userImg }: Props) => {
   const token = localStorage.getItem("token");
   const { id } = useParams();
-  const long = 300;
   const [showFullDesc, setShowFullDesc] = useState<boolean>(false);
   const [event, setEvent] = useState<any>({
     id: "",
@@ -109,6 +109,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
     getEvent();
   }, [reload, event.commentsCount]);
 
+  // UPDATE EVENT //
   const handleUpdate = async () => {
     try {
       await webApi.put(
@@ -146,7 +147,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
     if (file) setImg(file);
   };
 
-  // UPLOAD IMG
+  // UPLOAD IMG //
   useEffect(() => {
     if (img) {
       const uploadImg = async () => {
@@ -186,7 +187,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
     <Paper elevation={0} sx={{ marginY: 5 }}>
       <Card sx={{ position: "relative" }}>
         <CardMedia
-          image={EVENT_IMG_URL + event.mainImage}
+          image={`${EVENT_IMG_URL}${event.id}/${event.mainImage}`}
           component="img"
           alt={event.name}
           height="350"
@@ -318,12 +319,21 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
       {images.length === 0 ? (
         ""
       ) : (
-        <Box sx={{ marginY: 5 }}>
-          {/* <Carousel images={images} /> */}
-        </Box>
+        <Box sx={{ marginY: 5 }}>{/* <Carousel images={images} /> */}</Box>
       )}
 
-      <Divider />
+      {event.eventImages === null ? (
+        <Typography
+          sx={{ textAlign: "center", color: "gray", mt: 5 }}
+          variant="h5"
+        >
+          No hay imágenes del evento
+        </Typography>
+      ) : (
+        ""
+      )}
+
+      {role === "admin" ? <UploadImages token={token} /> : ""}
 
       <Comments
         userId={userId}

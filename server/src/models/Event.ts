@@ -53,7 +53,8 @@ Event.init(
       type: DataTypes.STRING
     },
     eventImages: {
-      type: DataTypes.ARRAY(DataTypes.STRING)
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: []
     }
     
   },

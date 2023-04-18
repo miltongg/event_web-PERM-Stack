@@ -7,6 +7,9 @@ const updateEvent = async (req: Request, res: Response) => {
     let { name, description, date, image, images, commentsCount, rating } = req.body
     const paramId = req.params.id;
     const headerId = req.headers.id;
+
+    console.log(images);
+    
   
 
     if (date && date.includes('/')) {

@@ -36,6 +36,7 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Confirm } from "notiflix/build/notiflix-confirm-aio";
 import { setUserImg } from "../store/slices/user/userSlice";
+import { USER_IMG_URL } from "../helpers/url";
 
 interface Props {
   userId: string;
@@ -376,7 +377,7 @@ const ProfileScreen = ({ userId }: Props) => {
                   width: 200,
                   borderRadius: "50%",
                 }}
-                src={`http://localhost:4000/api/uploads/img/avatar/${userImg}`}
+                src={`${USER_IMG_URL}${id}/${userImg}`}
               />
             ) : (
               <Person sx={{ width: 200, height: 200 }} />

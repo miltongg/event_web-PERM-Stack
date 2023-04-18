@@ -1,0 +1,1 @@
+export const ALLOWED_IMG_EXT = ['image/jpg', 'image/png', 'image/jpeg'];

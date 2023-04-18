@@ -7,7 +7,6 @@ const router = Router();
 
 router.post('/iupload', verifyToken, uploadImg);
 
-router.get('/uploads/img/:folder/:id', getImg)
-
+router.get('/uploads/img/:folder/:subfolder/:id', getImg)
 
 export default router;

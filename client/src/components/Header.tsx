@@ -194,7 +194,7 @@ export default function Header({ id, userImg }: IState) {
                           width: 42,
                           borderRadius: "50%",
                         }}
-                        src={USER_IMG_URL + userImg}
+                        src={`${USER_IMG_URL}${id}/${userImg}`}
                       />
                     </IconButton>
                   ) : (

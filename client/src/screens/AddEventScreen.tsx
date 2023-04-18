@@ -50,14 +50,18 @@ const AddEventScreen = ({ id }: Props) => {
     // data.append('files', eventImages as FileList)
 
     try {
+
+      // Post event //
       const { data } = await webApi.post("/event", formData, {
         headers: { token },
       });
 
+      // Upload image to server //
       const image = await webApi.post("/iupload", formData, {
         headers: { token, id: data.id, folder: "event/" },
       });
 
+      // Update event img with image name //
       await webApi.put(`/event/${data.id}`, image.data, {
         headers: { token },
       });

@@ -358,7 +358,7 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
                       borderRadius: "50%",
                       mr: 2,
                     }}
-                    src={USER_IMG_URL + comment.userImg}
+                    src={`${USER_IMG_URL}${comment.userId}/${comment.userImg}`}
                   />
                 ) : (
                   <Avatar sx={{ mr: 1 }} />
@@ -482,7 +482,7 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
                           borderRadius: "50%",
                           mr: 1,
                         }}
-                        src={USER_IMG_URL + userImg}
+                        src={`${USER_IMG_URL}${userId}/${userImg}`}
                       />
                     ) : (
                       <Avatar sx={{ width: 36, height: 36 }} />

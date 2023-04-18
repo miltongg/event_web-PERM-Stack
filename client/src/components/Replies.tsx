@@ -195,10 +195,10 @@ const Replies = ({
                         borderRadius: "50%",
                         mr: 1,
                       }}
-                      src={USER_IMG_URL + rep?.userImg}
+                      src={`${USER_IMG_URL}${rep.userId}/${rep?.userImg}`}
                     />
                   ) : (
-                    <Avatar sx={{ width: 36, height: 36 }} />
+                    <Avatar sx={{ width: 36, height: 36, mr: 1 }} />
                   )}
                 </Box>
                 <Box
@@ -306,7 +306,7 @@ const Replies = ({
                         src={USER_IMG_URL + userImg}
                       />
                     ) : (
-                      <Avatar sx={{ width: 36, height: 36 }} />
+                      <Avatar sx={{ width: 36, height: 36, mr: 1 }} />
                     )}
                     <TextField
                       sx={{ p: 1 }}

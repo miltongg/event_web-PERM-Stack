@@ -20,7 +20,7 @@ const getImg = async (req: Request, res: Response) => {
         //         message: 'folder vacío'
         //     })
         
-        const pathFile = path.join(__dirname, `../../uploads/img/${folder}/${id}`);
+        const pathFile = path.join(__dirname, `../../uploads/img/${folder}/${id}/${id}`);
     
 
         if (!existsSync(pathFile))

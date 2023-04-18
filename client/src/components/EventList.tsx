@@ -27,33 +27,33 @@ const EventList: FC<Props> = (props) => {
 
   return (
     <Box>
-      {events.map(({ id, name, date, description, mainImage }) => (
-        <Card key={id} sx={{ maxWidth: 1, marginY: 5 }}>
+      {events.map((event) => (
+        <Card key={event.id} sx={{ maxWidth: 1, marginY: 5 }}>
           <CardMedia
             component="img"
-            alt={name}
+            alt={event.name}
             height="300"
-            image={EVENT_IMG_URL + mainImage}
+            image={`${EVENT_IMG_URL}${event.id}/${event.mainImage}`}
           />
           <CardContent>
             <Typography variant="h5" component="div">
-              {name}
+              {event.name}
             </Typography>
-            <Typography gutterBottom>{date}</Typography>
+            <Typography gutterBottom>{event.date}</Typography>
             <Typography
               variant="body2"
               color="text.secondary"
               component="div"
-              style={{ whiteSpace: "pre-line", textAlign: 'justify' }}
+              style={{ whiteSpace: "pre-line", textAlign: "justify" }}
             >
-              {description.length >= 450
-                ? description.substring(0, 450) + "..."
-                : description}
+              {event.description.length >= 450
+                ? event.description.substring(0, 450) + "..."
+                : event.description}
             </Typography>
           </CardContent>
           <CardActions>
             <Button size="small">Compartir</Button>
-            <Button onClick={() => navigate(`event/${id}`)} size="small">
+            <Button onClick={() => navigate(`event/${event.id}`)} size="small">
               Ver Más...
             </Button>
           </CardActions>
