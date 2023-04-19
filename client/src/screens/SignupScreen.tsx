@@ -16,7 +16,7 @@ import {webApi} from "../helpers/animeApi";
 import {toast} from "react-toastify";
 import {getError} from "../helpers/handleErrors";
 import {useNavigate} from "react-router-dom";
-import { PinInput } from 'react-input-pin-code';
+import {PinInput} from 'react-input-pin-code';
 import {useDispatch} from "react-redux";
 import decodeToken from "../libs/decodeToken";
 
@@ -63,14 +63,14 @@ const SignupScreen = () => {
       setFormState({...formState, loading: true});
       
       const data = new FormData(event.currentTarget);
-  
+      
       await webApi.post('/signup', {
         name: data.get('name'),
         username: data.get('username'),
         email: data.get('email'),
         password: data.get('password'),
         confirmPassword: data.get('password2')
-      })
+      });
       
       toast.success('Por favor, revise su correo')
       setFormState({...formState, dataSent: true})
@@ -105,11 +105,11 @@ const SignupScreen = () => {
   }
   
   return (
-      <Box component="form" onSubmit={handleSubmit} sx={{display: "flex", height: "100vh"}}>
-        {
-          !dataSent ? <FormControl sx={formStyle}>
+    <Box component="form" onSubmit={handleSubmit} sx={{display: "flex", height: "100vh"}}>
+      {
+        !dataSent ? <FormControl sx={formStyle}>
             <Typography variant="h5" sx={{textAlign: "center", color: "orange"}}>Crear Cuenta</Typography>
-      
+            
             <TextField
               required
               id="name"
@@ -118,7 +118,7 @@ const SignupScreen = () => {
               variant="standard"
               sx={{marginY: 2}}
             />
-
+            
             <TextField
               required
               id="username"
@@ -127,7 +127,7 @@ const SignupScreen = () => {
               variant="standard"
               sx={{marginY: 2}}
             />
-      
+            
             <TextField
               required
               id="email"
@@ -137,7 +137,7 @@ const SignupScreen = () => {
               variant="standard"
               sx={{marginY: 2}}
             />
-      
+            
             <FormControl sx={{marginY: 2}} variant="standard">
               <InputLabel required htmlFor="standard-adornment-password">Contraseña</InputLabel>
               <Input
@@ -158,7 +158,7 @@ const SignupScreen = () => {
                 }
               />
             </FormControl>
-      
+            
             <FormControl sx={{marginY: 2}} variant="standard">
               <InputLabel required htmlFor="standard-adornment-password">Repita la Contraseña</InputLabel>
               <Input
@@ -178,7 +178,7 @@ const SignupScreen = () => {
                 }
               />
             </FormControl>
-    
+            
             <Box sx={{marginTop: 3, marginBottom: 2}}>
               {loading ? <LinearProgress color="warning"/> : ""}
               <Button
@@ -205,11 +205,12 @@ const SignupScreen = () => {
                 ¿Ya tienes una cuenta?
               </Link>
             </Box>
-            
-        </FormControl> :
+          
+          </FormControl> :
           
           <Box sx={formStyle}>
-            <Typography color="orange" mb="10px" mt="-10px" textAlign="center" variant="h6">Copie el código aquí.</Typography>
+            <Typography color="orange" mb="10px" mt="-10px" textAlign="center" variant="h6">Copie el código
+              aquí.</Typography>
             <Box sx={{display: "flex", width: 1, textAlign: "center", justifyContent: "center"}}>
               <PinInput
                 placeholder=""
@@ -218,7 +219,7 @@ const SignupScreen = () => {
                 onChange={(value, index, values) => setValues(values)}
               />
             </Box>
-  
+            
             <Button
               variant="contained"
               sx={{
@@ -233,12 +234,12 @@ const SignupScreen = () => {
             >
               Verificar
             </Button>
-            
-          </Box>
           
-        }
+          </Box>
         
-      </Box>
+      }
+    
+    </Box>
   );
 };
 
