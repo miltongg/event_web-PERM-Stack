@@ -8,19 +8,22 @@ const getImg = async (req: Request, res: Response) => {
 
     try {
 
-        const {id, folder} = req.params;
+        const {subfolder, name, folder} = req.params;
+
+        console.log(req.params);
         
-        if (!id)
-            return res.status(400).json({
-                message: 'id vacío'
-            });
+        
+        // if (!id)
+        //     return res.status(400).json({
+        //         message: 'id vacío'
+        //     });
 
         // if (!folder)
         //     return res.status(400).json({
         //         message: 'folder vacío'
         //     })
         
-        const pathFile = path.join(__dirname, `../../uploads/img/${folder}/${id}/${id}`);
+        const pathFile = path.join(__dirname, `../../uploads/img/${folder}/${subfolder}/${name}`);
     
 
         if (!existsSync(pathFile))

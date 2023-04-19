@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import path from "path";
 import { existsSync, mkdirSync } from "fs";
-import { IMG_UPLOAD_PATH, ALLOWED_IMG } from "../../helpers/defineConsts";
+import {IMG_UPLOAD_PATH, ALLOWED_IMG, EVENT_PREFIX} from "../../helpers/defineConsts";
 import randomId from "../../libs/randomId";
 
 interface FileRequest extends Request {
@@ -22,45 +22,9 @@ const uploadImg = async (req: Request, res: Response) => {
     const prefix = req.headers.prefix as string;
     let count = 1;
 
-    const imgList: string[] = [];
 
     if (!folder || !id)
       return res.status(404).json({ message: "Faltan datos" });
-
-    if (Array.isArray(file)) {
-      for (let element of file) {
-        const fileExt = element.mimetype.split("/")[1];
-        element.name = `${id}_${count}`;
-        count++;
-
-        // check if imgs has valid extension, return error if not
-        if (!ALLOWED_IMG.includes(fileExt))
-          return res.status(401).json({
-            message: `Por favor, seleccione un formato de imagen válido. ${ALLOWED_IMG}`,
-          });
-
-        // get path to save img in server
-        const uploadImgsPath = path.join(
-          __dirname,
-          IMG_UPLOAD_PATH,
-          folder,
-          id + "/"
-        );
-
-        imgList.push(element.name);
-        
-
-        // create folder if not exist
-        if (!existsSync(uploadImgsPath))
-          mkdirSync(uploadImgsPath, { recursive: true });
-
-        element.mv(uploadImgsPath + element.name, async (error: any) => {
-          if (error) return res.status(500).json({ message: error });
-        });
-      }      
-
-      return res.json({ images: imgList });
-    }
 
     const fileExt = file.mimetype.split("/")[1];
 
@@ -70,12 +34,10 @@ const uploadImg = async (req: Request, res: Response) => {
       });
 
     // file.name = randomId();
-    file.name = id;
+    file.name = prefix + '_' + randomId();
 
     const uploadPath = path.join(__dirname, IMG_UPLOAD_PATH, folder, id + "/");
-
-    console.log(uploadPath);
-
+    
     if (!existsSync(uploadPath)) mkdirSync(uploadPath, { recursive: true });
 
     file.mv(uploadPath + file.name, async (error: any) => {
@@ -83,8 +45,8 @@ const uploadImg = async (req: Request, res: Response) => {
 
       res.json({ image: file.name });
     });
-  } catch ({ message }: any) {
-    res.status(500).json({ message });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 };
 

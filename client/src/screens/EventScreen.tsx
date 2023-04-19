@@ -49,39 +49,36 @@ const editButtonStyle = {
   },
 };
 
-const images = [
-  // {
-  //   original: "https://picsum.photos/id/1018/1000/600/",
-  //   thumbnail: "https://picsum.photos/id/1018/250/150/",
-  // },
-  // {
-  //   original: "https://picsum.photos/id/1015/1000/600/",
-  //   thumbnail: "https://picsum.photos/id/1015/250/150/",
-  // },
-  // {
-  //   original: "https://picsum.photos/id/1019/1000/600/",
-  //   thumbnail: "https://picsum.photos/id/1019/250/150/",
-  // },
-];
-
 interface Props {
   userId: string;
   role: string;
   userImg: string | null | undefined;
 }
 
+interface IEvent {
+  id: string;
+  name: string;
+  date: string | object;
+  description: string;
+  commentsCount: number;
+  rating: number;
+  mainImage: string;
+  eventImages: string[]
+}
+
 const EventScreen = ({ userId, role, userImg }: Props) => {
   const token = localStorage.getItem("token");
   const { id } = useParams();
   const [showFullDesc, setShowFullDesc] = useState<boolean>(false);
-  const [event, setEvent] = useState<any>({
+  const [event, setEvent] = useState<IEvent>({
     id: "",
     name: "",
     date: "",
     description: "",
-    commentCount: 0,
+    commentsCount: 0,
     rating: 0,
     mainImage: "",
+    eventImages: []
   });
 
   const [edit, setEdit] = useState({
@@ -122,7 +119,6 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
         {
           headers: {
             token,
-            "Content-Type": "application/json",
           },
         }
       );
@@ -159,6 +155,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
             headers: {
               token,
               folder: "event/",
+              prefix: 'event',
               id,
             },
           });
@@ -172,8 +169,8 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
           );
 
           toast.success("Se ha actualizado este evento");
-
           setReload(!reload);
+          
         } catch (error) {
           toast.error(getError(error));
         }
@@ -316,10 +313,12 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
 
       <Divider />
 
-      {images.length === 0 ? (
+      {event.eventImages.length === 0 ? (
         ""
       ) : (
-        <Box sx={{ marginY: 5 }}>{/* <Carousel images={images} /> */}</Box>
+        <Box sx={{ marginY: 5 }}>
+          <Carousel images={event.eventImages}/>
+        </Box>
       )}
 
       {event.eventImages === null ? (
@@ -338,7 +337,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
       <Comments
         userId={userId}
         token={token}
-        commentsCount={event.commentCount}
+        commentsCount={event.commentsCount}
         userImg={userImg}
         role={role}
       />

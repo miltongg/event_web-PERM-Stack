@@ -36,7 +36,6 @@ moment.locale("es");
 
 interface Props {
   userId: string | undefined;
-  // eventId: string,
   token: string | null;
   role: string | null;
   commentsCount: number;

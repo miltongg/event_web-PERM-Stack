@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
-import { VisibilityOff, Visibility, Send } from "@mui/icons-material";
+import {useNavigate} from "react-router-dom";
+import {VisibilityOff, Visibility, Send} from "@mui/icons-material";
 import {
   Box,
   FormControl,
@@ -13,12 +13,11 @@ import {
   Button,
   Link,
 } from "@mui/material";
-import { useState, FormEvent, MouseEventHandler, MouseEvent } from "react";
-import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
-import { webApi } from "../helpers/animeApi";
-import { getError } from "../helpers/handleErrors";
-import decodeToken from "../libs/decodeToken";
+import {useState, FormEvent} from "react";
+import {useDispatch} from "react-redux";
+import {toast} from "react-toastify";
+import {webApi} from "../helpers/animeApi";
+import {getError} from "../helpers/handleErrors";
 
 const formStyle = {
   boxShadow: "0px 5px 10px rgba(0, 0, 0, 0.2)",
@@ -39,75 +38,73 @@ const RecoverPasswordScreen = () => {
     dataSent: false,
     loading: false,
   });
-
-  const { showPassword, dataSent, loading } = formState;
-
+  
+  const {showPassword, dataSent, loading} = formState;
+  
   const dispatch = useDispatch();
   const handleClickShowPassword = () =>
     setFormState((prevState) => ({
       ...prevState,
       showPassword: !prevState.showPassword,
     }));
-
+  
   const navigate = useNavigate();
-
+  
   // sent code to email
-  const handleSentEmail = async (e: MouseEvent) => {
+  const handleSentEmail = async () => {
     console.log(formState.email);
-
+    
     try {
       await webApi.post(
         "/mail",
         {
           email: formState.email,
-        },
-        {}
+        }
       );
-
+      
       toast.success("Un código de verificación ha sido enviado a su correo");
     } catch (error: any) {
       toast.error(getError(error));
     }
   };
-
+  
   // submit form
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    
     try {
-      setFormState({ ...formState, loading: true });
-
+      setFormState({...formState, loading: true});
+      
       const data = new FormData(event.currentTarget);
-
-      await webApi.post("/signup", {
-        name: data.get("name"),
-        username: data.get("username"),
-        email: data.get("email"),
+      
+      await webApi.post("/forgot", {
+        code: data.get("code"),
         password: data.get("password"),
         confirmPassword: data.get("password2"),
       });
-
-      toast.success("Por favor, revise su correo");
-      setFormState({ ...formState, dataSent: true });
+      
+      toast.success("Ha cambiado su contraseña");
+      setFormState({...formState, dataSent: true});
+      navigate('/signin');
     } catch (error: any) {
       toast.error(getError(error));
-      setFormState({ ...formState, loading: false });
+      setFormState({...formState, loading: false});
       console.log(error);
     }
   };
-
+  
   return (
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{ display: "flex", height: "100vh" }}
+      sx={{display: "flex", height: "100vh"}}
     >
       <FormControl sx={formStyle}>
-        <Typography variant="h5" sx={{ textAlign: "center", color: "orange" }}>
+        <Typography variant="h5" sx={{textAlign: "center", color: "orange"}}>
           Cambiar Contraseña
         </Typography>
-
-        <FormControl sx={{ marginY: 2 }} variant="standard">
+        
+        <FormControl sx={{marginY: 2}} variant="standard">
           <InputLabel required htmlFor="standard-adornment-password">
             Correo
           </InputLabel>
@@ -117,18 +114,18 @@ const RecoverPasswordScreen = () => {
             type="email"
             name="email"
             onChange={(e) =>
-              setFormState({ ...formState, email: e.target.value })
+              setFormState({...formState, email: e.target.value})
             }
             endAdornment={
               <InputAdornment position="end">
                 <IconButton onClick={handleSentEmail}>
-                  <Send />
+                  <Send/>
                 </IconButton>
               </InputAdornment>
             }
           />
         </FormControl>
-
+        
         <TextField
           required
           id="code"
@@ -136,10 +133,10 @@ const RecoverPasswordScreen = () => {
           name="code"
           type="text"
           variant="standard"
-          sx={{ marginY: 2 }}
+          sx={{marginY: 2}}
         />
-
-        <FormControl sx={{ marginY: 2 }} variant="standard">
+        
+        <FormControl sx={{marginY: 2}} variant="standard">
           <InputLabel required htmlFor="standard-adornment-password">
             Contraseña
           </InputLabel>
@@ -155,14 +152,14 @@ const RecoverPasswordScreen = () => {
                   onClick={handleClickShowPassword}
                   // onMouseDown={handleMouseDownPassword}
                 >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                  {showPassword ? <VisibilityOff/> : <Visibility/>}
                 </IconButton>
               </InputAdornment>
             }
           />
         </FormControl>
-
-        <FormControl sx={{ marginY: 2 }} variant="standard">
+        
+        <FormControl sx={{marginY: 2}} variant="standard">
           <InputLabel required htmlFor="standard-adornment-password">
             Repita la Contraseña
           </InputLabel>
@@ -177,15 +174,15 @@ const RecoverPasswordScreen = () => {
                   onClick={handleClickShowPassword}
                   // onMouseDown={handleMouseDownPassword}
                 >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                  {showPassword ? <VisibilityOff/> : <Visibility/>}
                 </IconButton>
               </InputAdornment>
             }
           />
         </FormControl>
-
-        <Box sx={{ marginTop: 3, marginBottom: 2 }}>
-          {loading ? <LinearProgress color="warning" /> : ""}
+        
+        <Box sx={{marginTop: 3, marginBottom: 2}}>
+          {loading ? <LinearProgress color="warning"/> : ""}
           <Button
             disabled={loading}
             variant="contained"

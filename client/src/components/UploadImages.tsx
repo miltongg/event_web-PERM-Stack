@@ -1,4 +1,4 @@
-import { AddPhotoAlternate, Image, Delete, Send } from "@mui/icons-material";
+import { AddPhotoAlternate, Image, Delete } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import { FormEvent, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ALLOWED_IMG_EXT } from "../helpers/definedConst";
 import { webApi } from "../helpers/animeApi";
 import { toast } from "react-toastify";
 import { getError } from "../helpers/handleErrors";
@@ -62,8 +61,8 @@ const UploadImages = ({ token }: Props) => {
 
       setLoading(true);
 
-      const { data } = await webApi.post("/iupload", formData, {
-        headers: { token, id, folder: "event/" },
+      const { data } = await webApi.post("/iuploads", formData, {
+        headers: { token, id, folder: "event/", prefix: 'event' },
       });
 
       await webApi.put(
@@ -110,7 +109,7 @@ const UploadImages = ({ token }: Props) => {
         size="small"
         sx={{ ml: 1 }}
         variant="contained"
-        endIcon={loading ? <CircularProgress size={15} /> :<Image />}
+        endIcon={loading ? <CircularProgress size={15} /> : <Image />}
         type="submit"
       >
         Enviar {images.length}

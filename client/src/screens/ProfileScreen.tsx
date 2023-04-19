@@ -310,6 +310,7 @@ const ProfileScreen = ({ userId }: Props) => {
             headers: {
               token,
               folder: "avatar/",
+              prefix: 'user',
               id: userId,
             },
           });
