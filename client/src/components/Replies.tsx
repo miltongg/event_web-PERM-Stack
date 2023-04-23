@@ -7,18 +7,18 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { useState } from "react";
-import { webApi } from "../helpers/animeApi";
-import { toast } from "react-toastify";
-import { getError } from "../helpers/handleErrors";
-import { Delete, Done, Edit } from "@mui/icons-material";
+import {useState} from "react";
+import {webApi} from "../helpers/animeApi";
+import {toast} from "react-toastify";
+import {getError} from "../helpers/handleErrors";
+import {AccessTime, Delete, Done, Edit} from "@mui/icons-material";
 import {
   deleteButtonStyle,
   doneButtonStyle,
   editButtonStyle,
 } from "../helpers/customStyles";
-import { USER_IMG_URL } from "../helpers/url";
-import { Confirm } from "notiflix/build/notiflix-confirm-aio";
+import {USER_IMG_URL} from "../helpers/url";
+import {Confirm} from "notiflix/build/notiflix-confirm-aio";
 import moment from "moment";
 
 interface Props {
@@ -31,7 +31,7 @@ interface Props {
     repliesCount: number;
     createdAt: string;
   };
-
+  
   replies: {
     id: string;
     username: string;
@@ -51,14 +51,14 @@ interface Props {
 }
 
 const Replies = ({
-  comment,
-  replies,
-  userImg,
-  token,
-  handleGetReplies,
-  userId,
-  role,
-}: Props) => {
+                   comment,
+                   replies,
+                   userImg,
+                   token,
+                   handleGetReplies,
+                   userId,
+                   role,
+                 }: Props) => {
   const [reply, setReply] = useState<{
     index?: number | null;
     commentId?: string;
@@ -68,13 +68,13 @@ const Replies = ({
     commentId: "",
     text: "",
   });
-
+  
   const [editedReply, setEditedReply] = useState<string>("");
   const [edit, setEdit] = useState<{ index?: number | null; edit: boolean }>({
     index: null,
     edit: false,
   });
-
+  
   // UPDATE REPLY //
   const handleUpdatedReply = async (replyId: string) => {
     try {
@@ -84,25 +84,25 @@ const Replies = ({
           reply: editedReply,
         },
         {
-          headers: { token },
+          headers: {token},
         }
       );
-
+      
       toast.success("Has actualizado tu comentario");
-      setEdit({ edit: false });
+      setEdit({edit: false});
     } catch (error: any) {
       console.error(error);
       toast.error(getError(error));
     }
   };
-
+  
   // EDIT REPLY //
   const handleEditReply = (index: number, value: string) => {
     const reply = [...replies];
     reply[index].reply = value;
     setEditedReply(reply[index].reply);
   };
-
+  
   // TOGGLE EDIT //
   const editToggle = (index: number) => {
     if (edit.index !== index) {
@@ -117,7 +117,7 @@ const Replies = ({
       });
     }
   };
-
+  
   // POST REPLY //
   const handleReply = async (
     commentId: string,
@@ -136,18 +136,18 @@ const Replies = ({
           repliedToId,
         },
         {
-          headers: { token },
+          headers: {token},
         }
       );
-
+      
       handleGetReplies(commentId);
       toast.success("Respondido");
-      setReply({ ...reply, index: null });
+      setReply({...reply, index: null});
     } catch (error) {
       toast.error(getError(error));
     }
   };
-
+  
   // DELETE REPLY //
   const handleDeleteReply = async (id: string, commentId: string) => {
     try {
@@ -158,12 +158,13 @@ const Replies = ({
         "No",
         async () => {
           await webApi.delete(`/reply/${id}`, {
-            headers: { token },
+            headers: {token},
           });
           toast.success("Has borrado el comentario");
           handleGetReplies(commentId);
         },
-        () => {},
+        () => {
+        },
         {
           titleColor: "black",
           okButtonBackground: "orange",
@@ -175,15 +176,15 @@ const Replies = ({
       toast.error(getError(error));
     }
   };
-
+  
   return replies.length > 0 ? (
     <>
       {replies.map((rep, index) => (
         <Box key={rep.id}>
           {rep.commentId === comment.id ? (
             <Paper elevation={0}>
-              <Box sx={{ display: "flex", ml: 3, pt: 2 }}>
-                <Box sx={{ display: "flex", pl: 2 }}>
+              <Box sx={{display: "flex", ml: 3, pt: 2}}>
+                <Box sx={{display: "flex", pl: 2}}>
                   {rep?.userImg ? (
                     <Paper
                       elevation={2}
@@ -198,7 +199,7 @@ const Replies = ({
                       src={`${USER_IMG_URL}${rep.userId}/${rep?.userImg}`}
                     />
                   ) : (
-                    <Avatar sx={{ width: 36, height: 36, mr: 1 }} />
+                    <Avatar sx={{width: 36, height: 36, mr: 1}}/>
                   )}
                 </Box>
                 <Box
@@ -218,9 +219,9 @@ const Replies = ({
                   >
                     <Box>
                       <Typography>{rep.username}</Typography>
-                      <Typography sx={{ fontSize: 11 }}>
-                        {moment(rep.createdAt).fromNow()}
-                      </Typography>
+                      <Box sx={{fontSize: 11, color: '#6677FF'}}>
+                        <AccessTime sx={{fontSize: 11}}/> {moment(rep.createdAt).fromNow()}
+                      </Box>
                     </Box>
                     <Box>
                       {userId === rep.userId || role === "admin" ? (
@@ -254,13 +255,13 @@ const Replies = ({
                       variant="standard"
                       autoFocus
                       fullWidth
-                      sx={{ pl: 2 }}
+                      sx={{pl: 2}}
                       value={rep.reply}
                       onChange={(e) => handleEditReply(index, e.target.value)}
                     />
                   ) : (
-                    <Typography sx={{ pl: 1, mt: 1 }}>
-                      <span style={{ color: "#4682B4" }}>
+                    <Typography sx={{pl: 1, mt: 1}}>
+                      <span style={{color: "#4682B4"}}>
                         {rep.repliedToName}
                       </span>{" "}
                       {rep.reply}
@@ -268,9 +269,9 @@ const Replies = ({
                   )}
                 </Box>
               </Box>
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Box sx={{display: "flex", justifyContent: "flex-end"}}>
                 <Button
-                  sx={{ textTransform: "capitalize", pr: 1 }}
+                  sx={{textTransform: "capitalize", pr: 1}}
                   size="small"
                   variant="text"
                   onClick={() =>
@@ -285,13 +286,13 @@ const Replies = ({
                 </Button>
               </Box>
               {/* <Divider /> */}
-
+              
               {/* REPLY */}
-
+              
               {reply.index === index && reply.commentId === comment.id ? (
                 <Paper elevation={0}>
                   {/* <Divider /> */}
-                  <Box sx={{ display: "flex", pl: 5, pt: 1 }}>
+                  <Box sx={{display: "flex", pl: 5, pt: 1}}>
                     {userImg ? (
                       <Paper
                         elevation={5}
@@ -306,28 +307,28 @@ const Replies = ({
                         src={USER_IMG_URL + userImg}
                       />
                     ) : (
-                      <Avatar sx={{ width: 36, height: 36, mr: 1 }} />
+                      <Avatar sx={{width: 36, height: 36, mr: 1}}/>
                     )}
                     <TextField
-                      sx={{ p: 1 }}
+                      sx={{p: 1}}
                       autoFocus
                       fullWidth
                       variant="standard"
                       value={`${reply.text}`}
                       InputProps={{
                         startAdornment: (
-                          <span style={{ color: "#4682B4" }}>
+                          <span style={{color: "#4682B4"}}>
                             {`${rep.username}`}&nbsp;
                           </span>
                         ),
                       }}
                       onChange={(e) =>
-                        setReply({ ...reply, text: e.target.value })
+                        setReply({...reply, text: e.target.value})
                       }
                     />
                   </Box>
                   <Box
-                    sx={{ display: "flex", justifyContent: "flex-end", pr: 1 }}
+                    sx={{display: "flex", justifyContent: "flex-end", pr: 1}}
                   >
                     <Button
                       onClick={() =>
@@ -340,13 +341,13 @@ const Replies = ({
                         )
                       }
                       size="small"
-                      sx={{ textTransform: "capitalize", color: "#50C878" }}
+                      sx={{textTransform: "capitalize", color: "#50C878"}}
                     >
                       Responder
                     </Button>
                     <Button
-                      onClick={() => setReply({ ...reply, index: null })}
-                      sx={{ textTransform: "capitalize", color: "#50C878" }}
+                      onClick={() => setReply({...reply, index: null})}
+                      sx={{textTransform: "capitalize", color: "#50C878"}}
                       size="small"
                     >
                       Cancelar

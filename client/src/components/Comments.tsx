@@ -1,6 +1,7 @@
-import { FormEvent, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import {FormEvent, useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
 import {
+  AccessTime,
   Comment,
   Delete,
   Done,
@@ -23,23 +24,25 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { toast } from "react-toastify";
-import { getError } from "../helpers/handleErrors";
-import { webApi } from "../helpers/animeApi";
+import {toast} from "react-toastify";
+import {getError} from "../helpers/handleErrors";
+import {webApi} from "../helpers/animeApi";
 import Replies from "./Replies";
-import { USER_IMG_URL } from "../helpers/url";
+import {USER_IMG_URL} from "../helpers/url";
 import moment from "moment";
 import "moment/locale/es";
-import { Confirm } from "notiflix/build/notiflix-confirm-aio";
+import {Confirm} from "notiflix/build/notiflix-confirm-aio";
 
 moment.locale("es");
 
 interface Props {
+  id: string,
   userId: string | undefined;
   token: string | null;
   role: string | null;
   commentsCount: number;
   userImg: string | null | undefined;
+  handleActivateReload: () => void;
 }
 
 interface IComment {
@@ -65,16 +68,25 @@ interface IReplies {
   repliedToId: string;
 }
 
-const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
+const Comments = ({
+                    id,
+                    userId,
+                    userImg,
+                    token,
+                    role,
+                    commentsCount,
+                    handleActivateReload,
+                  }: Props) => {
   const [comments, setComments] = useState<IComment[]>([]);
   const [editedComment, setEditedComment] = useState<string>("");
   const [edit, setEdit] = useState<{ index?: number | null; edit: boolean }>({
     index: null,
     edit: false,
   });
-
+  const [loading, setLoading] = useState<boolean>(false);
+  
   const [showReplies, setShowReplies] = useState<number | null>(null);
-
+  
   const [reply, setReply] = useState<{
     index?: number | null;
     commentId?: string;
@@ -84,20 +96,18 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
     commentId: "",
     text: "",
   });
-
+  
   const [replies, setReplies] = useState<IReplies[]>([]);
   const [arrIndex, setArrIndex] = useState<string>("");
-
+  
   const [reload, setReload] = useState<boolean>(false);
   const [rating, setRating] = useState<number | null>(0);
-
-  const { id } = useParams<string>();
-
+  
   // GET COMMENTS //
   useEffect(() => {
     try {
       const callComments = async () => {
-        const { data } = await webApi.get(`/comment/${id}`);
+        const {data} = await webApi.get(`/comment/${id}`);
         setComments(data);
       };
       callComments();
@@ -106,21 +116,21 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
       toast.error(getError(error));
     }
   }, [reload]);
-
+  
   // POST COMMENT //
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // setLoading(true);
-
+    
+    setLoading(true);
+    
     const formData = new FormData(e.currentTarget);
-
+    
     try {
       await webApi.post(
         "/comment",
         {
-          eventId: id,
           comment: formData.get("comment"),
+          elementId: id,
           rating,
         },
         {
@@ -129,25 +139,18 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
           },
         }
       );
-
-      // setLoading(false);
-
+      
+      setLoading(false);
+      
       toast.success("Comentario añadido");
+      handleActivateReload();
       setReload(!reload);
-
-      await webApi.put(
-        `/event/${id}`,
-        {
-          commentsCount: commentsCount + 1,
-        },
-        { headers: { token } }
-      );
     } catch (error: any) {
-      // setLoading(false);
+      setLoading(false);
       toast.error(getError(error));
     }
   };
-
+  
   // EDIT COMMENT //
   const handleEditComment = (index: number, value: string) => {
     const comment = [...comments];
@@ -155,7 +158,7 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
     setEditedComment(comment[index].comment);
     // setComments(comment);
   };
-
+  
   // UPDATE COMMENT //
   const handleUpdatedComment = async (commentId: string) => {
     try {
@@ -166,12 +169,14 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
           rating,
         },
         {
-          headers: { token },
+          headers: {token},
         }
       );
-
+      
+      handleActivateReload();
+      
       toast.success("Has actualizado tu comentario");
-      setEdit({ edit: false });
+      setEdit({edit: false});
       // setRating(0)
       setReload(!reload);
     } catch (error: any) {
@@ -179,7 +184,7 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
       toast.error(getError(error));
     }
   };
-
+  
   // POST REPLY //
   const handleReply = async (
     commentId: string,
@@ -198,10 +203,10 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
           repliedToId,
         },
         {
-          headers: { token },
+          headers: {token},
         }
       );
-
+      
       // UPDATE REPLIES COUNT OF COMMENTS //
       await webApi.put(
         `/comment/${commentId}`,
@@ -209,19 +214,19 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
           repliesCount: comments[index].repliesCount + 1,
         },
         {
-          headers: { token },
+          headers: {token},
         }
       );
       setReload(!reload);
       toast.success("Respondido");
-      setReply({ ...reply, index: null });
-
+      setReply({...reply, index: null});
+      
       handleGetReplies(commentId, index);
     } catch (error) {
       toast.error(getError(error));
     }
   };
-
+  
   // TOGGLE EDIT BUTTON //
   const editToggle = (index: number) => {
     if (edit.index !== index) {
@@ -238,26 +243,26 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
       setRating(0);
     }
   };
-
+  
   // GET REPLIES //
   const handleGetReplies = async (commentId: string, index: number) => {
     if (showReplies === index) {
-      setReplies([])
+      setReplies([]);
       setShowReplies(null);
     } else {
       try {
-        const { data } = await webApi.get(`/reply/${commentId}`);
+        const {data} = await webApi.get(`/reply/${commentId}`);
         setReplies(data);
         setArrIndex(commentId);
         setReload(!reload);
       } catch (error) {
         toast.error(getError(error));
       }
-
+      
       setShowReplies(index);
     }
   };
-
+  
   // DELETE COMMENT //
   const handleDeleteComment = async (id: string) => {
     try {
@@ -268,14 +273,15 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
         "No",
         async () => {
           await webApi.delete(`/comment/${id}`, {
-            headers: { token },
+            headers: {token},
           });
           toast.success("Has borrado el comentario");
           // setRating(0)
-          setEdit({ index: null, edit: false });
+          setEdit({index: null, edit: false});
           setReload(!reload);
         },
-        () => {},
+        () => {
+        },
         {
           titleColor: "black",
           okButtonBackground: "orange",
@@ -287,15 +293,15 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
       toast.error(getError(error));
     }
   };
-
+  
   return (
     <>
       {!userId ? (
         <>
-          <Typography variant="h5" sx={{ p: 5, textAlign: "center" }}>
+          <Typography variant="h5" sx={{p: 5, textAlign: "center"}}>
             Inicia sesión para comentar
           </Typography>
-          <Divider />
+          <Divider/>
         </>
       ) : comments.find((i) => i.userId === userId) ? (
         ""
@@ -303,49 +309,49 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
         <Paper
           component="form"
           elevation={1}
-          sx={{ p: 2, width: 1, my: 2 }}
+          sx={{p: 2, width: 1, my: 2}}
           onSubmit={handleSubmit}
         >
           <Box>
             <Rating
-              sx={{ mb: 2 }}
+              sx={{mb: 2}}
               value={rating}
               onChange={(e, newValue) => {
                 setRating(newValue);
               }}
             />
-
+            
             <TextField
               multiline
               rows={4}
-              sx={{ width: 1 }}
+              sx={{width: 1}}
               name="comment"
               label="Deja tu comentario"
             />
             <Button
               type="submit"
               variant="contained"
-              sx={{ my: 2 }}
-              startIcon={<Comment />}
+              sx={{my: 2}}
+              startIcon={<Comment/>}
             >
               Comentar
             </Button>
           </Box>
-          <Divider />
+          <Divider/>
         </Paper>
       )}
-
+      
       {/* RENDER COMMENTS */}
-
+      
       {comments.length === 0 ? (
-        <Typography sx={{ textAlign: "center" }}>
+        <Typography sx={{textAlign: "center"}}>
           No hay comentarios de este evento
         </Typography>
       ) : (
         comments.map((comment, index) => (
           <Box key={comment.id}>
-            <Paper sx={{ position: "relative", mb: 3 }}>
-              <Box sx={{ display: "flex", p: 1 }}>
+            <Paper sx={{position: "relative", mb: 3}}>
+              <Box sx={{display: "flex", p: 1}}>
                 {comment.userImg ? (
                   <Paper
                     elevation={5}
@@ -360,15 +366,16 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
                     src={`${USER_IMG_URL}${comment.userId}/${comment.userImg}`}
                   />
                 ) : (
-                  <Avatar sx={{ mr: 1 }} />
+                  <Avatar sx={{mr: 1}}/>
                 )}
                 <Box>
                   <Typography>{comment.username}</Typography>
-                  <Typography sx={{ fontSize: "0.7rem" }}>
+                  <Box sx={{fontSize: 11, color: "#6677FF"}}>
+                    <AccessTime sx={{fontSize: 11}}/>{" "}
                     {moment(comment.createdAt).fromNow()}
-                  </Typography>
+                  </Box>
                 </Box>
-                <Box sx={{ position: "absolute", right: 5 }}>
+                <Box sx={{position: "absolute", right: 5}}>
                   <Rating
                     disabled={edit.index !== index}
                     value={
@@ -409,17 +416,17 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
                   variant="standard"
                   autoFocus
                   fullWidth
-                  sx={{ pl: 2 }}
+                  sx={{pl: 2}}
                   value={edit.index === index ? editedComment : comment.comment}
                   onChange={(e) => handleEditComment(index, e.target.value)}
                 />
               ) : (
-                <Typography sx={{ pl: 7, pr: 2, pb: 1 }}>
+                <Typography sx={{pl: 7, pr: 2, pb: 1}}>
                   {comment.comment}
                 </Typography>
               )}
-
-              <Divider />
+              
+              <Divider/>
               <Box
                 sx={{
                   display: "flex",
@@ -435,9 +442,9 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
                       : () => null
                   }
                   variant="text"
-                  sx={{ px: 1, textTransform: "lowercase" }}
+                  sx={{px: 1, textTransform: "lowercase"}}
                   startIcon={
-                    comment.id === arrIndex ? <ExpandLess /> : <ExpandMore />
+                    comment.id === arrIndex ? <ExpandLess/> : <ExpandMore/>
                   }
                   size="small"
                 >
@@ -445,11 +452,11 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
                     ? `${comment.repliesCount} respuesta`
                     : `${comment.repliesCount} respuestas`}
                 </Button>
-                <Box sx={{ pl: 1 }}>
+                <Box sx={{pl: 1}}>
                   <Button
                     size="small"
                     variant="text"
-                    sx={{ textTransform: "capitalize" }}
+                    sx={{textTransform: "capitalize"}}
                     onClick={() =>
                       setReply({
                         index,
@@ -462,14 +469,14 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
                   </Button>
                 </Box>
               </Box>
-              <Divider />
-
+              <Divider/>
+              
               {/* REPLY FORM */}
-
+              
               {reply.index === index && reply.commentId === comment.id ? (
                 <Paper>
-                  <Divider />
-                  <Box sx={{ display: "flex", pl: 2, pt: 1 }}>
+                  <Divider/>
+                  <Box sx={{display: "flex", pl: 2, pt: 1}}>
                     {userImg ? (
                       <Paper
                         elevation={5}
@@ -484,28 +491,40 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
                         src={`${USER_IMG_URL}${userId}/${userImg}`}
                       />
                     ) : (
-                      <Avatar sx={{ width: 36, height: 36 }} />
+                      <Avatar sx={{width: 36, height: 36}}/>
                     )}
                     <TextField
-                      sx={{ p: 1 }}
+                      sx={{p: 1}}
                       autoFocus
                       fullWidth
                       variant="standard"
                       value={`${reply.text}`}
                       InputProps={{
                         startAdornment: (
-                          <span style={{ color: "#4682B4" }}>
-                            {`${comment.username}`}&nbsp;
+                          <span
+                            style={{
+                              color: "#4682B4",
+                            }}
+                          >
+                            {`${comment.username}`}
+                            &nbsp;
                           </span>
                         ),
                       }}
                       onChange={(e) =>
-                        setReply({ ...reply, text: e.target.value })
+                        setReply({
+                          ...reply,
+                          text: e.target.value,
+                        })
                       }
                     />
                   </Box>
                   <Box
-                    sx={{ display: "flex", justifyContent: "flex-end", pr: 1 }}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      pr: 1,
+                    }}
                   >
                     <Button
                       onClick={() =>
@@ -518,13 +537,24 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
                         )
                       }
                       size="small"
-                      sx={{ textTransform: "capitalize", color: "#50C878" }}
+                      sx={{
+                        textTransform: "capitalize",
+                        color: "#50C878",
+                      }}
                     >
                       Responder
                     </Button>
                     <Button
-                      onClick={() => setReply({ ...reply, index: null })}
-                      sx={{ textTransform: "capitalize", color: "#50C878" }}
+                      onClick={() =>
+                        setReply({
+                          ...reply,
+                          index: null,
+                        })
+                      }
+                      sx={{
+                        textTransform: "capitalize",
+                        color: "#50C878",
+                      }}
                       size="small"
                     >
                       Cancelar
@@ -534,7 +564,7 @@ const Comments = ({ userId, userImg, token, role, commentsCount }: Props) => {
               ) : (
                 ""
               )}
-
+              
               {/* RENDER REPLIES */}
             </Paper>
             <Replies

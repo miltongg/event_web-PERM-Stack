@@ -2,21 +2,22 @@ import {Model, DataTypes} from "sequelize";
 import {sequelize} from "../database/database";
 import Comment from "./Comment";
 
-class Event extends Model {
+class News extends Model {
   public id!: string;
   public userId!: string;
   public name!: string;
+  public subtitle?: string;
+  public tag!: string;
+  public slug!: string;
   public date!: Date;
   public description!: string;
-  public rating!: number;
   public mainImage!: string;
-  public eventImages?: string[];
+  public images?: string[];
   public commentsCount!: number;
   public views!: number;
-  
 }
 
-Event.init(
+News.init(
   {
     id: {
       type: DataTypes.STRING,
@@ -32,6 +33,15 @@ Event.init(
       allowNull: false,
     },
     
+    subtitle: {
+      type: DataTypes.STRING,
+    },
+    
+    slug: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    
     date: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -39,6 +49,11 @@ Event.init(
     
     description: {
       type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    
+    tag: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     
@@ -51,26 +66,26 @@ Event.init(
       type: DataTypes.STRING,
     },
     
-    eventImages: {
+    images: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       defaultValue: [],
     },
   },
   {
-    tableName: "events",
+    tableName: "news",
     timestamps: true,
     sequelize,
   }
 );
 
-Comment.belongsTo(Event, {
-  foreignKey: "eventId",
+Comment.belongsTo(News, {
+  foreignKey: "newsId",
   targetKey: "id",
 });
 
-Event.hasMany(Comment, {
-  foreignKey: "eventId",
+News.hasMany(Comment, {
+  foreignKey: "newsId",
   sourceKey: "id",
 });
 
-export default Event;
+export default News;

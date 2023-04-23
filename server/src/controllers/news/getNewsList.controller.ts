@@ -1,36 +1,38 @@
-import {Request, Response} from "express";
-import Event from "../../models/Event";
+import { Request, Response } from "express";
+import News from "../../models/News";
 import sequelize from "sequelize";
 import Comment from "../../models/Comment";
 
-const getEventsList = async (req: Request, res: Response) => {
+const getNewsList = async (req: Request, res: Response) => {
   try {
     let limit = req.headers.limit as number | undefined;
     let offset = req.headers.offset as number | undefined;
-    
+
     if (!limit) limit = 10;
-    
+
     if (!offset) offset = 0;
-    
-    const eventsList = await Event.findAll({
+
+    const newsList = await News.findAll({
       attributes: {
         include: [
-          [sequelize.fn('COUNT', sequelize.col('Comments.id')), 'commentsCount'],
-          [sequelize.fn('AVG', sequelize.col('Comments.rating')), 'rating'],
+          [
+            sequelize.fn("COUNT", sequelize.col("Comments.id")),
+            "commentsCount",
+          ],
         ],
       },
       include: [
         {
           model: Comment,
-          as: 'Comments',
+          as: "Comments",
           attributes: [],
         },
       ],
-      group: ['Event.id'],
-      order: [['date', 'DESC']],
+      group: ["News.id"],
+      order: [["date", "DESC"]],
     });
-    
-    res.json(eventsList);
+
+    res.json(newsList);
   } catch (error: any) {
     console.error(error);
     res.status(500).json({
@@ -39,4 +41,4 @@ const getEventsList = async (req: Request, res: Response) => {
   }
 };
 
-export default getEventsList;
+export default getNewsList;

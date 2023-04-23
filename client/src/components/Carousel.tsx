@@ -23,7 +23,7 @@ const Carousel = ({images}: Image) => {
           resolve(null)
         })
       }
-      setImg(photos)
+      setImg(photos);
     }
     
     getImages()

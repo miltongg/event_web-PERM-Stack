@@ -1,43 +1,43 @@
 import {Request, Response} from "express";
-import Comment from "../../models/Comment";
 import {StatusCodes} from "http-status-codes";
-import {COMMENT_PREFIX} from "../../helpers/defineConsts";
+import {COMMENT_PREFIX, EVENT_PREFIX} from "../../helpers/defineConsts";
 import randomId from "../../libs/randomId";
+import Comment from "../../models/Comment";
+import event from "../../models/Event";
 
 const createComment = async (req: Request, res: Response) => {
+  const {elementId, comment, rating} = req.body;
+  const {id, username, userImg} = req.user;
   
-  const { eventId, comment, rating } = req.body
-  const { id, username, userImg } = req.user
+  let newsId: string | null = null;
+  let eventId: string | null = null;
   
-  console.log(req.body)
+  elementId.includes(EVENT_PREFIX) ? eventId = elementId : newsId = elementId;
   
   try {
-    
-    if (!eventId || !comment)
+    if (!comment)
       return res.status(StatusCodes.UNAUTHORIZED).json({
-        message: 'Missing eventId or comment'
-      })
-  
+        message: "Escribe tu comentario",
+      });
+    
+    // Create comment
     const newComment = await Comment.create({
       id: COMMENT_PREFIX + randomId(),
       comment,
       username,
-      userId: id,
+      newsId,
       eventId,
+      userId: id,
       userImg,
-      rating
+      rating,
     });
-  
-    console.log(newComment)
     
-    res.json(newComment)
-  
+    res.json(newComment);
   } catch (error: any) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message
-    })
+      message: error.message,
+    });
   }
-  
-}
+};
 
 export default createComment;

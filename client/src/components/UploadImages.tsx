@@ -142,6 +142,7 @@ const UploadImages = ({token, handleActivateReload, eventImages}: Props) => {
         variant='contained'
         size="small"
         color='error'
+        disabled={eventImages.length === 0}
         onClick={handleActivateDel}
       >
         Eliminar
