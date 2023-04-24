@@ -1,24 +1,22 @@
-import { Request, Response } from "express";
+import {Request, Response} from "express";
 import Event from "../../models/Event";
 
 const updateEvent = async (req: Request, res: Response) => {
   try {
-    let { name, description, date, image, images, commentsCount, rating } =
+    let {name, description, date, image, images, commentsCount, rating} =
       req.body;
     const paramId = req.params.id;
     const headerId = req.headers.id;
-
-    console.log(images);
-
+    
     console.log(date, "date");
-
+    
     if (date && date.includes("/")) {
       const [day, month, year] = date.split("/");
       date = `${year}/${month}/${day}`;
     }
-
+    
     let id = paramId ? paramId : headerId;
-
+    
     await Event.update(
       {
         name,
@@ -30,10 +28,10 @@ const updateEvent = async (req: Request, res: Response) => {
         rating,
       },
       {
-        where: { id },
+        where: {id},
       }
     );
-
+    
     res.json({
       message: "Se ha actualizado el evento correctamente",
     });
