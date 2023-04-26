@@ -1,5 +1,5 @@
-import {Model, DataTypes} from "sequelize";
-import {sequelize} from "../database/database";
+import { Model, DataTypes } from "sequelize";
+import { sequelize } from "../database/database";
 import Comment from "./Comment";
 
 class Event extends Model {
@@ -13,7 +13,6 @@ class Event extends Model {
   public eventImages?: string[];
   public commentsCount!: number;
   public views!: number;
-  
 }
 
 Event.init(
@@ -22,35 +21,40 @@ Event.init(
       type: DataTypes.STRING,
       primaryKey: true,
     },
-    
+
     userId: {
       type: DataTypes.STRING,
     },
-    
+
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    
+
+    slug: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
     date: {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    
+
     description: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    
+
     views: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
-    
+
     mainImage: {
       type: DataTypes.STRING,
     },
-    
+
     eventImages: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       defaultValue: [],

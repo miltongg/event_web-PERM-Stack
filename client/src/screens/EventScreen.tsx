@@ -11,12 +11,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {ChangeEvent, useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import Comments from "../components/Comments";
-import {toast} from "react-toastify";
-import {getError} from "../helpers/handleErrors";
-import {webApi} from "../helpers/animeApi";
+import { toast } from "react-toastify";
+import { getError } from "../helpers/handleErrors";
+import { webApi } from "../helpers/animeApi";
 import {
   CalendarMonth,
   CameraAltRounded,
@@ -24,10 +24,10 @@ import {
   Edit,
 } from "@mui/icons-material";
 import moment from "moment";
-import {StaticDatePicker} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {EVENT_IMG_URL} from "../helpers/url";
+import { StaticDatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { EVENT_IMG_URL } from "../helpers/url";
 import Carousel from "../components/Carousel";
 import UploadImages from "../components/UploadImages";
 import EventDataRecord from "../components/DataRecord";
@@ -64,6 +64,7 @@ interface Props {
 interface IEvent {
   id: string;
   name: string;
+  slug: string;
   date: string | object;
   description: string;
   commentsCount: number;
@@ -73,13 +74,14 @@ interface IEvent {
   eventImages: string[];
 }
 
-const EventScreen = ({userId, role, userImg}: Props) => {
+const EventScreen = ({ userId, role, userImg }: Props) => {
   const token = localStorage.getItem("token");
-  const {id} = useParams();
+  const { slug } = useParams();
   const [showFullDesc, setShowFullDesc] = useState<boolean>(false);
   const [event, setEvent] = useState<IEvent>({
     id: "",
     name: "",
+    slug: "",
     date: "",
     description: "",
     commentsCount: 0,
@@ -88,7 +90,7 @@ const EventScreen = ({userId, role, userImg}: Props) => {
     mainImage: "",
     eventImages: [],
   });
-  
+
   const [edit, setEdit] = useState({
     name: false,
     date: false,
@@ -97,12 +99,12 @@ const EventScreen = ({userId, role, userImg}: Props) => {
   });
   const [img, setImg] = useState<any>(null);
   const [reload, setReload] = useState(false);
-  
+
   // GET EVENT //
   useEffect(() => {
     const getEvent = async () => {
       try {
-        const {data} = await webApi.get(`/event/${id}`);
+        const { data } = await webApi.get(`/event/${slug}`);
         data.date = moment(data.date).format("DD/MM/YYYY");
         setEvent(data);
         // setDate(data.date);
@@ -112,18 +114,17 @@ const EventScreen = ({userId, role, userImg}: Props) => {
     };
     getEvent();
   }, []);
-  
+
   // Change reload value //
   const handleActivateReload = () => {
     setReload(!reload);
   };
-  
+
   // UPDATE EVENT //
   const handleUpdate = async () => {
-    
     try {
       await webApi.put(
-        `/event/${id}`,
+        `/event/${slug}`,
         {
           name: event.name,
           date: event.date,
@@ -135,70 +136,70 @@ const EventScreen = ({userId, role, userImg}: Props) => {
           },
         }
       );
-      
+
       setEdit({
         ...edit,
         name: false,
         date: false,
         description: false,
       });
-      
+
       toast.success("Se ha actualizado este evento");
-      
+
       setReload(!reload);
     } catch (error) {
       toast.error(getError(error));
     }
   };
-  
+
   const updateEventCommentsCount = (number: number) => {
-    setEvent({...event, commentsCount: number})
-  }
-  
+    setEvent({ ...event, commentsCount: number });
+  };
+
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) setImg(file);
   };
-  
+
   // UPLOAD IMG //
   useEffect(() => {
     if (img) {
       const uploadImg = async () => {
         let fileData = new FormData();
         fileData.append("file", img);
-        
+
         try {
-          const {data} = await webApi.post("/iupload", fileData, {
+          const { data } = await webApi.post("/iupload", fileData, {
             headers: {
               token,
               folder: "event/",
               prefix: "event",
-              id,
+              id: event.id,
             },
           });
-          
+
           await webApi.put(
-            `/event/${id}`,
-            {image: data.image},
+            `/event/${slug}`,
+            { image: data.image },
             {
-              headers: {token},
+              headers: { token },
             }
           );
-          
-          setEvent({...event, mainImage: data.image})
+
+          setEvent({ ...event, mainImage: data.image });
           toast.success("Se ha actualizado este evento");
         } catch (error) {
           toast.error(getError(error));
         }
       };
-      
+
       uploadImg();
     }
   }, [img]);
-  
+
   return event.id ? (
-    <Paper elevation={0} sx={{marginY: 5}}>
-      <Card sx={{position: "relative"}}>
+    <Paper elevation={0} sx={{ marginY: 5 }}>
+      <Card sx={{ position: "relative" }}>
         <CardMedia
           image={`${EVENT_IMG_URL}${event.id}/${event.mainImage}`}
           component="img"
@@ -206,7 +207,7 @@ const EventScreen = ({userId, role, userImg}: Props) => {
           height="350"
         />
         <IconButton
-          sx={{position: "absolute", zIndex: 2, top: 0, right: 0}}
+          sx={{ position: "absolute", zIndex: 2, top: 0, right: 0 }}
           aria-label="upload picture"
           component="label"
         >
@@ -227,20 +228,20 @@ const EventScreen = ({userId, role, userImg}: Props) => {
           />
         </IconButton>
       </Card>
-      <Box sx={{paddingY: 2}}>
+      <Box sx={{ paddingY: 2 }}>
         <ListItem>
           {edit?.name ? (
             <>
               <TextField
-                inputProps={{style: {fontSize: 34}}}
-                InputProps={{style: {fontSize: 34}}}
+                inputProps={{ style: { fontSize: 34 } }}
+                InputProps={{ style: { fontSize: 34 } }}
                 fullWidth
                 autoFocus={true}
                 variant="standard"
                 value={event?.name}
-                onChange={(e) => setEvent({...event, name: e.target.value})}
+                onChange={(e) => setEvent({ ...event, name: e.target.value })}
               />
-              <Done sx={doneButtonStyle} onClick={handleUpdate}/>
+              <Done sx={doneButtonStyle} onClick={handleUpdate} />
             </>
           ) : (
             <Typography variant="h4">{event?.name}</Typography>
@@ -248,7 +249,7 @@ const EventScreen = ({userId, role, userImg}: Props) => {
           {role === "admin" ? (
             <Edit
               sx={editButtonStyle}
-              onClick={() => setEdit({...edit, name: !edit.name})}
+              onClick={() => setEdit({ ...edit, name: !edit.name })}
             />
           ) : (
             ""
@@ -258,12 +259,15 @@ const EventScreen = ({userId, role, userImg}: Props) => {
           {edit?.date ? (
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <StaticDatePicker
-                sx={{width: 1}}
-                onChange={(date) => setEvent(
-                  {...event, date: moment(date!.toString()).format('DD/MM/YYYY')}
-                )}
+                sx={{ width: 1 }}
+                onChange={(date) =>
+                  setEvent({
+                    ...event,
+                    date: moment(date!.toString()).format("DD/MM/YYYY"),
+                  })
+                }
                 onAccept={handleUpdate}
-                onClose={() => setEdit({...edit, date: false})}
+                onClose={() => setEdit({ ...edit, date: false })}
               />
             </LocalizationProvider>
           ) : (
@@ -275,8 +279,8 @@ const EventScreen = ({userId, role, userImg}: Props) => {
                 justifyContent: "space-between",
               }}
             >
-              <Box sx={{display: "flex"}}>
-                <CalendarMonth/>
+              <Box sx={{ display: "flex" }}>
+                <CalendarMonth />
                 <Typography>{event.date.toString()}</Typography>
                 {role === "admin" ? (
                   <Edit
@@ -292,7 +296,7 @@ const EventScreen = ({userId, role, userImg}: Props) => {
                   ""
                 )}
               </Box>
-              
+
               <EventDataRecord
                 views={event.views}
                 rating={event.rating}
@@ -301,14 +305,14 @@ const EventScreen = ({userId, role, userImg}: Props) => {
             </Box>
           )}
         </ListItem>
-        
-        <Divider sx={{marginY: 2}}/>
-        <ListItem sx={{alignItems: "initial"}}>
+
+        <Divider sx={{ marginY: 2 }} />
+        <ListItem sx={{ alignItems: "initial" }}>
           {edit?.description ? (
             <>
               <TextField
-                inputProps={{style: {fontSize: 16}}}
-                InputProps={{style: {fontSize: 16}}}
+                inputProps={{ style: { fontSize: 16 } }}
+                InputProps={{ style: { fontSize: 16 } }}
                 fullWidth
                 autoFocus={true}
                 multiline
@@ -321,11 +325,11 @@ const EventScreen = ({userId, role, userImg}: Props) => {
                   })
                 }
               />
-              <Done onClick={handleUpdate} sx={doneButtonStyle}/>
+              <Done onClick={handleUpdate} sx={doneButtonStyle} />
             </>
           ) : (
             <Box
-              sx={{cursor: "pointer"}}
+              sx={{ cursor: "pointer" }}
               onClick={() => setShowFullDesc(!showFullDesc)}
             >
               <Collapse in={showFullDesc} collapsedSize={85}>
@@ -345,7 +349,7 @@ const EventScreen = ({userId, role, userImg}: Props) => {
               </Collapse>
             </Box>
           )}
-          
+
           {role === "admin" ? (
             <Edit
               sx={editButtonStyle}
@@ -361,23 +365,23 @@ const EventScreen = ({userId, role, userImg}: Props) => {
           )}
         </ListItem>
       </Box>
-      
-      <Divider/>
-      
+
+      <Divider />
+
       {/* Render Carousel */}
       {event.eventImages.length === 0 ? (
         <Typography
-          sx={{textAlign: "center", color: "gray", mt: 5}}
+          sx={{ textAlign: "center", color: "gray", mt: 5 }}
           variant="h5"
         >
           No hay imágenes del evento
         </Typography>
       ) : (
-        <Box sx={{marginY: 5}}>
-          <Carousel images={event.eventImages}/>
+        <Box sx={{ marginY: 5 }}>
+          <Carousel images={event.eventImages} />
         </Box>
       )}
-      
+
       {/* Render Upload ScreenShots */}
       {role === "admin" ? (
         <UploadImages
@@ -388,7 +392,7 @@ const EventScreen = ({userId, role, userImg}: Props) => {
       ) : (
         ""
       )}
-      
+
       {/* Render Comments */}
       <Comments
         userId={userId}
@@ -400,7 +404,7 @@ const EventScreen = ({userId, role, userImg}: Props) => {
       />
     </Paper>
   ) : (
-    <CircularProgress/>
+    <CircularProgress />
   );
 };
 
