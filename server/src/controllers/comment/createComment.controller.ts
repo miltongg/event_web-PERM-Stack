@@ -32,7 +32,8 @@ const createComment = async (req: Request, res: Response) => {
       rating,
     });
     
-    res.json(newComment);
+    res.json(newComment.dataValues);
+    
   } catch (error: any) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: error.message,

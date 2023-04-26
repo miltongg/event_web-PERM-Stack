@@ -95,7 +95,6 @@ const EventScreen = ({userId, role, userImg}: Props) => {
     description: false,
     mainImage: false,
   });
-  const [date, setDate] = useState(null);
   const [img, setImg] = useState<any>(null);
   const [reload, setReload] = useState(false);
   
@@ -151,6 +150,10 @@ const EventScreen = ({userId, role, userImg}: Props) => {
       toast.error(getError(error));
     }
   };
+  
+  const updateEventCommentsCount = (number: number) => {
+    setEvent({...event, commentsCount: number})
+  }
   
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -391,10 +394,9 @@ const EventScreen = ({userId, role, userImg}: Props) => {
         userId={userId}
         token={token}
         id={event.id}
-        commentsCount={event.commentsCount}
+        updateEventCommentsCount={updateEventCommentsCount}
         userImg={userImg}
         role={role}
-        handleActivateReload={handleActivateReload}
       />
     </Paper>
   ) : (

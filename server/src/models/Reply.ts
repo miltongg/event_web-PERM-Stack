@@ -10,8 +10,7 @@ class Reply extends Model {
   public commentId!: string;
   public username!: string;
   public userImg?: string;
-  public repliedToName?: string;
-  public repliedToId?: string;
+  
 }
 
 Reply.init(
@@ -32,14 +31,14 @@ Reply.init(
         key: 'id',
       },
     },
-    commentId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      references: {
-        model: Comment,
-        key: 'id',
-      },
-    },
+    // commentId: {
+    //   type: DataTypes.STRING,
+    //   allowNull: false,
+    //   references: {
+    //     model: Comment,
+    //     key: 'id',
+    //   },
+    // },
     username: {
       type: DataTypes.STRING,
       allowNull: false
@@ -48,12 +47,12 @@ Reply.init(
       type: DataTypes.STRING,
       allowNull: false
     },
-
+    
     repliedToId: {
       type: DataTypes.STRING,
       allowNull: false
     },
-
+    
     userImg: {
       type: DataTypes.STRING
     }

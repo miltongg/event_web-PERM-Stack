@@ -7,8 +7,8 @@ import Comment from "../../models/Comment";
 
 const createReply = async (req: Request, res: Response) => {
   
-  const { commentId, reply, repliedToName, repliedToId } = req.body
-  const { id, username, userImg } = req.user
+  const {commentId, reply, repliedToName, repliedToId} = req.body
+  const {id, username, userImg} = req.user
   
   console.log(req.body)
   
@@ -18,7 +18,7 @@ const createReply = async (req: Request, res: Response) => {
       return res.status(StatusCodes.UNAUTHORIZED).json({
         message: 'Missing commentId or reply'
       })
-  
+    
     const newReply = await Reply.create({
       id: REPLY_PREFIX + randomId(),
       reply,
@@ -29,11 +29,9 @@ const createReply = async (req: Request, res: Response) => {
       repliedToId,
       userImg
     });
-
-    await Comment.increment('repliesCount', {where: {id: commentId}})
-      
-    res.json(newReply)
-  
+    
+    res.json(newReply.dataValues)
+    
   } catch (error: any) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: error.message

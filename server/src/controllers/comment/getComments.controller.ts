@@ -2,7 +2,8 @@ import {Response, Request} from "express";
 import Comment from "../../models/Comment";
 import {StatusCodes} from "http-status-codes";
 import {EVENT_PREFIX} from "../../helpers/defineConsts";
-import {Op} from 'sequelize';
+import sequelize, {Op} from 'sequelize';
+import Reply from "../../models/Reply";
 
 const getComments = async (req: Request, res: Response): Promise<Response> => {
   
@@ -21,7 +22,22 @@ const getComments = async (req: Request, res: Response): Promise<Response> => {
           {newsId},
           {eventId}
         ]
-      }
+      },
+      
+      attributes: {
+        include: [
+          [sequelize.fn('COUNT', sequelize.col('Replies.id')), 'repliesCount']
+        ]
+      },
+      
+      include: [
+        {
+          model: Reply,
+          as: 'Replies',
+          attributes: []
+        }
+      ],
+      group: ['Comment.id'],
     })
     
     return res.json(comments);
