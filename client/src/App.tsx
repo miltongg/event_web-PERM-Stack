@@ -90,16 +90,13 @@ function App() {
                   element={<EventListScreen role={role} />}
                 />
                 <Route
-                  path="/event/:id"
+                  path="/event/:slug"
                   element={
                     <EventScreen userId={id} role={role} userImg={userImg} />
                   }
                 />
                 <Route path="/event/add" element={<AddEventScreen id={id} />} />
-                <Route
-                  path="/news"
-                  element={<NewsListScreen role={role} />}
-                />
+                <Route path="/news" element={<NewsListScreen role={role} />} />
                 <Route
                   path="/news/:slug"
                   element={

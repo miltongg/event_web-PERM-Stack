@@ -41,7 +41,7 @@ interface Props {
   token: string | null;
   role: string | null;
   userImg: string | null | undefined;
-  updateEventCommentsCount: (number: number) => void;
+  updateCommentsCount: (number: number) => void;
 }
 
 interface IComment {
@@ -73,7 +73,7 @@ const Comments = ({
   userImg,
   token,
   role,
-  updateEventCommentsCount,
+  updateCommentsCount,
 }: Props) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<IComment[]>([]);
@@ -133,7 +133,7 @@ const Comments = ({
 
   // UPDATE EVENTS COMMENTS COUNT ///
   useEffect(() => {
-    updateEventCommentsCount(comments?.length);
+    updateCommentsCount(comments?.length);
   }, [comments]);
 
   // POST COMMENT //

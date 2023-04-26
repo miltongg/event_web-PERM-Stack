@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Comments from "../components/Comments";
 import { toast } from "react-toastify";
 import { getError } from "../helpers/handleErrors";
@@ -31,6 +31,7 @@ import { EVENT_IMG_URL } from "../helpers/url";
 import Carousel from "../components/Carousel";
 import UploadImages from "../components/UploadImages";
 import EventDataRecord from "../components/DataRecord";
+import unidecode from "unidecode";
 
 const doneButtonStyle = {
   color: "orange",
@@ -76,6 +77,7 @@ interface IEvent {
 
 const EventScreen = ({ userId, role, userImg }: Props) => {
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
   const { slug } = useParams();
   const [showFullDesc, setShowFullDesc] = useState<boolean>(false);
   const [event, setEvent] = useState<IEvent>({
@@ -107,18 +109,12 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
         const { data } = await webApi.get(`/event/${slug}`);
         data.date = moment(data.date).format("DD/MM/YYYY");
         setEvent(data);
-        // setDate(data.date);
       } catch (error) {
         toast.error(getError(error));
       }
     };
     getEvent();
   }, []);
-
-  // Change reload value //
-  const handleActivateReload = () => {
-    setReload(!reload);
-  };
 
   // UPDATE EVENT //
   const handleUpdate = async () => {
@@ -144,16 +140,27 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
         description: false,
       });
 
-      toast.success("Se ha actualizado este evento");
+      if (event.name) {
+        const slug = unidecode(event.name)
+          .replace(/[^a-zA-Z0-9]/g, "-")
+          .toLowerCase();
 
-      setReload(!reload);
+        navigate(`/event/${slug}`);
+      }
+
+      toast.success("Se ha actualizado este evento");
     } catch (error) {
       toast.error(getError(error));
     }
   };
 
-  const updateEventCommentsCount = (number: number) => {
+  // UPDATE STATE FUNCTIONS //
+  const updateCommentsCount = (number: number) => {
     setEvent({ ...event, commentsCount: number });
+  };
+
+  const updateEventImages = (images: string[]) => {
+    setEvent({ ...event, eventImages: images });
   };
 
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -378,16 +385,17 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
         </Typography>
       ) : (
         <Box sx={{ marginY: 5 }}>
-          <Carousel images={event.eventImages} />
+          <Carousel images={event.eventImages} id={event.id} />
         </Box>
       )}
 
       {/* Render Upload ScreenShots */}
       {role === "admin" ? (
         <UploadImages
+          id={event.id}
           eventImages={event.eventImages}
           token={token}
-          handleActivateReload={handleActivateReload}
+          updateEventImages={updateEventImages}
         />
       ) : (
         ""
@@ -398,7 +406,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
         userId={userId}
         token={token}
         id={event.id}
-        updateEventCommentsCount={updateEventCommentsCount}
+        updateCommentsCount={updateCommentsCount}
         userImg={userImg}
         role={role}
       />

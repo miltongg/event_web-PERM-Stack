@@ -1,36 +1,37 @@
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
-import {EVENT_IMG_URL} from "../helpers/url";
-import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import { EVENT_IMG_URL } from "../helpers/url";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 interface Image {
   images: any[];
+  id: string;
 }
 
-const Carousel = ({images}: Image) => {
-  const {id} = useParams();
-  const [img, setImg] = useState<any[]>([])
-  
+const Carousel = ({ images, id }: Image) => {
+  const [img, setImg] = useState<any[]>([]);
+
   useEffect(() => {
-    
     const getImages = async () => {
       let photos: any[] = [];
-      
+
       for (let element of images) {
-        await new Promise(resolve => {
-          photos.push({original: `${EVENT_IMG_URL}${id}/${element}`, thumbnail: `${EVENT_IMG_URL}${id}/${element}`});
-          resolve(null)
-        })
+        await new Promise((resolve) => {
+          photos.push({
+            original: `${EVENT_IMG_URL}${id}/${element}`,
+            thumbnail: `${EVENT_IMG_URL}${id}/${element}`,
+          });
+          resolve(null);
+        });
       }
       setImg(photos);
-    }
-    
-    getImages()
-    
+    };
+
+    getImages();
   }, [images]);
-  
-  return (<ImageGallery autoPlay items={img}/>);
+
+  return <ImageGallery autoPlay items={img} />;
 };
 
 export default Carousel;

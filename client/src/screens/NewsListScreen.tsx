@@ -26,7 +26,7 @@ interface Props {
   role: string;
 }
 
-const NewsListScreen = ({role}: Props) => {
+const NewsListScreen = ({ role }: Props) => {
   const [news, setNews] = useState([]);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
@@ -62,7 +62,7 @@ const NewsListScreen = ({role}: Props) => {
             startIcon={<AddCircle />}
             onClick={() => navigate("/news/add")}
           >
-            Añadir evento
+            Añadir Noticia
           </Button>
         </Box>
       ) : (
