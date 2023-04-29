@@ -17,14 +17,7 @@ import { getError } from "../helpers/handleErrors";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MobileDatePicker } from "@mui/x-date-pickers";
-import {
-  AddCircle,
-  AddPhotoAlternate,
-  Image,
-  NewspaperRounded,
-  Send,
-  TagSharp,
-} from "@mui/icons-material";
+import { AddPhotoAlternate, Image, Send } from "@mui/icons-material";
 import { newsTagList } from "../helpers/tasgList";
 
 interface Props {
@@ -55,9 +48,6 @@ const AddNewsScreen = ({ id }: Props) => {
     const formData = new FormData(e.currentTarget);
 
     formData.append("date", date!); // agregar la fecha en formato ISO
-
-    // data.append('file', mainImage as File); // Agrega la imagen principal al
-    // data.append('files', eventImages as FileList)
 
     try {
       // Post event //
@@ -129,13 +119,11 @@ const AddNewsScreen = ({ id }: Props) => {
             onChange={(e) => setTag(e.target.value)}
             fullWidth
           >
-            {
-              newsTagList.map(({value, label}) => (
-                <MenuItem key={value} value={value}>
-                  {label}
-                </MenuItem>
-              ))
-            }
+            {newsTagList.map(({ value, label }) => (
+              <MenuItem key={value} value={value}>
+                {label}
+              </MenuItem>
+            ))}
           </TextField>
         </Grid>
 

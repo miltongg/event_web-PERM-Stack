@@ -1,11 +1,28 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../database/database";
 import OTP from "./OTP";
 import Comment from "./Comment";
-import Event from "./Event";
+import Reply from "./Reply";
 
-const User = sequelize.define(
-  "users",
+class User extends Model {
+  public id!: string;
+  public username!: string;
+  public email!: string;
+  public password!: string;
+  public role!: string;
+  public string!: string;
+  public token?: string;
+  public cell?: string;
+  public socials?: string[];
+  public userImg?: string;
+
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+  public readonly comments?: Comment[];
+  public readonly replies?: Reply[];
+}
+
+User.init(
   {
     id: {
       type: DataTypes.STRING,
@@ -62,7 +79,9 @@ const User = sequelize.define(
     },
   },
   {
+    tableName: "users",
     timestamps: true,
+    sequelize,
   }
 );
 
@@ -72,6 +91,11 @@ User.hasOne(OTP, {
 });
 
 User.hasMany(Comment, {
+  foreignKey: "userId",
+  sourceKey: "id",
+});
+
+User.hasMany(Reply, {
   foreignKey: "userId",
   sourceKey: "id",
 });

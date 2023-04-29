@@ -41,6 +41,11 @@ Event.init(
       allowNull: false,
     },
 
+    rating: {
+      type: DataTypes.DOUBLE,
+      defaultValue: 0,
+    },
+
     description: {
       type: DataTypes.TEXT,
       allowNull: false,

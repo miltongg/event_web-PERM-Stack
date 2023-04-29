@@ -22,6 +22,7 @@ import { Confirm } from "notiflix/build/notiflix-confirm-aio";
 import moment from "moment";
 
 interface Props {
+  id: string;
   userImg: string | undefined | null;
   userId: string | undefined;
   token: string | null;
@@ -43,6 +44,7 @@ interface IReplies {
 }
 
 const Replies = ({
+  id,
   userImg,
   token,
   userId,

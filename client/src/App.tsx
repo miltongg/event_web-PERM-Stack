@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -29,6 +29,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import AddNewsScreen from "./screens/AddNewsScreen";
 import NewsScreen from "./screens/NewsScreen";
 import NewsListScreen from "./screens/NewsListScreen";
+import DashboardScreen from "./screens/DashboardScreen";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -58,6 +59,7 @@ function App() {
     "profile",
     "recover",
     "events",
+    "dashboard",
   ];
 
   let { pathname } = useLocation();
@@ -81,10 +83,13 @@ function App() {
             <Grid item xs={12} md={mainColumSize}>
               <ScrollToTop />
               <Routes>
-                <Route path="/" element={<HomeScreen />} />
+                {/* AUTH */}
+                <Route path="/" element={<HomeScreen role={role} />} />
                 <Route path="/signup" element={<SignupScreen />} />
                 <Route path="/signin" element={<SigninScreen />} />
                 <Route path="/recover" element={<RecoverPasswordScreen />} />
+
+                {/* EVENT */}
                 <Route
                   path="/event"
                   element={<EventListScreen role={role} />}
@@ -96,6 +101,8 @@ function App() {
                   }
                 />
                 <Route path="/event/add" element={<AddEventScreen id={id} />} />
+
+                {/* NEWS */}
                 <Route path="/news" element={<NewsListScreen role={role} />} />
                 <Route
                   path="/news/:slug"
@@ -103,12 +110,25 @@ function App() {
                     <NewsScreen userId={id} role={role} userImg={userImg} />
                   }
                 />
-
                 <Route path="/news/add" element={<AddNewsScreen id={id} />} />
+
+                {/* PROFILE */}
                 <Route
                   path={"/profile/:id"}
                   element={
                     id ? <ProfileScreen userId={id} /> : <SigninScreen />
+                  }
+                />
+
+                {/* DASHBOARD */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    role === "admin" ? (
+                      <DashboardScreen />
+                    ) : (
+                      <Navigate to={"/"} />
+                    )
                   }
                 />
               </Routes>

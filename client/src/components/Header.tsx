@@ -28,6 +28,7 @@ import {
   PersonAdd,
   Logout,
   Person,
+  AssignmentInd,
 } from "@mui/icons-material";
 import { useNavigate, NavLink } from "react-router-dom";
 import { IState } from "../interfaces/interfaces";
@@ -181,8 +182,10 @@ export default function Header({ id, userImg }: IState) {
                 ))}
               </List>
             ) : (
-              <List sx={{display: 'flex'}}>
-                <ListItem>Admin</ListItem>
+              <List sx={{ display: "flex" }}>
+                <ListItem sx={navStyles} component={NavLink} to={"/dashboard"}>
+                  <AssignmentInd /> Administrar
+                </ListItem>
                 <Tooltip title="Menú">
                   {userImg ? (
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

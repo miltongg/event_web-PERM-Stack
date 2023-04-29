@@ -223,6 +223,7 @@ const Comments = ({
           reply: replyText,
           repliedToName,
           repliedToId,
+          elementId: id,
         },
         {
           headers: { token },
@@ -586,6 +587,7 @@ const Comments = ({
             </Paper>
             {comment.id === commentData.id ? (
               <Replies
+                id={id}
                 userImg={userImg}
                 userId={userId}
                 token={token}
