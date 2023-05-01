@@ -1,9 +1,4 @@
-import {
-  AddCircle,
-  AddPhotoAlternate,
-  Image,
-  PermMedia,
-} from "@mui/icons-material";
+import { AddCircle, AddPhotoAlternate, Image } from "@mui/icons-material";
 import {
   TextField,
   Button,
@@ -30,15 +25,12 @@ const AddEventScreen = ({ id }: Props) => {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(null);
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState<any>(null);
   const [mainImage, setMainImage] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    console.log(mainImage?.name, "imagen");
-  }, [mainImage]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,30 +41,43 @@ const AddEventScreen = ({ id }: Props) => {
 
     formData.append("date", date!); // agregar la fecha en formato ISO
 
-    // data.append('file', mainImage as File); // Agrega la imagen principal al
-    // data.append('files', eventImages as FileList)
-
     try {
-      // Post event //
-      const { data } = await webApi.post("/event", formData, {
-        headers: { token },
-      });
+      if (mainImage?.type.includes("image")) {
+        // Post event //
+        const { data } = await webApi.post("/event", formData, {
+          headers: { token },
+        });
 
-      // Upload image to server //
-      const image = await webApi.post("/iupload", formData, {
-        headers: { token, id: data.id, prefix: "event", folder: "event/" },
-      });
+        // Upload image to server //
+        const image = await webApi.post("/iupload", formData, {
+          headers: { token, id: data.id, prefix: "event", folder: "event/" },
+        });
 
-      // Update event img with image name //
-      await webApi.put(`/event/${data.slug}`, image.data, {
-        headers: { token },
-      });
+        // Update event img with image name //
+        await webApi.put(`/event/${data.slug}`, image.data, {
+          headers: { token },
+        });
 
-      toast.success("Evento añadido satisfactoriamente");
-      navigate(`/event/${data.slug}`);
+        navigate(`/event/${data.slug}`);
+      } else {
+        toast.error(
+          "La imagen no tiene un formato válido. Elija una imagen con formato jpg, png o jpeg"
+        );
+        setLoading(false);
+      }
     } catch (error) {
       setLoading(false);
       toast.error(getError(error));
+    }
+  };
+
+  const handleSelectImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMainImage(e.target.files ? e.target.files[0] : null);
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => setImage(e.target?.result);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -136,14 +141,16 @@ const AddEventScreen = ({ id }: Props) => {
               type="file"
               name="file"
               hidden
-              onChange={(e) =>
-                setMainImage(e.target.files ? e.target.files[0] : null)
-              }
+              onChange={handleSelectImage}
             />
           </Button>
-          {mainImage ? (
-            <ListItem>
-              <Image />
+          {image ? (
+            <ListItem sx={{ display: "block" }}>
+              <img
+                src={image}
+                alt={mainImage?.name}
+                style={{ height: 100, borderRadius: 2 }}
+              />
               <Typography>{mainImage?.name}</Typography>
             </ListItem>
           ) : (

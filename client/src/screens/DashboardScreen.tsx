@@ -64,6 +64,7 @@ const DashboardScreen = () => {
         aria-label="basic tabs example"
         sx={{
           borderRight: 1,
+          borderBottom: 1,
           borderColor: "divider",
         }}
       >
@@ -81,7 +82,7 @@ const DashboardScreen = () => {
       <TabPanel value={value} index={2}>
         Item Three
       </TabPanel>
-      <TabPanel value={value} index={2}>
+      <TabPanel value={value} index={3}>
         Item Four
       </TabPanel>
     </Paper>

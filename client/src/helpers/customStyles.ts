@@ -33,3 +33,22 @@ export const deleteButtonStyle = {
     color: "block",
   },
 };
+
+export const dashboardImgGrow = {
+  cursor: "pointer",
+  zIndex: 1,
+  display: "flex",
+  alignItems: "center",
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "100%",
+};
+
+export const dashboardImgStandard = {
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  width: 50,
+};

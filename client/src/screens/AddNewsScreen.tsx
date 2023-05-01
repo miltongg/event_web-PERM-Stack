@@ -29,6 +29,7 @@ const AddNewsScreen = ({ id }: Props) => {
   const [subtitle, setSubtitle] = useState("");
   const [tag, setTag] = useState("");
   const [date, setDate] = useState(null);
+  const [image, setImage] = useState<any>(null);
   const [description, setDescription] = useState("");
   const [mainImage, setMainImage] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -70,6 +71,16 @@ const AddNewsScreen = ({ id }: Props) => {
     } catch (error) {
       setLoading(false);
       toast.error(getError(error));
+    }
+  };
+
+  const handleSelectImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMainImage(e.target.files ? e.target.files[0] : null);
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => setImage(e.target?.result);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -163,14 +174,16 @@ const AddNewsScreen = ({ id }: Props) => {
               type="file"
               name="file"
               hidden
-              onChange={(e) =>
-                setMainImage(e.target.files ? e.target.files[0] : null)
-              }
+              onChange={handleSelectImage}
             />
           </Button>
-          {mainImage ? (
-            <ListItem>
-              <Image />
+          {image ? (
+            <ListItem sx={{ display: "block" }}>
+              <img
+                src={image}
+                alt={mainImage?.name}
+                style={{ height: 100, borderRadius: 2 }}
+              />
               <Typography>{mainImage?.name}</Typography>
             </ListItem>
           ) : (

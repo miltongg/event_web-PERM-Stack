@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Avatar,
-  Box,
-  Button,
-  CircularProgress,
   IconButton,
   MenuItem,
   Table,
@@ -22,6 +18,11 @@ import { toast } from "react-toastify";
 import { getError } from "../helpers/handleErrors";
 import { statusList, roleList, newsTagList } from "../helpers/tasgList";
 import { Confirm } from "notiflix/build/notiflix-confirm-aio";
+import Loading from "./Loading";
+import {
+  dashboardImgGrow,
+  dashboardImgStandard,
+} from "../helpers/customStyles";
 
 interface IEvent {
   id: string;
@@ -66,7 +67,7 @@ const tableHead: ITableHead[] = [
   },
   {
     id: "comments",
-    label: "No. Comentarios",
+    label: "No. Coment",
     style: cellStyle,
   },
   {
@@ -110,17 +111,16 @@ const DashboardEvent = () => {
   const token = localStorage.getItem("token");
   const [events, setEvents] = useState<IEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [imgSize, setImgSize] = useState<boolean>(false);
+  const [imgGrow, setimgGrow] = useState<number | null>(null);
   const [edit, setEdit] = useState<{ edit: boolean; index: number | null }>({
     edit: false,
     index: null,
   });
-  const [editUser, setEditUser] = useState<{ status: string; role: string }>({
+  const [editEvent, setEditEvent] = useState<{ status: string }>({
     status: "",
-    role: "",
   });
 
-  // GET USERS //
+  // GET EVENT //
   useEffect(() => {
     const getEvents = async () => {
       setLoading(true);
@@ -135,8 +135,8 @@ const DashboardEvent = () => {
         setEvents(data);
         setLoading(false);
       } catch (error) {
-        toast.error(getError(error));
         setLoading(false);
+        toast.error(getError(error));
       }
     };
 
@@ -218,10 +218,7 @@ const DashboardEvent = () => {
   };
 
   return loading ? (
-    <CircularProgress
-      size={70}
-      sx={{ position: "absolute", left: "50%", top: "50%" }}
-    />
+    <Loading />
   ) : (
     <Table>
       <TableHead>
@@ -240,26 +237,18 @@ const DashboardEvent = () => {
             // onClick={() => handleUserClick(user)}
           >
             <TableCell>
-              {event?.mainImage ? (
-                <img
-                  style={{
-                    cursor: "pointer",
-                    zIndex: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    position: imgSize ? "absolute" : "relative",
-                    top: imgSize ? "50%" : "auto",
-                    left: imgSize ? "50%" : "auto",
-                    transform: imgSize ? "translate(-50%, -50%)" : "none",
-                    width: imgSize ? "100%" : 50,
-                  }}
-                  src={`${EVENT_IMG_URL}${event.id}/${event.mainImage}`}
-                  alt="foto"
-                  onClick={() => setImgSize(!imgSize)}
-                />
-              ) : (
-                <Avatar />
-              )}
+              <img
+                style={
+                  imgGrow === index ? dashboardImgGrow : dashboardImgStandard
+                }
+                src={`${EVENT_IMG_URL}${event.id}/${event.mainImage}`}
+                alt="foto"
+                onClick={
+                  imgGrow === index
+                    ? () => setimgGrow(null)
+                    : () => setimgGrow(index)
+                }
+              />
             </TableCell>
             <TableCell>{event.id}</TableCell>
             <TableCell>{event.name}</TableCell>
@@ -276,10 +265,10 @@ const DashboardEvent = () => {
                   label="estado"
                   variant="standard"
                   select
-                  value={editUser.status}
+                  value={editEvent.status}
                   sx={{ mt: -2 }}
                   onChange={(e) =>
-                    setEditUser({ ...editUser, status: e.target.value })
+                    setEditEvent({ ...editEvent, status: e.target.value })
                   }
                   fullWidth
                 >

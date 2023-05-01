@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Avatar,
-  Box,
-  Button,
   IconButton,
   MenuItem,
   Table,
@@ -12,15 +10,20 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
-import { USER_IMG_URL } from "../helpers/url";
+import { EVENT_IMG_URL, USER_IMG_URL } from "../helpers/url";
 import EditIcon from "@mui/icons-material/Edit";
 import DoneIcon from "@mui/icons-material/Done";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { webApi } from "../helpers/animeApi";
 import { toast } from "react-toastify";
 import { getError } from "../helpers/handleErrors";
-import { statusList, roleList, newsTagList } from "../helpers/tasgList";
+import { statusList, roleList } from "../helpers/tasgList";
 import { Confirm } from "notiflix/build/notiflix-confirm-aio";
+import Loading from "./Loading";
+import {
+  dashboardImgGrow,
+  dashboardImgStandard,
+} from "../helpers/customStyles";
 
 interface IUsers {
   id: string;
@@ -106,7 +109,7 @@ const DashboardUser = () => {
   const token = localStorage.getItem("token");
   const [users, setUsers] = useState<IUsers[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [imgSize, setImgSize] = useState<boolean>(false);
+  const [imgGrow, setImgGrow] = useState<number | null>(null);
   const [edit, setEdit] = useState<{ edit: boolean; index: number | null }>({
     edit: false,
     index: null,
@@ -119,6 +122,7 @@ const DashboardUser = () => {
   // GET USERS //
   useEffect(() => {
     const getUsers = async () => {
+      setLoading(true);
       try {
         const { data } = await webApi.get("/users", {
           headers: {
@@ -128,7 +132,9 @@ const DashboardUser = () => {
         });
 
         setUsers(data);
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         toast.error(getError(error));
       }
     };
@@ -212,7 +218,9 @@ const DashboardUser = () => {
     }
   };
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : (
     <Table>
       <TableHead>
         <TableRow>
@@ -232,20 +240,16 @@ const DashboardUser = () => {
             <TableCell>
               {user?.userImg ? (
                 <img
-                  style={{
-                    cursor: "pointer",
-                    zIndex: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    position: imgSize ? "absolute" : "relative",
-                    top: imgSize ? "50%" : "auto",
-                    left: imgSize ? "50%" : "auto",
-                    transform: imgSize ? "translate(-50%, -50%)" : "none",
-                    width: imgSize ? "100%" : 50,
-                  }}
+                  style={
+                    imgGrow === index ? dashboardImgGrow : dashboardImgStandard
+                  }
                   src={`${USER_IMG_URL}${user.id}/${user.userImg}`}
                   alt="foto"
-                  onClick={() => setImgSize(!imgSize)}
+                  onClick={
+                    imgGrow === index
+                      ? () => setImgGrow(null)
+                      : () => setImgGrow(index)
+                  }
                 />
               ) : (
                 <Avatar />

@@ -32,6 +32,7 @@ import Carousel from "../components/Carousel";
 import UploadImages from "../components/UploadImages";
 import EventDataRecord from "../components/DataRecord";
 import unidecode from "unidecode";
+import Loading from "../components/Loading";
 
 const doneButtonStyle = {
   color: "orange",
@@ -185,6 +186,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
             },
           });
 
+          // UPDATE EVENT IMAGE //
           await webApi.put(
             `/event/${slug}`,
             { image: data.image },
@@ -412,7 +414,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
       />
     </Paper>
   ) : (
-    <CircularProgress />
+    <Loading />
   );
 };
 

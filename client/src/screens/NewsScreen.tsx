@@ -30,6 +30,7 @@ import DataRecord from "../components/DataRecord";
 import { doneButtonStyle, editButtonStyle } from "../helpers/customStyles";
 import Comments from "../components/Comments";
 import unidecode from "unidecode";
+import Loading from "../components/Loading";
 
 interface Props {
   userId: string;
@@ -376,7 +377,7 @@ const NewsScreen = ({ role, userId, userImg }: Props) => {
       />
     </Paper>
   ) : (
-    <CircularProgress />
+    <Loading />
   );
 };
 

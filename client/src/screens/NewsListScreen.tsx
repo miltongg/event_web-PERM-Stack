@@ -5,8 +5,9 @@ import { toast } from "react-toastify";
 import { getError } from "../helpers/handleErrors";
 import moment from "moment";
 import { AddCircle } from "@mui/icons-material";
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import NewsList from "../components/NewsList";
+import Loading from "../components/Loading";
 
 interface INews {
   id: string;
@@ -69,7 +70,7 @@ const NewsListScreen = ({ role }: Props) => {
         ""
       )}
       {loading ? (
-        <CircularProgress />
+        <Loading />
       ) : news?.length !== 0 ? (
         <NewsList news={news} role={role} />
       ) : (

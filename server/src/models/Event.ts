@@ -11,6 +11,7 @@ class Event extends Model {
   public rating!: number;
   public mainImage!: string;
   public eventImages?: string[];
+  public status!: string;
   public commentsCount!: number;
   public views!: number;
 }
@@ -54,6 +55,11 @@ Event.init(
     views: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
+    },
+
+    status: {
+      type: DataTypes.STRING,
+      defaultValue: "visible",
     },
 
     mainImage: {

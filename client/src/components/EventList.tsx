@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { EVENT_IMG_URL } from "../helpers/url";
 import DataRecord from "./DataRecord";
-import { AddCircle, CalendarMonth } from "@mui/icons-material";
+import { CalendarMonth } from "@mui/icons-material";
 
 interface Props {
   events: {

@@ -7,7 +7,9 @@ const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    let { name, username, email, cell, socials, userImg } = req.body;
+    let { name, username, email, cell, socials, userImg } = req.body.user;
+
+    console.log(socials);
 
     if (req.user.id !== id && req.user.role !== ADMIN_ROLE) {
       console.log("User not found");
