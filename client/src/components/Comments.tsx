@@ -131,7 +131,7 @@ const Comments = ({
     }
   }, []);
 
-  // UPDATE EVENTS COMMENTS COUNT ///
+  // UPDATE EVENTS COMMENTS COUNT //
   useEffect(() => {
     updateCommentsCount(comments?.length);
   }, [comments]);
@@ -363,7 +363,7 @@ const Comments = ({
       {/* RENDER COMMENTS */}
       {comments.length === 0 ? (
         <Typography sx={{ textAlign: "center" }}>
-          No hay comentarios de este evento
+          No hay comentarios, se el primero en comentar
         </Typography>
       ) : (
         comments.map((comment, index) => (
@@ -439,7 +439,7 @@ const Comments = ({
                   onChange={(e) => handleEditComment(index, e.target.value)}
                 />
               ) : (
-                <Typography sx={{ pl: 7, pr: 2, pb: 1 }}>
+                <Typography sx={{ pl: 9, pr: 2, pb: 1 }}>
                   {comment.comment}
                 </Typography>
               )}

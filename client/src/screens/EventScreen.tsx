@@ -108,9 +108,11 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
     const getEvent = async () => {
       try {
         const { data } = await webApi.get(`/event/${slug}`);
+
         data.date = moment(data.date).format("DD/MM/YYYY");
         setEvent(data);
       } catch (error) {
+        navigate('/event')
         toast.error(getError(error));
       }
     };

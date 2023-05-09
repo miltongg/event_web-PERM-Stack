@@ -30,6 +30,10 @@ import AddNewsScreen from "./screens/AddNewsScreen";
 import NewsScreen from "./screens/NewsScreen";
 import NewsListScreen from "./screens/NewsListScreen";
 import DashboardScreen from "./screens/DashboardScreen";
+import GamesScreen from "./screens/GamesScreen";
+import DashboardUser from "./components/DashboardUser";
+import DashboardEvent from "./components/DashboardEvent";
+import DashboardNews from "./components/DashboardNews";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -85,9 +89,9 @@ function App() {
               <Routes>
                 {/* AUTH */}
                 <Route path="/" element={<HomeScreen role={role} />} />
-                <Route path="/signup" element={<SignupScreen />} />
-                <Route path="/signin" element={<SigninScreen />} />
-                <Route path="/recover" element={<RecoverPasswordScreen />} />
+                <Route path="/signup" element={id ? <Navigate to={'/'} /> : <SignupScreen />} />
+                <Route path="/signin" element={ id ? <Navigate to={'/'} /> : <SigninScreen />} />
+                <Route path="/recover" element={id ? <Navigate to={'/'} /> : <RecoverPasswordScreen />} />
 
                 {/* EVENT */}
                 <Route
@@ -100,7 +104,16 @@ function App() {
                     <EventScreen userId={id} role={role} userImg={userImg} />
                   }
                 />
-                <Route path="/event/add" element={<AddEventScreen id={id} />} />
+                <Route
+                  path="/event/add"
+                  element={
+                    role === "admin" ? (
+                      <AddEventScreen id={id} />
+                    ) : (
+                      <Navigate to="/" />
+                    )
+                  }
+                />
 
                 {/* NEWS */}
                 <Route path="/news" element={<NewsListScreen role={role} />} />
@@ -110,7 +123,16 @@ function App() {
                     <NewsScreen userId={id} role={role} userImg={userImg} />
                   }
                 />
-                <Route path="/news/add" element={<AddNewsScreen id={id} />} />
+                <Route
+                  path="/news/add"
+                  element={
+                    role === "admin" ? (
+                      <AddNewsScreen id={id} />
+                    ) : (
+                      <Navigate to="/" />
+                    )
+                  }
+                />
 
                 {/* PROFILE */}
                 <Route
@@ -127,10 +149,19 @@ function App() {
                     role === "admin" ? (
                       <DashboardScreen />
                     ) : (
-                      <Navigate to={"/"} />
+                      <Navigate to="/" />
                     )
                   }
-                />
+                >
+                  <Route path="users" element={<DashboardUser/>} />
+                  <Route path="events" element={<DashboardEvent/>} />
+                  <Route path="news" element={<DashboardNews/>} />
+                </Route>
+
+                {/* GAMES */}
+                <Route path="/games" element={<GamesScreen />} />
+                <Route path="*" element={<Navigate to='/' replace />} />
+
               </Routes>
             </Grid>
             {!hideSidebar ? (

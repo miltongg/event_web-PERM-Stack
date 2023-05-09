@@ -4,8 +4,17 @@ import unidecode from "unidecode";
 
 const updateEvent = async (req: Request, res: Response) => {
   try {
-    let { name, description, date, image, images, commentsCount, rating } =
-      req.body;
+    let {
+      name,
+      description,
+      date,
+      status,
+      image,
+      images,
+      commentsCount,
+      rating,
+    } = req.body;
+
     const paramSlug = req.params.slug;
     const headerId = req.headers.id;
 
@@ -28,6 +37,7 @@ const updateEvent = async (req: Request, res: Response) => {
         description,
         date,
         mainImage: image,
+        status,
         eventImages: images,
         commentsCount,
         rating,

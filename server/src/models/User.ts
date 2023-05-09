@@ -15,6 +15,9 @@ class User extends Model {
   public cell?: string;
   public socials?: string[];
   public userImg?: string;
+  public score?: number;
+  public likes?: string[];
+  public dislikes?: string[];
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -76,6 +79,21 @@ User.init(
 
     userImg: {
       type: DataTypes.STRING,
+    },
+
+    likes: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: []
+    },
+
+    dislikes: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: []
+    },
+
+    score: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
   },
   {

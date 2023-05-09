@@ -282,7 +282,7 @@ const Replies = ({
                       onChange={(e) => handleEditReply(index, e.target.value)}
                     />
                   ) : (
-                    <Typography sx={{ pl: 1, mt: 1 }}>
+                    <Typography sx={{ mt: 1 }}>
                       <span style={{ color: "#4682B4" }}>
                         {reply.repliedToName}
                       </span>{" "}

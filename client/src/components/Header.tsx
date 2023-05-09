@@ -29,6 +29,7 @@ import {
   Logout,
   Person,
   AssignmentInd,
+  Casino,
 } from "@mui/icons-material";
 import { useNavigate, NavLink } from "react-router-dom";
 import { IState } from "../interfaces/interfaces";
@@ -58,6 +59,7 @@ const leftLinks = [
   { title: "Inicio", icon: <Home />, path: "/" },
   { title: "Eventos", icon: <Event />, path: "/event" },
   { title: "Noticias", icon: <Newspaper />, path: "/news" },
+  { title: "Juegos", icon: <Casino />, path: "/games" },
   { title: "Contacto", icon: <ContactPage />, path: "/contact" },
 ];
 

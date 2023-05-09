@@ -13,7 +13,7 @@ const getEvent = async (req: Request, res: Response) => {
 
     if (!id)
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Event no encontrada",
+        message: "Evento no encontrado",
       });
 
     const event = await Event.findOne({
@@ -36,6 +36,7 @@ const getEvent = async (req: Request, res: Response) => {
       ],
       group: ["Event.id"],
     });
+    
 
     if (!event)
       return res
@@ -49,7 +50,7 @@ const getEvent = async (req: Request, res: Response) => {
     res.json(event);
   } catch (error: any) {
     console.error(error);
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: error?.message,
     });
   }

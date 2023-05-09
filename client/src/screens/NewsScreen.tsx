@@ -91,6 +91,7 @@ const NewsScreen = ({ role, userId, userImg }: Props) => {
         data.date = moment(data.date).format("DD/MM/YYYY");
         setNews(data);
       } catch (error) {
+        navigate('/news')
         toast.error(getError(error));
       }
     };

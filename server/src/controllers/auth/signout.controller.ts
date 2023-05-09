@@ -20,7 +20,10 @@ export default async function signout(req: Request, res: Response) {
     });
     
     res.json({message: "Te has desconectado"})
-  } catch ({message}) {
-    res.status(500).json(message)
+  } catch (error: any) {
+    console.error(error.message)
+    res.status(500).json({
+      message: error.message
+    })
   }
 }

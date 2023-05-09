@@ -38,10 +38,6 @@ export const statusList = [
     label: "pendiente",
   },
   {
-    value: "banned",
-    label: "baneado",
-  },
-  {
     value: "deleted",
     label: "borrado",
   },

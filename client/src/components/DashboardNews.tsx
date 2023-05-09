@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   IconButton,
   MenuItem,
@@ -9,7 +9,7 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
-import { EVENT_IMG_URL } from "../helpers/url";
+import { NEWS_IMG_URL } from "../helpers/url";
 import EditIcon from "@mui/icons-material/Edit";
 import DoneIcon from "@mui/icons-material/Done";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -25,18 +25,20 @@ import {
 } from "../helpers/customStyles";
 import dateFormat from "../helpers/dateFormat";
 
-interface IEvent {
+interface INews {
   id: string;
   name: string;
+  subtitle: string;
   slug: string;
-  createdAt: string;
   description: string;
-  commentsCount: number;
+  tag: string;
+  userId: string;
   rating: number;
   status: string;
-  views: number;
   mainImage: string;
-  eventImages: string[];
+  createdAt: string;
+  views: number;
+  commentsCount: number;
 }
 
 interface ITableHead {
@@ -98,16 +100,16 @@ const tableHead: ITableHead[] = [
   },
 ];
 
-const DashboardEvent = () => {
+const DashboardNews = () => {
   const token = localStorage.getItem("token");
-  const [events, setEvents] = useState<IEvent[]>([]);
+  const [news, setNews] = useState<INews[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [imgGrow, setImgGrow] = useState<number | null>(null);
   const [edit, setEdit] = useState<{ edit: boolean; index: number | null }>({
     edit: false,
     index: null,
   });
-  const [editEvent, setEditEvent] = useState<{ status: string }>({
+  const [editNews, setEditNews] = useState<{ status: string }>({
     status: "",
   });
 
@@ -116,17 +118,17 @@ const DashboardEvent = () => {
     const getEvents = async () => {
       setLoading(true);
       try {
-        const { data } = await webApi.get("/event", {
+        const { data } = await webApi.get("/news", {
           headers: {
             limit: 10,
             offset: 0,
           },
         });
 
-        const { eventsList, count } = data;
+        const { newsList, count } = data;
 
 
-        setEvents(eventsList);
+        setNews(newsList);
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -138,10 +140,10 @@ const DashboardEvent = () => {
   }, []);
 
   // CHANGE EVENT VALUES //
-  const handleEditEvent = (id: string, index: number) => {
-    setEditEvent({
-      ...editEvent,
-      status: events.find((event) => event.id === id)?.status!,
+  const handleEditNews = (id: string, index: number) => {
+    setEditNews({
+      ...editNews,
+      status: news.find((n) => n.id === id)?.status!,
     });
 
     if (edit.index === index) {
@@ -152,27 +154,27 @@ const DashboardEvent = () => {
   };
 
   // UPDATE EVENTS //
-  const handleUpdateEvent = async (slug: string) => {
+  const handleUpdateNews = async (slug: string) => {
     try {
       setLoading(true);
 
       await webApi.put(
         `/event/${slug}`,
         {
-          status: editEvent.status,
+          status: editNews.status,
         },
         {
           headers: { token },
         }
       );
 
-      events.map((event) => {
-        if (event.slug === slug) {
-          event.status = editEvent.status;
+      news.map((n) => {
+        if (n.slug === slug) {
+          n.status = editNews.status;
         }
       });
       setEdit({ ...edit, edit: false, index: null });
-      toast.success("Se ha actualizado el usuario");
+      toast.success("Se ha actualizado la noticia");
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -181,19 +183,19 @@ const DashboardEvent = () => {
   };
 
   // DELETE EVENT //
-  const handleDeleteEvent = async (id: string, name: string) => {
+  const handleDeleteNews = async (id: string, name: string) => {
     try {
       Confirm.show(
-        `¿Deseas borrar el evento?`,
+        `¿Deseas borrar la noticia?`,
         `${name}`,
         "Si",
         "No",
         async () => {
-          await webApi.delete(`/event/${id}`, {
+          await webApi.delete(`/news/${id}`, {
             headers: { token },
           });
-          setEvents(events.filter((event) => event.id !== id));
-          toast.success(`Has borrado el evento ${name}`);
+          setNews(news.filter((n) => n.id !== id));
+          toast.success(`Has borrado la noticia ${name}`);
         },
         () => {},
         {
@@ -222,9 +224,9 @@ const DashboardEvent = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {events.map((event, index: number) => (
+        {news.map((n, index: number) => (
           <TableRow
-            key={event.id}
+            key={n.id}
             // onClick={() => handleUserClick(user)}
           >
             <TableCell>
@@ -232,7 +234,7 @@ const DashboardEvent = () => {
                 style={
                   imgGrow === index ? dashboardImgGrow : dashboardImgStandard
                 }
-                src={`${EVENT_IMG_URL}${event.id}/${event.mainImage}`}
+                src={`${NEWS_IMG_URL}${n.id}/${n.mainImage}`}
                 alt="foto"
                 onClick={
                   imgGrow === index
@@ -241,13 +243,13 @@ const DashboardEvent = () => {
                 }
               />
             </TableCell>
-            <TableCell>{event.id}</TableCell>
-            <TableCell>{event.name}</TableCell>
-            <TableCell>{event.commentsCount}</TableCell>
-            <TableCell>{event.rating}</TableCell>
-            <TableCell>{event.views}</TableCell>
+            <TableCell>{n.id}</TableCell>
+            <TableCell>{n.name}</TableCell>
+            <TableCell>{n.commentsCount}</TableCell>
+            <TableCell>{n.rating}</TableCell>
+            <TableCell>{n.views}</TableCell>
 
-            <TableCell>{dateFormat(event.createdAt)}</TableCell>
+            <TableCell>{dateFormat(n.createdAt)}</TableCell>
             <TableCell>
               {edit.edit && index === edit.index ? (
                 <TextField
@@ -256,10 +258,10 @@ const DashboardEvent = () => {
                   label="estado"
                   variant="standard"
                   select
-                  value={editEvent.status}
+                  value={editNews.status}
                   sx={{ mt: -2 }}
                   onChange={(e) =>
-                    setEditEvent({ ...editEvent, status: e.target.value })
+                    setEditNews({ ...editNews, status: e.target.value })
                   }
                   fullWidth
                 >
@@ -270,14 +272,14 @@ const DashboardEvent = () => {
                   ))}
                 </TextField>
               ) : (
-                event.status
+                n.status
               )}
             </TableCell>
             <TableCell>
               <IconButton
                 color="warning"
                 disabled={loading}
-                onClick={() => handleEditEvent(event.id, index)}
+                onClick={() => handleEditNews(n.id, index)}
               >
                 <EditIcon />
               </IconButton>
@@ -285,7 +287,7 @@ const DashboardEvent = () => {
                 <IconButton
                   color="error"
                   disabled={loading}
-                  onClick={() => handleUpdateEvent(event.slug)}
+                  onClick={() => handleUpdateNews(n.slug)}
                 >
                   <DoneIcon />
                 </IconButton>
@@ -293,7 +295,7 @@ const DashboardEvent = () => {
                 <IconButton
                   color="error"
                   disabled={loading}
-                  onClick={() => handleDeleteEvent(event.id, event.name)}
+                  onClick={() => handleDeleteNews(n.id, n.name)}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -306,4 +308,4 @@ const DashboardEvent = () => {
   );
 };
 
-export default DashboardEvent;
+export default DashboardNews;

@@ -39,7 +39,7 @@ const getNews = async (req: Request, res: Response) => {
     
     if (!news)
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Evento no encontrado"
+        message: "Noticia no encontrada"
       })
     
     await News.increment('views', {where: {slug}})

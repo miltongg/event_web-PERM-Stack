@@ -20,8 +20,6 @@ import {
 import { USER_IMG_URL } from "../helpers/url";
 import {
   AddCircle,
-  Done,
-  Edit,
   Facebook,
   Instagram,
   Mail,
@@ -40,7 +38,6 @@ import { useDispatch } from "react-redux";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Confirm } from "notiflix/build/notiflix-confirm-aio";
-import update = toast.update;
 
 interface Props {
   userId: string;
@@ -58,6 +55,7 @@ const ProfileScreen = ({ userId }: Props) => {
     email: "",
     role: "",
     userImg: "",
+    cell: "",
     socials: [],
   });
 
@@ -137,7 +135,10 @@ const ProfileScreen = ({ userId }: Props) => {
       await webApi.put(
         `user/${id}`,
         {
-          user,
+          name: user.name,
+          username: user.username,
+          userImg: user.userImg,
+          cell: user.cell,
         },
         { headers: { token } }
       );
@@ -179,15 +180,9 @@ const ProfileScreen = ({ userId }: Props) => {
       });
 
       // UPDATE USER IMG IN DB //
-      await webApi.put(
-        `user/${id}`,
-        {
-          userImg: data.image,
-        },
-        { headers: { id: userId, token } }
-      );
 
       setUser({ ...user, userImg: data.image });
+      setUpdate(!update);
       dispatch(setUserImg({ userImg: data.image }));
       setLoading(false);
 
@@ -256,8 +251,8 @@ const ProfileScreen = ({ userId }: Props) => {
       {!user.id ? (
         ""
       ) : (
-        <Paper elevation={3}>
-          <Grid container spacing={0} sx={{ mt: 5 }}>
+        <Paper elevation={3} sx={{ my: 5 }}>
+          <Grid container spacing={0}>
             <Grid
               item
               xs={12}
@@ -266,7 +261,7 @@ const ProfileScreen = ({ userId }: Props) => {
                 background:
                   "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
                 textAlign: "center",
-                borderRadius: "5px 0 0 5px",
+                borderRadius: { xs: "5px 5px 0 0", md: "5px 0 0 5px" },
               }}
             >
               <Box sx={{ mx: "auto", my: "20px", position: "relative" }}>
@@ -375,9 +370,9 @@ const ProfileScreen = ({ userId }: Props) => {
               md={8}
               sx={{
                 backgroundColor: "#fbfbfb",
-                borderRadius: "0 5px 5px 0",
+                borderRadius: { md: "5px", xs: "0 0 5px 5px" },
                 paddingY: 5,
-                paddingX: { xs: 2, sm: 5, md: 10, ld: 15 },
+                paddingX: { xs: 2, sm: 5, md: 10, lg: 15 },
               }}
             >
               <Typography variant="h6">Tu información</Typography>
@@ -444,6 +439,7 @@ const ProfileScreen = ({ userId }: Props) => {
                         <TextField
                           variant="standard"
                           value={editSocial.text}
+                          fullWidth
                           onChange={(e) =>
                             setEditSocial({
                               ...editSocial,
@@ -530,6 +526,7 @@ const ProfileScreen = ({ userId }: Props) => {
                     <TextField
                       variant="standard"
                       value={editSocial.text}
+                      fullWidth
                       autoFocus={true}
                       onChange={(e) =>
                         setEditSocial({

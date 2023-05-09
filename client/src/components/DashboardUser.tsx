@@ -24,6 +24,7 @@ import {
   dashboardImgGrow,
   dashboardImgStandard,
 } from "../helpers/customStyles";
+import dateFormat from "../helpers/dateFormat";
 
 interface IUsers {
   id: string;
@@ -94,16 +95,6 @@ const tableHead: ITableHead[] = [
     style: cellStyle,
   },
 ];
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  return `${day.toString().padStart(2, "0")}/${month
-    .toString()
-    .padStart(2, "0")}/${year}`;
-};
 
 const DashboardUser = () => {
   const token = localStorage.getItem("token");
@@ -284,7 +275,7 @@ const DashboardUser = () => {
                 user.role
               )}
             </TableCell>
-            <TableCell>{formatDate(user.createdAt)}</TableCell>
+            <TableCell>{dateFormat(user.createdAt)}</TableCell>
             <TableCell>
               {edit.edit && index === edit.index ? (
                 <TextField

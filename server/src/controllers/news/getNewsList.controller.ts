@@ -28,11 +28,16 @@ const getNewsList = async (req: Request, res: Response) => {
           attributes: [],
         },
       ],
+      subQuery: false,
       group: ["News.id"],
       order: [["date", "DESC"]],
+      limit,
+      offset,
     });
 
-    res.json(newsList);
+    const count = await News.count();
+
+    res.json({ newsList, count });
   } catch (error: any) {
     console.error(error);
     res.status(500).json({

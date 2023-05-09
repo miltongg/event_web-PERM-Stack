@@ -1,6 +1,7 @@
-import {Model, DataTypes} from "sequelize";
-import {sequelize} from "../database/database";
+import { Model, DataTypes } from "sequelize";
+import { sequelize } from "../database/database";
 import Comment from "./Comment";
+import { STATUS_VISIBLE } from "../helpers/defineConsts";
 
 class News extends Model {
   public id!: string;
@@ -11,6 +12,8 @@ class News extends Model {
   public slug!: string;
   public date!: Date;
   public description!: string;
+  public rating!: number;
+  public status!: string;
   public mainImage!: string;
   public images?: string[];
   public commentsCount!: number;
@@ -23,52 +26,62 @@ News.init(
       type: DataTypes.STRING,
       primaryKey: true,
     },
-    
+
     userId: {
       type: DataTypes.STRING,
     },
-    
+
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    
+
     subtitle: {
       type: DataTypes.STRING,
     },
-    
+
     slug: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    
+
     date: {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    
+
     description: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    
+
     tag: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    
+
     views: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
-    
+
     mainImage: {
       type: DataTypes.STRING,
     },
-    
+
     images: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       defaultValue: [],
+    },
+
+    status: {
+      type: DataTypes.STRING,
+      defaultValue: STATUS_VISIBLE,
+    },
+    
+    rating: {
+      type: DataTypes.DOUBLE,
+      defaultValue: 0,
     },
   },
   {

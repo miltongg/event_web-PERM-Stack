@@ -7,6 +7,8 @@ import {
   CardActions,
   CardContent,
   CardMedia,
+  Pagination,
+  Stack,
   Typography,
 } from "@mui/material";
 import { EVENT_IMG_URL } from "../helpers/url";
