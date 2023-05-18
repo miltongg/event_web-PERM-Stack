@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Divider,
   Grid,
   ListItem,
   MenuItem,
@@ -19,6 +20,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { AddPhotoAlternate, Image, Send } from "@mui/icons-material";
 import { newsTagList } from "../helpers/tasgList";
+import { addFormStyle, buttonFormStyle } from "../helpers/customStyles";
+import zIndex from "@mui/material/styles/zIndex";
 
 interface Props {
   id: string;
@@ -36,10 +39,6 @@ const AddNewsScreen = ({ id }: Props) => {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    console.log(mainImage?.name, "imagen");
-  }, [mainImage]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,7 +65,7 @@ const AddNewsScreen = ({ id }: Props) => {
         headers: { token },
       });
 
-      toast.success("Evento añadido satisfactoriamente");
+      toast.success("Noticia añadida satisfactoriamente");
       navigate(`/news/${data.slug}`);
     } catch (error) {
       setLoading(false);
@@ -87,7 +86,8 @@ const AddNewsScreen = ({ id }: Props) => {
   return (
     <Paper
       component="form"
-      sx={{ padding: 2, marginY: 5 }}
+      elevation={0}
+      sx={addFormStyle}
       onSubmit={handleSubmit}
     >
       <Typography
@@ -130,8 +130,13 @@ const AddNewsScreen = ({ id }: Props) => {
             onChange={(e) => setTag(e.target.value)}
             fullWidth
           >
-            {newsTagList.map(({ value, label }) => (
-              <MenuItem key={value} value={value}>
+            {newsTagList.map(({ value, label, divider }, index) => (
+              <MenuItem
+                sx={{ p: 1 }}
+                divider={index !== newsTagList.length - 1}
+                key={value}
+                value={value}
+              >
                 {label}
               </MenuItem>
             ))}
@@ -145,7 +150,7 @@ const AddNewsScreen = ({ id }: Props) => {
               value={date}
               onChange={(date) => setDate(date!)}
               format="DD-MM-YYYY"
-              label="Fecha"
+              label="Fecha *"
             />
           </LocalizationProvider>
         </Grid>
@@ -162,47 +167,38 @@ const AddNewsScreen = ({ id }: Props) => {
             rows={8}
           />
         </Grid>
-
-        <Grid item xs={12}>
-          <Button
-            startIcon={<AddPhotoAlternate />}
-            variant="contained"
-            component="label"
-          >
-            Seleccionar imagen
-            <input
-              type="file"
-              name="file"
-              hidden
-              onChange={handleSelectImage}
-            />
-          </Button>
-          {image ? (
-            <ListItem sx={{ display: "block" }}>
-              <img
-                src={image}
-                alt={mainImage?.name}
-                style={{ height: 100, borderRadius: 2 }}
-              />
-              <Typography>{mainImage?.name}</Typography>
-            </ListItem>
-          ) : (
-            ""
-          )}
-        </Grid>
-
-        <Grid item xs={12}>
-          <Button
-            startIcon={!loading ? <Send /> : <CircularProgress size={20} />}
-            disabled={loading}
-            type="submit"
-            variant="contained"
-            color="primary"
-          >
-            Agregar noticia
-          </Button>
-        </Grid>
       </Grid>
+      <Button
+        startIcon={<AddPhotoAlternate />}
+        sx={buttonFormStyle}
+        variant="contained"
+        component="label"
+      >
+        Seleccionar imagen
+        <input type="file" name="file" hidden onChange={handleSelectImage} />
+      </Button>
+      {image ? (
+        <ListItem sx={{ display: "block" }}>
+          <img
+            src={image}
+            alt={mainImage?.name}
+            style={{ height: 100, borderRadius: 2 }}
+          />
+          <Typography>{mainImage?.name}</Typography>
+        </ListItem>
+      ) : (
+        ""
+      )}
+
+      <Button
+        startIcon={!loading ? <Send /> : <CircularProgress size={20} />}
+        sx={buttonFormStyle}
+        disabled={loading}
+        type="submit"
+        variant="contained"
+      >
+        Agregar noticia
+      </Button>
     </Paper>
   );
 };

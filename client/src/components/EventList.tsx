@@ -37,7 +37,7 @@ const EventList: FC<Props> = (props) => {
   return (
     <Box>
       {events.map((event) => (
-        <Card key={event.id} sx={{ maxWidth: 1, marginY: 5 }}>
+        <Card key={event.id} sx={{ maxWidth: 1, mb: 5 }}>
           <CardMedia
             component="img"
             alt={event.name}

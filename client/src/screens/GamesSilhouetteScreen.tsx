@@ -1,3 +1,9 @@
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { webApi } from "../helpers/animeApi";
+import moment from "moment/moment";
+import { toast } from "react-toastify";
+import { getError } from "../helpers/handleErrors";
 import {
   Backdrop,
   Box,
@@ -6,27 +12,21 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import moment from "moment";
-import { useEffect, useState, ChangeEvent } from "react";
-import { toast } from "react-toastify";
-import EventList from "../components/EventList";
-import { webApi } from "../helpers/animeApi";
-import { getError } from "../helpers/handleErrors";
 import { AddCircle } from "@mui/icons-material";
-import { useLocation, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
+import GameList from "../components/GameList";
 
 interface Props {
   role: string;
 }
 
-const EventListScreen = ({ role }: Props) => {
+const GamesSilhouetteScreen = ({ role }: Props) => {
   const { search } = useLocation();
   let query = new URLSearchParams(search);
   const pageNumber = Number(query.get("page")) || 1;
 
   const [page, setPage] = useState<number>(pageNumber);
-  const [events, setEvents] = useState([]);
+  const [games, setGames] = useState([]);
   const [limit, setLimit] = useState(3);
   const [offset, setOffset] = useState(limit * (page - 1));
   const [count, setCount] = useState<number>(0);
@@ -54,19 +54,19 @@ const EventListScreen = ({ role }: Props) => {
   // GET EVENTS //
   useEffect(() => {
     try {
-      const getEvents = async () => {
+      const getGames = async () => {
         setLoading(true);
-        let { data } = await webApi(`/event?page=${page}`, {
+        let { data } = await webApi(`/game?page=${page}`, {
           headers: { limit, offset },
         });
 
-        const { eventsList, count } = data;
+        const { gamesList, count } = data;
 
-        for (let element of eventsList) {
+        for (let element of gamesList) {
           element.date = moment(element.date).format("DD/MM/YYYY");
         }
 
-        setEvents(eventsList);
+        setGames(gamesList);
         setCount(parseInt(String(count / 2)));
         setLoading(false);
 
@@ -77,7 +77,7 @@ const EventListScreen = ({ role }: Props) => {
         });
       };
 
-      getEvents();
+      getGames();
     } catch (error) {
       setLoading(false);
       toast.error(getError(error));
@@ -85,13 +85,14 @@ const EventListScreen = ({ role }: Props) => {
   }, [reload]);
 
   // RENDER //
+
   return (
     <>
       {role === "admin" ? (
         <Box sx={{ mt: 5, mb: -1, textAlign: "right" }}>
           <Button
             startIcon={<AddCircle />}
-            onClick={() => navigate("/event/add")}
+            onClick={() => navigate("/game/add")}
           >
             Añadir evento
           </Button>
@@ -106,13 +107,13 @@ const EventListScreen = ({ role }: Props) => {
       ) : (
         ""
       )}
-      {!loading && events?.length === 0 ? (
+      {!loading && games?.length === 0 ? (
         <Typography variant="h4" sx={{ textAlign: "center", mt: 10 }}>
-          No hay eventos que mostrar
+          No hay elemetos que mostrar
         </Typography>
       ) : (
         <Box sx={{ mt: 5 }}>
-          <EventList events={events} role={role} />
+          <GameList games={games} role={role} />
           {!loading && count >= 2 ? (
             <Stack spacing={2} sx={{ mb: 5 }}>
               <Pagination
@@ -129,4 +130,4 @@ const EventListScreen = ({ role }: Props) => {
   );
 };
 
-export default EventListScreen;
+export default GamesSilhouetteScreen;

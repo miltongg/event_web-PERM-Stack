@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  Chip,
   IconButton,
   MenuItem,
+  Paper,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
   TextField,
@@ -22,8 +25,11 @@ import Loading from "./Loading";
 import {
   dashboardImgGrow,
   dashboardImgStandard,
+  dashboardTableBodyStyle,
+  dashboardTableHeadStyle,
 } from "../helpers/customStyles";
 import dateFormat from "../helpers/dateFormat";
+import definedConst from "../helpers/definedConst";
 
 interface INews {
   id: string;
@@ -47,56 +53,51 @@ interface ITableHead {
   style: any;
 }
 
-const cellStyle = {
-  textAlign: "center",
-  fontWeight: "bold",
-};
-
 const tableHead: ITableHead[] = [
   {
     id: "eventImg",
     label: "Foto",
-    style: cellStyle,
+    style: dashboardTableHeadStyle,
   },
-  {
-    id: "id",
-    label: "ID",
-    style: cellStyle,
-  },
+  // {
+  //   id: "id",
+  //   label: "ID",
+  //   style: dashboardTableHeadStyle,
+  // },
   {
     id: "name",
     label: "Nombre",
-    style: cellStyle,
+    style: dashboardTableHeadStyle,
   },
-  {
-    id: "comments",
-    label: "No. Coment",
-    style: cellStyle,
-  },
-  {
-    id: "rating",
-    label: "Valoración",
-    style: cellStyle,
-  },
-  {
-    id: "views",
-    label: "Vistas",
-    style: cellStyle,
-  },
+  // {
+  //   id: "comments",
+  //   label: "No. Coment",
+  //   style: dashboardTableHeadStyle,
+  // },
+  // {
+  //   id: "rating",
+  //   label: "Valoración",
+  //   style: dashboardTableHeadStyle,
+  // },
+  // {
+  //   id: "views",
+  //   label: "Vistas",
+  //   style: dashboardTableHeadStyle,
+  // },
   {
     id: "createdAt",
     label: "Creado",
-    style: cellStyle,
+    style: dashboardTableHeadStyle,
   },
   {
     id: "status",
     label: "Estado",
-    style: cellStyle,
+    style: dashboardTableHeadStyle,
   },
   {
     id: "actions",
     label: "Acciones",
-    style: cellStyle,
+    style: dashboardTableHeadStyle,
   },
 ];
 
@@ -126,7 +127,6 @@ const DashboardNews = () => {
         });
 
         const { newsList, count } = data;
-
 
         setNews(newsList);
         setLoading(false);
@@ -213,98 +213,120 @@ const DashboardNews = () => {
   return loading ? (
     <Loading />
   ) : (
-    <Table>
-      <TableHead>
-        <TableRow>
-          {tableHead.map((head) => (
-            <TableCell key={head.id} style={head.style}>
-              {head.label}
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {news.map((n, index: number) => (
-          <TableRow
-            key={n.id}
-            // onClick={() => handleUserClick(user)}
-          >
-            <TableCell>
-              <img
-                style={
-                  imgGrow === index ? dashboardImgGrow : dashboardImgStandard
-                }
-                src={`${NEWS_IMG_URL}${n.id}/${n.mainImage}`}
-                alt="foto"
-                onClick={
-                  imgGrow === index
-                    ? () => setImgGrow(null)
-                    : () => setImgGrow(index)
-                }
-              />
-            </TableCell>
-            <TableCell>{n.id}</TableCell>
-            <TableCell>{n.name}</TableCell>
-            <TableCell>{n.commentsCount}</TableCell>
-            <TableCell>{n.rating}</TableCell>
-            <TableCell>{n.views}</TableCell>
-
-            <TableCell>{dateFormat(n.createdAt)}</TableCell>
-            <TableCell>
-              {edit.edit && index === edit.index ? (
-                <TextField
-                  required
-                  name="status"
-                  label="estado"
-                  variant="standard"
-                  select
-                  value={editNews.status}
-                  sx={{ mt: -2 }}
-                  onChange={(e) =>
-                    setEditNews({ ...editNews, status: e.target.value })
-                  }
-                  fullWidth
-                >
-                  {statusList.map(({ value, label }) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              ) : (
-                n.status
-              )}
-            </TableCell>
-            <TableCell>
-              <IconButton
-                color="warning"
-                disabled={loading}
-                onClick={() => handleEditNews(n.id, index)}
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            {tableHead.map((head) => (
+              <TableCell
+                sx={dashboardTableHeadStyle}
+                key={head.id}
+                style={head.style}
               >
-                <EditIcon />
-              </IconButton>
-              {edit.edit && edit.index === index ? (
-                <IconButton
-                  color="error"
-                  disabled={loading}
-                  onClick={() => handleUpdateNews(n.slug)}
-                >
-                  <DoneIcon />
-                </IconButton>
-              ) : (
-                <IconButton
-                  color="error"
-                  disabled={loading}
-                  onClick={() => handleDeleteNews(n.id, n.name)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              )}
-            </TableCell>
+                {head.label}
+              </TableCell>
+            ))}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHead>
+        <TableBody>
+          {news.map((n, index: number) => (
+            <TableRow
+              key={n.id}
+              // onClick={() => handleUserClick(user)}
+            >
+              <TableCell sx={dashboardTableBodyStyle}>
+                <img
+                  style={
+                    imgGrow === index ? dashboardImgGrow : dashboardImgStandard
+                  }
+                  src={`${NEWS_IMG_URL}${n.id}/${n.mainImage}`}
+                  alt="foto"
+                  onClick={
+                    imgGrow === index
+                      ? () => setImgGrow(null)
+                      : () => setImgGrow(index)
+                  }
+                />
+              </TableCell>
+              {/*<TableCell sx={dashboardTableBodyStyle}>{n.id}</TableCell>*/}
+              <TableCell sx={dashboardTableBodyStyle}>{n.name}</TableCell>
+              {/*<TableCell sx={dashboardTableBodyStyle}>*/}
+              {/*  {n.commentsCount}*/}
+              {/*</TableCell>*/}
+              {/*<TableCell sx={dashboardTableBodyStyle}>*/}
+              {/*  {!n.rating ? 0 : n.rating}*/}
+              {/*</TableCell>*/}
+              {/*<TableCell sx={dashboardTableBodyStyle}>{n.views}</TableCell>*/}
+
+              <TableCell sx={dashboardTableBodyStyle}>
+                {dateFormat(n.createdAt)}
+              </TableCell>
+              <TableCell sx={dashboardTableBodyStyle}>
+                {edit.edit && index === edit.index ? (
+                  <TextField
+                    required
+                    name="status"
+                    label="estado"
+                    variant="standard"
+                    select
+                    value={editNews.status}
+                    sx={{ mt: -2 }}
+                    onChange={(e) =>
+                      setEditNews({ ...editNews, status: e.target.value })
+                    }
+                    fullWidth
+                  >
+                    {statusList.map(({ value, label }) => (
+                      <MenuItem key={value} value={value}>
+                        {label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                ) : (
+                  <Chip
+                    color={
+                      n.status === definedConst.STATUS_ACTIVE
+                        ? "success"
+                        : n.status === definedConst.STATUS_PENDING
+                        ? "warning"
+                        : "default"
+                    }
+                    size="small"
+                    label={n.status}
+                  />
+                )}
+              </TableCell>
+              <TableCell sx={dashboardTableBodyStyle}>
+                <IconButton
+                  color="warning"
+                  disabled={loading}
+                  onClick={() => handleEditNews(n.id, index)}
+                >
+                  <EditIcon />
+                </IconButton>
+                {edit.edit && edit.index === index ? (
+                  <IconButton
+                    color="error"
+                    disabled={loading}
+                    onClick={() => handleUpdateNews(n.slug)}
+                  >
+                    <DoneIcon />
+                  </IconButton>
+                ) : (
+                  <IconButton
+                    color="error"
+                    disabled={loading}
+                    onClick={() => handleDeleteNews(n.id, n.name)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

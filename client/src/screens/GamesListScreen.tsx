@@ -16,20 +16,19 @@ const gameList = [
     description:
       "Adivina la silueta de las imagenes, demuestra tu conocimiento",
     img: "/game-imgs/silhouette-img.png",
-    link: '/games/discover-the-silhouette'
+    link: "/game/discover-the-silhouette",
   },
   {
     title: "Adivina la música",
     description:
       "Prepara bien los oidos para descubrir a que anime o videojuego pertenece el fragmento de la música",
     img: "/game-imgs/music-girl.jpg",
-    link: '/games/discover-the-music'
+    link: "/game/discover-the-music",
   },
 ];
 
-const GamesScreen = () => {
-
-  const navigate = useNavigate()
+const GamesListScreen = () => {
+  const navigate = useNavigate();
 
   return (
     <Box sx={{ mt: 5 }}>
@@ -39,11 +38,11 @@ const GamesScreen = () => {
         columns={{ xs: 4, sm: 8, md: 12 }}
       >
         {gameList.map(({ title, description, img, link }) => (
-          <Grid item xs={2} sm={4} md={4}>
+          <Grid key={title} item xs={2} sm={4} md={4}>
             <Card
               sx={{
                 maxWidth: 345,
-                "&:hover": { boxShadow: "10", cursor: "pointer" },
+                "&:hover": { boxShadow: "5", cursor: "pointer" },
               }}
               onClick={() => navigate(link)}
             >
@@ -64,4 +63,4 @@ const GamesScreen = () => {
   );
 };
 
-export default GamesScreen;
+export default GamesListScreen;

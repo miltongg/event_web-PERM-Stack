@@ -15,7 +15,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProfileScreen from "./screens/ProfileScreen";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import decodeToken from "./libs/decodeToken";
 import { setUser } from "./store/slices/user/userSlice";
 import { IRootState } from "./interfaces/interfaces";
@@ -23,17 +23,18 @@ import SigninScreen from "./screens/SigninScreen";
 import RecoverPasswordScreen from "./screens/RecoverPasswordScreen";
 import AddEventScreen from "./screens/AddEventScreen";
 import EventScreen from "./screens/EventScreen";
-import { webApi } from "./helpers/animeApi";
 import EventListScreen from "./screens/EventListScreen";
 import ScrollToTop from "./components/ScrollToTop";
 import AddNewsScreen from "./screens/AddNewsScreen";
 import NewsScreen from "./screens/NewsScreen";
 import NewsListScreen from "./screens/NewsListScreen";
 import DashboardScreen from "./screens/DashboardScreen";
-import GamesScreen from "./screens/GamesScreen";
+import GamesListScreen from "./screens/GamesListScreen";
 import DashboardUser from "./components/DashboardUser";
 import DashboardEvent from "./components/DashboardEvent";
 import DashboardNews from "./components/DashboardNews";
+import AddGameScreen from "./screens/AddGameScreen";
+import GamesSilhouetteScreen from "./screens/GamesSilhouetteScreen";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -57,19 +58,23 @@ function App() {
   let mainColumSize = 8;
   let hideSidebar = false;
 
-  const removeSidebarRoutes = [
+  const hideSidebarRoutesWords = [
     "signup",
     "signin",
     "profile",
     "recover",
     "events",
     "dashboard",
+    "add",
   ];
 
-  let { pathname } = useLocation();
-  pathname = pathname.split("/")[1];
+  const { pathname } = useLocation();
 
-  if (removeSidebarRoutes.includes(pathname)) {
+  const pathwords = pathname
+    .split("/")
+    .filter((word) => hideSidebarRoutesWords.includes(word));
+
+  if (pathwords.length) {
     mainColumSize = 12;
     hideSidebar = true;
   }
@@ -83,15 +88,26 @@ function App() {
       <Box component="main" sx={{ minHeight: "100vh" }}>
         <CssBaseline />
         <Container>
-          <Grid container spacing={3}>
+          <Grid container spacing={4}>
             <Grid item xs={12} md={mainColumSize}>
               <ScrollToTop />
               <Routes>
                 {/* AUTH */}
                 <Route path="/" element={<HomeScreen role={role} />} />
-                <Route path="/signup" element={id ? <Navigate to={'/'} /> : <SignupScreen />} />
-                <Route path="/signin" element={ id ? <Navigate to={'/'} /> : <SigninScreen />} />
-                <Route path="/recover" element={id ? <Navigate to={'/'} /> : <RecoverPasswordScreen />} />
+                <Route
+                  path="/signup"
+                  element={id ? <Navigate to={"/"} /> : <SignupScreen />}
+                />
+                <Route
+                  path="/signin"
+                  element={id ? <Navigate to={"/"} /> : <SigninScreen />}
+                />
+                <Route
+                  path="/recover"
+                  element={
+                    id ? <Navigate to={"/"} /> : <RecoverPasswordScreen />
+                  }
+                />
 
                 {/* EVENT */}
                 <Route
@@ -146,22 +162,23 @@ function App() {
                 <Route
                   path="/dashboard"
                   element={
-                    role === "admin" ? (
-                      <DashboardScreen />
-                    ) : (
-                      <Navigate to="/" />
-                    )
+                    role === "admin" ? <DashboardScreen /> : <Navigate to="/" />
                   }
                 >
-                  <Route path="users" element={<DashboardUser/>} />
-                  <Route path="events" element={<DashboardEvent/>} />
-                  <Route path="news" element={<DashboardNews/>} />
+                  <Route path="users" element={<DashboardUser />} />
+                  <Route path="events" element={<DashboardEvent />} />
+                  <Route path="news" element={<DashboardNews />} />
                 </Route>
 
                 {/* GAMES */}
-                <Route path="/games" element={<GamesScreen />} />
-                <Route path="*" element={<Navigate to='/' replace />} />
+                <Route path="/game" element={<GamesListScreen />} />
+                <Route path="/game/add" element={<AddGameScreen />} />
+                <Route
+                  path="/game/discover-the-silhouette"
+                  element={<GamesSilhouetteScreen role={role} />}
+                />
 
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Grid>
             {!hideSidebar ? (

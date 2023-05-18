@@ -64,22 +64,22 @@ interface Props {
   userImg: string | null | undefined;
 }
 
-const EventScreen = ({ userId, role, userImg }: Props) => {
+const GameScreen = ({ userId, role, userImg }: Props) => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
-  const { slug } = useParams();
+  // const { slug } = useParams();
+  const { id } = useParams();
   const [showFullDesc, setShowFullDesc] = useState<boolean>(false);
-  const [event, setEvent] = useState<IEvent>({
+  const [game, setGame] = useState<any>({
     id: "",
     name: "",
-    slug: "",
     date: "",
+    points: null,
     description: "",
     commentsCount: 0,
     rating: 0,
     views: 0,
-    mainImage: "",
-    eventImages: [],
+    image: "",
   });
 
   const [edit, setEdit] = useState({
@@ -95,10 +95,10 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
   useEffect(() => {
     const getEvent = async () => {
       try {
-        const { data } = await webApi.get(`/event/${slug}`);
+        const { data } = await webApi.get(`/game/${id}`);
 
         data.date = moment(data.date).format("DD/MM/YYYY");
-        setEvent(data);
+        setGame(data);
       } catch (error) {
         navigate("/event");
         toast.error(getError(error));
@@ -111,11 +111,11 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
   const handleUpdate = async () => {
     try {
       await webApi.put(
-        `/event/${slug}`,
+        `/game/${id}`,
         {
-          name: event.name,
-          date: event.date,
-          description: event.description,
+          name: game.name,
+          date: game.date,
+          description: game.description,
         },
         {
           headers: {
@@ -131,12 +131,12 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
         description: false,
       });
 
-      if (event.name) {
-        const slug = unidecode(event.name)
+      if (game.name) {
+        const slug = unidecode(game.name)
           .replace(/[^a-zA-Z0-9]/g, "-")
           .toLowerCase();
 
-        navigate(`/event/${slug}`);
+        navigate(`/game/${id}`);
       }
 
       toast.success("Se ha actualizado este evento");
@@ -147,11 +147,11 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
 
   // UPDATE STATE FUNCTIONS //
   const updateCommentsCount = (number: number) => {
-    setEvent({ ...event, commentsCount: number });
+    setGame({ ...game, commentsCount: number });
   };
 
   const updateEventImages = (images: string[]) => {
-    setEvent({ ...event, eventImages: images });
+    setGame({ ...game, eventImages: images });
   };
 
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -170,22 +170,22 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
           const { data } = await webApi.post("/iupload", fileData, {
             headers: {
               token,
-              folder: "event/",
-              prefix: "event",
-              id: event.id,
+              folder: "game/",
+              prefix: "game",
+              id: game.id,
             },
           });
 
           // UPDATE EVENT IMAGE //
           await webApi.put(
-            `/event/${slug}`,
+            `/game/${id}`,
             { image: data.image },
             {
               headers: { token },
             }
           );
 
-          setEvent({ ...event, mainImage: data.image });
+          setGame({ ...game, image: data.image });
           toast.success("Se ha actualizado este evento");
         } catch (error) {
           toast.error(getError(error));
@@ -196,13 +196,13 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
     }
   }, [img]);
 
-  return event.id ? (
+  return game.id ? (
     <Paper elevation={0} sx={{ marginY: 5 }}>
       <Card sx={{ position: "relative" }}>
         <CardMedia
-          image={`${EVENT_IMG_URL}${event.id}/${event.mainImage}`}
+          image={`${EVENT_IMG_URL}${game.id}/${game.mainImage}`}
           component="img"
-          alt={event.name}
+          alt={game.name}
           height="350"
         />
         <IconButton
@@ -237,13 +237,13 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
                 fullWidth
                 autoFocus={true}
                 variant="standard"
-                value={event?.name}
-                onChange={(e) => setEvent({ ...event, name: e.target.value })}
+                value={game?.name}
+                onChange={(e) => setGame({ ...game, name: e.target.value })}
               />
               <Done sx={doneButtonStyle} onClick={handleUpdate} />
             </>
           ) : (
-            <Typography variant="h4">{event?.name}</Typography>
+            <Typography variant="h4">{game?.name}</Typography>
           )}
           {role === "admin" ? (
             <Edit
@@ -260,8 +260,8 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
               <StaticDatePicker
                 sx={{ width: 1 }}
                 onChange={(date) =>
-                  setEvent({
-                    ...event,
+                  setGame({
+                    ...game,
                     date: moment(date!.toString()).format("DD/MM/YYYY"),
                   })
                 }
@@ -280,7 +280,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
             >
               <Box sx={{ display: "flex" }}>
                 <CalendarMonth />
-                <Typography>{event.date.toString()}</Typography>
+                <Typography>{game.date.toString()}</Typography>
                 {role === "admin" ? (
                   <Edit
                     sx={editButtonStyle}
@@ -297,9 +297,9 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
               </Box>
 
               <EventDataRecord
-                views={event.views}
-                rating={event.rating}
-                commentsCount={event.commentsCount}
+                views={game.views}
+                rating={game.rating}
+                commentsCount={game.commentsCount}
               />
             </Box>
           )}
@@ -316,10 +316,10 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
                 autoFocus={true}
                 multiline
                 variant="standard"
-                value={event?.description}
+                value={game?.description}
                 onChange={(e) =>
-                  setEvent({
-                    ...event,
+                  setGame({
+                    ...game,
                     description: e.target.value,
                   })
                 }
@@ -343,7 +343,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
                     },
                   }}
                 >
-                  {event?.description}
+                  {game?.description}
                 </Typography>
               </Collapse>
             </Box>
@@ -367,37 +367,11 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
 
       <Divider />
 
-      {/* Render Carousel */}
-      {event.eventImages.length === 0 ? (
-        <Typography
-          sx={{ textAlign: "center", color: "gray", mt: 5 }}
-          variant="h5"
-        >
-          No hay imágenes del evento
-        </Typography>
-      ) : (
-        <Box sx={{ marginY: 5 }}>
-          <Carousel images={event.eventImages} id={event.id} />
-        </Box>
-      )}
-
-      {/* Render Upload ScreenShots */}
-      {role === "admin" ? (
-        <UploadImages
-          id={event.id}
-          eventImages={event.eventImages}
-          token={token}
-          updateEventImages={updateEventImages}
-        />
-      ) : (
-        ""
-      )}
-
       {/* Render Comments */}
       <Comments
         userId={userId}
         token={token}
-        id={event.id}
+        id={game.id}
         updateCommentsCount={updateCommentsCount}
         userImg={userImg}
         role={role}
@@ -408,4 +382,4 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
   );
 };
 
-export default EventScreen;
+export default GameScreen;

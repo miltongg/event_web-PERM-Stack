@@ -59,7 +59,7 @@ Event.init(
 
     status: {
       type: DataTypes.STRING,
-      defaultValue: "visible",
+      defaultValue: "active",
     },
 
     mainImage: {

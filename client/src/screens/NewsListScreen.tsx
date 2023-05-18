@@ -109,7 +109,7 @@ const NewsListScreen = ({ role }: Props) => {
           <Loading />
         </Backdrop>
       ) : news?.length !== 0 ? (
-        <>
+        <Box sx={{ mt: 5 }}>
           <NewsList news={news} role={role} />
           {!loading && count >= 10 ? (
             <Stack spacing={2} sx={{ mb: 5 }}>
@@ -123,10 +123,10 @@ const NewsListScreen = ({ role }: Props) => {
           ) : (
             ""
           )}
-        </>
+        </Box>
       ) : (
         <Typography variant="h4" sx={{ textAlign: "center", mt: 10 }}>
-          No hay elemetos que mostrar
+          No hay noticias que mostrar
         </Typography>
       )}
     </>

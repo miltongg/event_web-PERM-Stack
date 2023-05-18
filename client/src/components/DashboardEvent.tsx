@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import {
+  Chip,
   IconButton,
   MenuItem,
+  Paper,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
   TextField,
@@ -22,8 +25,11 @@ import Loading from "./Loading";
 import {
   dashboardImgGrow,
   dashboardImgStandard,
+  dashboardTableBodyStyle,
+  dashboardTableHeadStyle,
 } from "../helpers/customStyles";
 import dateFormat from "../helpers/dateFormat";
+import definedConst from "../helpers/definedConst";
 
 interface IEvent {
   id: string;
@@ -56,31 +62,31 @@ const tableHead: ITableHead[] = [
     label: "Foto",
     style: cellStyle,
   },
-  {
-    id: "id",
-    label: "ID",
-    style: cellStyle,
-  },
+  // {
+  //   id: "id",
+  //   label: "ID",
+  //   style: cellStyle,
+  // },
   {
     id: "name",
     label: "Nombre",
     style: cellStyle,
   },
-  {
-    id: "comments",
-    label: "No. Coment",
-    style: cellStyle,
-  },
-  {
-    id: "rating",
-    label: "Valoración",
-    style: cellStyle,
-  },
-  {
-    id: "views",
-    label: "Vistas",
-    style: cellStyle,
-  },
+  // {
+  //   id: "comments",
+  //   label: "No. Coment",
+  //   style: cellStyle,
+  // },
+  // {
+  //   id: "rating",
+  //   label: "Valoración",
+  //   style: cellStyle,
+  // },
+  // {
+  //   id: "views",
+  //   label: "Vistas",
+  //   style: cellStyle,
+  // },
   {
     id: "createdAt",
     label: "Creado",
@@ -124,7 +130,6 @@ const DashboardEvent = () => {
         });
 
         const { eventsList, count } = data;
-
 
         setEvents(eventsList);
         setLoading(false);
@@ -211,98 +216,120 @@ const DashboardEvent = () => {
   return loading ? (
     <Loading />
   ) : (
-    <Table>
-      <TableHead>
-        <TableRow>
-          {tableHead.map((head) => (
-            <TableCell key={head.id} style={head.style}>
-              {head.label}
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {events.map((event, index: number) => (
-          <TableRow
-            key={event.id}
-            // onClick={() => handleUserClick(user)}
-          >
-            <TableCell>
-              <img
-                style={
-                  imgGrow === index ? dashboardImgGrow : dashboardImgStandard
-                }
-                src={`${EVENT_IMG_URL}${event.id}/${event.mainImage}`}
-                alt="foto"
-                onClick={
-                  imgGrow === index
-                    ? () => setImgGrow(null)
-                    : () => setImgGrow(index)
-                }
-              />
-            </TableCell>
-            <TableCell>{event.id}</TableCell>
-            <TableCell>{event.name}</TableCell>
-            <TableCell>{event.commentsCount}</TableCell>
-            <TableCell>{event.rating}</TableCell>
-            <TableCell>{event.views}</TableCell>
-
-            <TableCell>{dateFormat(event.createdAt)}</TableCell>
-            <TableCell>
-              {edit.edit && index === edit.index ? (
-                <TextField
-                  required
-                  name="status"
-                  label="estado"
-                  variant="standard"
-                  select
-                  value={editEvent.status}
-                  sx={{ mt: -2 }}
-                  onChange={(e) =>
-                    setEditEvent({ ...editEvent, status: e.target.value })
-                  }
-                  fullWidth
-                >
-                  {statusList.map(({ value, label }) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              ) : (
-                event.status
-              )}
-            </TableCell>
-            <TableCell>
-              <IconButton
-                color="warning"
-                disabled={loading}
-                onClick={() => handleEditEvent(event.id, index)}
+    <TableContainer component={Paper} elevation={1}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            {tableHead.map((head) => (
+              <TableCell
+                sx={dashboardTableHeadStyle}
+                key={head.id}
+                style={head.style}
               >
-                <EditIcon />
-              </IconButton>
-              {edit.edit && edit.index === index ? (
-                <IconButton
-                  color="error"
-                  disabled={loading}
-                  onClick={() => handleUpdateEvent(event.slug)}
-                >
-                  <DoneIcon />
-                </IconButton>
-              ) : (
-                <IconButton
-                  color="error"
-                  disabled={loading}
-                  onClick={() => handleDeleteEvent(event.id, event.name)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              )}
-            </TableCell>
+                {head.label}
+              </TableCell>
+            ))}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHead>
+        <TableBody>
+          {events.map((event, index: number) => (
+            <TableRow
+              key={event.id}
+              // onClick={() => handleUserClick(user)}
+            >
+              <TableCell sx={{ alignItems: "center", alignContent: "center" }}>
+                <img
+                  style={
+                    imgGrow === index ? dashboardImgGrow : dashboardImgStandard
+                  }
+                  src={`${EVENT_IMG_URL}${event.id}/${event.mainImage}`}
+                  alt="foto"
+                  onClick={
+                    imgGrow === index
+                      ? () => setImgGrow(null)
+                      : () => setImgGrow(index)
+                  }
+                />
+              </TableCell>
+              {/*<TableCell sx={dashboardTableBodyStyle}>{event.id}</TableCell>*/}
+              <TableCell sx={dashboardTableBodyStyle}>{event.name}</TableCell>
+              {/*<TableCell sx={dashboardTableBodyStyle}>*/}
+              {/*  {event.commentsCount}*/}
+              {/*</TableCell>*/}
+              {/*<TableCell sx={dashboardTableBodyStyle}>*/}
+              {/*  {!event.rating ? 0 : event.rating}*/}
+              {/*</TableCell>*/}
+              {/*<TableCell sx={dashboardTableBodyStyle}>{event.views}</TableCell>*/}
+
+              <TableCell sx={dashboardTableBodyStyle}>
+                {dateFormat(event.createdAt)}
+              </TableCell>
+              <TableCell sx={dashboardTableBodyStyle}>
+                {edit.edit && index === edit.index ? (
+                  <TextField
+                    required
+                    name="status"
+                    label="estado"
+                    variant="standard"
+                    select
+                    value={editEvent.status}
+                    sx={{ mt: -2 }}
+                    onChange={(e) =>
+                      setEditEvent({ ...editEvent, status: e.target.value })
+                    }
+                    fullWidth
+                  >
+                    {statusList.map(({ value, label }) => (
+                      <MenuItem key={value} value={value}>
+                        {label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                ) : (
+                  <Chip
+                    color={
+                      event.status === definedConst.STATUS_ACTIVE
+                        ? "success"
+                        : event.status === definedConst.STATUS_PENDING
+                        ? "warning"
+                        : "default"
+                    }
+                    size="small"
+                    label={event.status}
+                  />
+                )}
+              </TableCell>
+              <TableCell sx={dashboardTableBodyStyle}>
+                <IconButton
+                  color="warning"
+                  disabled={loading}
+                  onClick={() => handleEditEvent(event.id, index)}
+                >
+                  <EditIcon />
+                </IconButton>
+                {edit.edit && edit.index === index ? (
+                  <IconButton
+                    color="error"
+                    disabled={loading}
+                    onClick={() => handleUpdateEvent(event.slug)}
+                  >
+                    <DoneIcon />
+                  </IconButton>
+                ) : (
+                  <IconButton
+                    color="error"
+                    disabled={loading}
+                    onClick={() => handleDeleteEvent(event.id, event.name)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

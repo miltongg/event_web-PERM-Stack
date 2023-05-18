@@ -1,5 +1,4 @@
 import { FormEvent, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import {
   AccessTime,
   Comment,
@@ -98,8 +97,10 @@ const Comments = ({
     if (showReplies === index) {
       setCommentData({ ...commentData, id: null, index: null });
       setShowReplies(null);
+      setArrIndex("");
     } else {
       setCommentData({ ...commentData, id: commentId, index });
+      setArrIndex(commentId);
       setShowReplies(index);
     }
   };

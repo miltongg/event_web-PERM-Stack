@@ -1,4 +1,4 @@
-import { AddCircle, AddPhotoAlternate, Image } from "@mui/icons-material";
+import { AddCircle, AddPhotoAlternate } from "@mui/icons-material";
 import {
   TextField,
   Button,
@@ -8,14 +8,15 @@ import {
   ListItem,
   CircularProgress,
 } from "@mui/material";
-import React, { useState, FormEvent, useEffect } from "react";
+import React, { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { webApi } from "../helpers/animeApi";
 import { toast } from "react-toastify";
 import { getError } from "../helpers/handleErrors";
-import { DatePicker, MobileDatePicker } from "@mui/x-date-pickers";
+import { MobileDateTimePicker} from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { addFormStyle, buttonFormStyle } from "../helpers/customStyles";
 
 interface Props {
   id: string;
@@ -84,7 +85,8 @@ const AddEventScreen = ({ id }: Props) => {
   return (
     <Paper
       component="form"
-      sx={{ padding: 2, marginY: 5 }}
+      elevation={0}
+      sx={addFormStyle}
       onSubmit={handleSubmit}
     >
       <Typography
@@ -108,11 +110,11 @@ const AddEventScreen = ({ id }: Props) => {
 
         <Grid item xs={12}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <MobileDatePicker
+            <MobileDateTimePicker
               sx={{ width: 1 }}
               value={date}
               onChange={(date) => setDate(date!)}
-              format="DD-MM-YYYY"
+              format="DD-MM-YYYY HH:mm"
             />
           </LocalizationProvider>
         </Grid>
@@ -129,49 +131,38 @@ const AddEventScreen = ({ id }: Props) => {
             rows={4}
           />
         </Grid>
-
-        <Grid item xs={12}>
-          <Button
-            startIcon={<AddPhotoAlternate />}
-            variant="contained"
-            component="label"
-          >
-            Subir imagen principal
-            <input
-              type="file"
-              name="file"
-              hidden
-              onChange={handleSelectImage}
-            />
-          </Button>
-          {image ? (
-            <ListItem sx={{ display: "block" }}>
-              <img
-                src={image}
-                alt={mainImage?.name}
-                style={{ height: 100, borderRadius: 2 }}
-              />
-              <Typography>{mainImage?.name}</Typography>
-            </ListItem>
-          ) : (
-            ""
-          )}
-        </Grid>
-
-        <Grid item xs={12}>
-          <Button
-            startIcon={
-              !loading ? <AddCircle /> : <CircularProgress size={20} />
-            }
-            disabled={loading}
-            type="submit"
-            variant="contained"
-            color="primary"
-          >
-            Agregar evento
-          </Button>
-        </Grid>
       </Grid>
+      <Button
+        startIcon={<AddPhotoAlternate />}
+        variant="contained"
+        component="label"
+        sx={buttonFormStyle}
+      >
+        Subir imagen principal
+        <input type="file" name="file" hidden onChange={handleSelectImage} />
+      </Button>
+      {image ? (
+        <ListItem sx={{ display: "block" }}>
+          <img
+            src={image}
+            alt={mainImage?.name}
+            style={{ height: 100, borderRadius: 2 }}
+          />
+          <Typography>{mainImage?.name}</Typography>
+        </ListItem>
+      ) : (
+        ""
+      )}
+
+      <Button
+        startIcon={!loading ? <AddCircle /> : <CircularProgress size={20} />}
+        disabled={loading}
+        type="submit"
+        variant="contained"
+        sx={buttonFormStyle}
+      >
+        Agregar evento
+      </Button>
     </Paper>
   );
 };

@@ -1,4 +1,4 @@
-import {useState, FormEvent} from "react";
+import { useState, FormEvent } from "react";
 import {
   Box,
   LinearProgress,
@@ -12,11 +12,11 @@ import {
   Typography,
   Link,
 } from "@mui/material";
-import {Visibility, VisibilityOff} from "@mui/icons-material";
-import {webApi} from "../helpers/animeApi";
-import {toast} from "react-toastify";
-import {getError} from "../helpers/handleErrors";
-import {useNavigate} from "react-router-dom";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { webApi } from "../helpers/animeApi";
+import { toast } from "react-toastify";
+import { getError } from "../helpers/handleErrors";
+import { useNavigate } from "react-router-dom";
 
 const formStyle = {
   boxShadow: "0px 5px 10px rgba(0, 0, 0, 0.2)",
@@ -25,7 +25,7 @@ const formStyle = {
   padding: 3,
   borderRadius: 1,
   backgroundColor: "white",
-  borderTop: "solid 5px orange",
+  // borderTop: "solid 5px #333",
   textAlign: "center",
 };
 
@@ -38,60 +38,60 @@ const SigninScreen = () => {
     showPassword: false,
     loading: false,
   });
-  
-  const {showPassword, loading} = formState;
-  
+
+  const { showPassword, loading } = formState;
+
   const handleClickShowPassword = () =>
     setFormState((prevState) => ({
       ...prevState,
       showPassword: !prevState.showPassword,
     }));
-  
+
   const navigate = useNavigate();
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
+
     try {
-      setFormState({...formState, loading: true});
-      
+      setFormState({ ...formState, loading: true });
+
       const formData = new FormData(event.currentTarget);
-      
-      const {data} = await webApi.post("/signin", {
+
+      const { data } = await webApi.post("/signin", {
         email: formData.get("email"),
         password: formData.get("password"),
       });
-      
+
       localStorage.setItem("token", data);
-      
+
       navigate("/");
     } catch (error: any) {
       toast.error(getError(error));
-      setFormState({...formState, loading: false});
+      setFormState({ ...formState, loading: false });
       console.log(error);
     }
   };
-  
+
   return (
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{display: "flex", height: "100vh"}}
+      sx={{ display: "flex", height: "100vh" }}
     >
       <FormControl sx={formStyle}>
-        <Typography variant="h5" sx={{textAlign: "center", color: "orange"}}>
+        <Typography variant="h5" sx={{ textAlign: "center", color: "black" }}>
           Autenticar
         </Typography>
-        
+
         <TextField
           id="email"
           label="Correo"
           name="email"
           type="email"
           variant="standard"
-          sx={{marginY: 2}}
+          sx={{ marginY: 2 }}
         />
-        
-        <FormControl sx={{marginY: 2}} variant="standard">
+
+        <FormControl sx={{ marginY: 2 }} variant="standard">
           <InputLabel htmlFor="standard-adornment-password">
             Contraseña
           </InputLabel>
@@ -106,15 +106,15 @@ const SigninScreen = () => {
                   onClick={handleClickShowPassword}
                   // onMouseDown={handleMouseDownPassword}
                 >
-                  {showPassword ? <VisibilityOff/> : <Visibility/>}
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
             }
           />
         </FormControl>
-        
-        <Box sx={{marginTop: 3, marginBottom: 2}}>
-          {loading ? <LinearProgress color="warning"/> : ""}
+
+        <Box sx={{ marginTop: 3, marginBottom: 2 }}>
+          {loading ? <LinearProgress color="warning" /> : ""}
           <Button
             disabled={loading}
             variant="contained"
@@ -122,9 +122,9 @@ const SigninScreen = () => {
             sx={{
               width: 1,
               mt: 1,
-              backgroundColor: "orange",
+              backgroundColor: "red",
               "&:hover": {
-                backgroundColor: "darkorange",
+                backgroundColor: "#333",
               },
             }}
           >
@@ -132,7 +132,7 @@ const SigninScreen = () => {
           </Button>
           <Link
             underline="none"
-            sx={{mt: 4, '&:hover': {color: 'darkslateblue'}}}
+            sx={{ mt: 4, "&:hover": { color: "darkslateblue" } }}
             component="button"
             onClick={() => navigate("/signup")}
           >
@@ -140,7 +140,7 @@ const SigninScreen = () => {
           </Link>
           <Link
             underline="none"
-            sx={{mt: 2, '&:hover': {color: 'darkslateblue'}}}
+            sx={{ mt: 2, "&:hover": { color: "darkslateblue" } }}
             component="button"
             onClick={() => navigate("/recover")}
           >

@@ -1,5 +1,6 @@
-import {DataTypes, Model} from "sequelize";
-import {sequelize} from "../database/database";
+import { DataTypes, Model } from "sequelize";
+import { sequelize } from "../database/database";
+import { STATUS_ACTIVE } from "../helpers/defineConsts";
 
 class Comment extends Model {
   public id!: string;
@@ -11,6 +12,7 @@ class Comment extends Model {
   public username!: string;
   public userImg?: string;
   public repliesCount?: number;
+  public status!: string;
 }
 
 Comment.init(
@@ -32,10 +34,10 @@ Comment.init(
       defaultValue: 0,
     },
     eventId: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     newsId: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     // userId: {
     //   type: DataTypes.STRING,
@@ -59,6 +61,10 @@ Comment.init(
     },
     userImg: {
       type: DataTypes.STRING,
+    },
+    status: {
+      type: DataTypes.STRING,
+      defaultValue: STATUS_ACTIVE,
     },
   },
   {

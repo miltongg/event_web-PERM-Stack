@@ -52,3 +52,34 @@ export const dashboardImgStandard = {
   alignItems: "center",
   width: 50,
 };
+
+export const dashboardTableHeadStyle = {
+  textAlign: "center",
+  fontWeight: "bold",
+  backgroundColor: "#333",
+  color: "white",
+};
+
+export const dashboardTableBodyStyle = {
+  textAlign: "center",
+};
+
+export const styles = {
+  colorNavbar: { backgroundColor: "#fc0303" },
+  colorText: { color: "white" },
+};
+
+export const buttonFormStyle = {
+  backgroundColor: "#FF0000",
+  marginTop: 2,
+  "&:hover": { backgroundColor: "#333" },
+};
+
+export const addFormStyle = {
+  p: 2,
+  width: "70%",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  margin: "20px auto",
+};

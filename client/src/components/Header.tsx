@@ -37,6 +37,7 @@ import { webApi } from "../helpers/animeApi";
 import { getError } from "../helpers/handleErrors";
 import { toast } from "react-toastify";
 import { USER_IMG_URL } from "../helpers/url";
+import { styles } from "../helpers/customStyles";
 
 const drawerWidth = 200;
 
@@ -59,7 +60,7 @@ const leftLinks = [
   { title: "Inicio", icon: <Home />, path: "/" },
   { title: "Eventos", icon: <Event />, path: "/event" },
   { title: "Noticias", icon: <Newspaper />, path: "/news" },
-  { title: "Juegos", icon: <Casino />, path: "/games" },
+  { title: "Juegos", icon: <Casino />, path: "/game" },
   { title: "Contacto", icon: <ContactPage />, path: "/contact" },
 ];
 
@@ -124,9 +125,9 @@ export default function Header({ id, userImg }: IState) {
   );
 
   return (
-    <Box sx={{ display: "flex", marginBottom: 8 }}>
+    <Box sx={{ display: "flex", mb: 8 }}>
       <CssBaseline />
-      <AppBar component="nav" sx={{ backgroundColor: "orange" }}>
+      <AppBar component="nav" sx={styles.colorNavbar}>
         <Toolbar>
           <IconButton
             color="inherit"

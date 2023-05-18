@@ -139,6 +139,7 @@ const ProfileScreen = ({ userId }: Props) => {
           username: user.username,
           userImg: user.userImg,
           cell: user.cell,
+          socials: user.socials,
         },
         { headers: { token } }
       );
@@ -152,7 +153,13 @@ const ProfileScreen = ({ userId }: Props) => {
       });
       setLoading(false);
       setEditSocial({ ...editSocial, text: "", index: null });
-      setToggleEdit({ ...toggleEdit, socials: false });
+      setToggleEdit({
+        ...toggleEdit,
+        socials: false,
+        name: false,
+        username: false,
+        cell: false,
+      });
 
       toast.success("Perfil actualizado");
     } catch (error) {

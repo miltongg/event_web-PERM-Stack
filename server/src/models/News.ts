@@ -1,7 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
 import Comment from "./Comment";
-import { STATUS_VISIBLE } from "../helpers/defineConsts";
+import { STATUS_ACTIVE } from "../helpers/defineConsts";
 
 class News extends Model {
   public id!: string;
@@ -76,9 +76,9 @@ News.init(
 
     status: {
       type: DataTypes.STRING,
-      defaultValue: STATUS_VISIBLE,
+      defaultValue: STATUS_ACTIVE,
     },
-    
+
     rating: {
       type: DataTypes.DOUBLE,
       defaultValue: 0,

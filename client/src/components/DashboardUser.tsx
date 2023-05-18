@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import {
   Avatar,
+  Chip,
   IconButton,
   MenuItem,
+  Paper,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
   TextField,
@@ -17,14 +20,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { webApi } from "../helpers/animeApi";
 import { toast } from "react-toastify";
 import { getError } from "../helpers/handleErrors";
-import { statusList, roleList } from "../helpers/tasgList";
+import { userStatusList, roleList } from "../helpers/tasgList";
 import { Confirm } from "notiflix/build/notiflix-confirm-aio";
 import Loading from "./Loading";
 import {
   dashboardImgGrow,
   dashboardImgStandard,
+  dashboardTableBodyStyle,
+  dashboardTableHeadStyle,
 } from "../helpers/customStyles";
 import dateFormat from "../helpers/dateFormat";
+import definedConst from "../helpers/definedConst";
 
 interface IUsers {
   id: string;
@@ -212,125 +218,136 @@ const DashboardUser = () => {
   return loading ? (
     <Loading />
   ) : (
-    <Table>
-      <TableHead>
-        <TableRow>
-          {tableHead.map((head) => (
-            <TableCell key={head.id} style={head.style}>
-              {head.label}
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {users.map((user, index: number) => (
-          <TableRow
-            key={user.id}
-            // onClick={() => handleUserClick(user)}
-          >
-            <TableCell>
-              {user?.userImg ? (
-                <img
-                  style={
-                    imgGrow === index ? dashboardImgGrow : dashboardImgStandard
-                  }
-                  src={`${USER_IMG_URL}${user.id}/${user.userImg}`}
-                  alt="foto"
-                  onClick={
-                    imgGrow === index
-                      ? () => setImgGrow(null)
-                      : () => setImgGrow(index)
-                  }
-                />
-              ) : (
-                <Avatar />
-              )}
-            </TableCell>
-            <TableCell>{user.id}</TableCell>
-            <TableCell>{user.name}</TableCell>
-            <TableCell>{user.username}</TableCell>
-            <TableCell>{user.email}</TableCell>
-            <TableCell>
-              {edit.edit && index === edit.index ? (
-                <TextField
-                  required
-                  name="rol"
-                  label="rol"
-                  variant="standard"
-                  select
-                  value={editUser.role}
-                  sx={{ mt: -2 }}
-                  onChange={(e) =>
-                    setEditUser({ ...editUser, role: e.target.value })
-                  }
-                  fullWidth
-                >
-                  {roleList.map(({ value, label }) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              ) : (
-                user.role
-              )}
-            </TableCell>
-            <TableCell>{dateFormat(user.createdAt)}</TableCell>
-            <TableCell>
-              {edit.edit && index === edit.index ? (
-                <TextField
-                  required
-                  name="status"
-                  label="estado"
-                  variant="standard"
-                  select
-                  value={editUser.status}
-                  sx={{ mt: -2 }}
-                  onChange={(e) =>
-                    setEditUser({ ...editUser, status: e.target.value })
-                  }
-                  fullWidth
-                >
-                  {statusList.map(({ value, label }) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              ) : (
-                user.status
-              )}
-            </TableCell>
-            <TableCell>
-              <IconButton
-                color="warning"
-                disabled={loading}
-                onClick={() => handleEditUser(user.id, index)}
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            {tableHead.map((head) => (
+              <TableCell
+                sx={dashboardTableHeadStyle}
+                key={head.id}
+                style={head.style}
               >
-                <EditIcon />
-              </IconButton>
-              {edit.edit && edit.index === index ? (
-                <IconButton
-                  color="error"
-                  disabled={loading}
-                  onClick={() => handleUpdateUser(user.id)}
-                >
-                  <DoneIcon />
-                </IconButton>
-              ) : (
-                <IconButton
-                  color="error"
-                  disabled={loading}
-                  onClick={() => handleDeleteUser(user.id, user.username)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              )}
-            </TableCell>
+                {head.label}
+              </TableCell>
+            ))}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHead>
+        <TableBody>
+          {users.map((user, index: number) => (
+            <TableRow
+              key={user.id}
+              // onClick={() => handleUserClick(user)}
+            >
+              <TableCell sx={dashboardTableBodyStyle}>
+                {user?.userImg ? (
+                  <Avatar src={`${USER_IMG_URL}${user.id}/${user.userImg}`} />
+                ) : (
+                  <Avatar />
+                )}
+              </TableCell>
+              <TableCell sx={dashboardTableBodyStyle}>{user.id}</TableCell>
+              <TableCell sx={dashboardTableBodyStyle}>{user.name}</TableCell>
+              <TableCell sx={dashboardTableBodyStyle}>
+                {user.username}
+              </TableCell>
+              <TableCell sx={dashboardTableBodyStyle}>{user.email}</TableCell>
+              <TableCell sx={dashboardTableBodyStyle}>
+                {edit.edit && index === edit.index ? (
+                  <TextField
+                    required
+                    name="rol"
+                    label="rol"
+                    variant="standard"
+                    select
+                    value={editUser.role}
+                    sx={{ mt: -2 }}
+                    onChange={(e) =>
+                      setEditUser({ ...editUser, role: e.target.value })
+                    }
+                    fullWidth
+                  >
+                    {roleList.map(({ value, label }) => (
+                      <MenuItem key={value} value={value}>
+                        {label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                ) : (
+                  user.role
+                )}
+              </TableCell>
+              <TableCell sx={dashboardTableBodyStyle}>
+                {dateFormat(user.createdAt)}
+              </TableCell>
+              <TableCell sx={dashboardTableBodyStyle}>
+                {edit.edit && index === edit.index ? (
+                  <TextField
+                    required
+                    name="status"
+                    label="estado"
+                    variant="standard"
+                    select
+                    value={editUser.status}
+                    sx={{ mt: -2 }}
+                    onChange={(e) =>
+                      setEditUser({ ...editUser, status: e.target.value })
+                    }
+                    fullWidth
+                  >
+                    {userStatusList.map(({ value, label }) => (
+                      <MenuItem key={value} value={value}>
+                        {label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                ) : (
+                  <Chip
+                    color={
+                      user.status === definedConst.STATUS_ACTIVE
+                        ? "success"
+                        : user.status === definedConst.STATUS_BANNED
+                        ? "error"
+                        : user.status === definedConst.STATUS_PENDING
+                        ? "warning"
+                        : "default"
+                    }
+                    size="small"
+                    label={user.status}
+                  />
+                )}
+              </TableCell>
+              <TableCell sx={dashboardTableBodyStyle}>
+                <IconButton
+                  color="warning"
+                  disabled={loading}
+                  onClick={() => handleEditUser(user.id, index)}
+                >
+                  <EditIcon />
+                </IconButton>
+                {edit.edit && edit.index === index ? (
+                  <IconButton
+                    color="error"
+                    disabled={loading}
+                    onClick={() => handleUpdateUser(user.id)}
+                  >
+                    <DoneIcon />
+                  </IconButton>
+                ) : (
+                  <IconButton
+                    color="error"
+                    disabled={loading}
+                    onClick={() => handleDeleteUser(user.id, user.username)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

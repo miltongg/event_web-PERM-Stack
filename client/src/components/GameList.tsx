@@ -9,45 +9,45 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-import { NEWS_IMG_URL } from "../helpers/url";
 import DataRecord from "./DataRecord";
 import { CalendarMonth } from "@mui/icons-material";
 
 interface Props {
-  news: {
+  games: {
     id: string;
     name: string;
     date: any;
     description: string;
-    mainImage: string;
-    slug: string;
-    commentsCount: number;
+    image: string;
+    rating: number;
+    points: number;
+    // commentsCount: number;
     views: number;
   }[];
   role: string | null;
 }
 
-const NewsList: FC<Props> = (props) => {
-  const { news, role } = props;
+const GameList: FC<Props> = (props) => {
+  const { games, role } = props;
   const navigate = useNavigate();
 
   return (
     <Box>
-      {news.map((n) => (
-        <Card key={n.id} sx={{ maxWidth: 1, mb: 5 }}>
+      {games.map((game) => (
+        <Card key={game.id} sx={{ maxWidth: 1, mb: 5 }}>
           <CardMedia
             component="img"
-            alt={n.name}
+            alt={game.name}
             height="300"
-            image={`${NEWS_IMG_URL}${n.id}/${n.mainImage}`}
+            // image={`${NEWS_IMG_URL}${n.id}/${n.mainImage}`}
           />
           <CardContent>
             <Typography variant="h5" component="div">
-              {n.name}
+              {game.name}
             </Typography>
             <Box sx={{ display: "flex", my: 1 }}>
               <CalendarMonth sx={{ mr: 1 }} />
-              <Typography>{n.date}</Typography>
+              <Typography>{game.date}</Typography>
             </Box>
 
             <Typography
@@ -56,9 +56,9 @@ const NewsList: FC<Props> = (props) => {
               component="div"
               style={{ whiteSpace: "pre-line", textAlign: "justify" }}
             >
-              {n.description.length >= 450
-                ? n.description.substring(0, 450) + "..."
-                : n.description}
+              {game.description.length >= 450
+                ? game.description.substring(0, 450) + "..."
+                : game.description}
             </Typography>
           </CardContent>
           <CardActions
@@ -66,15 +66,20 @@ const NewsList: FC<Props> = (props) => {
           >
             <Box sx={{ display: "flex", width: 1 }}>
               <Button size="small">Compartir</Button>
-              <Button onClick={() => navigate(`/news/${n.slug}`)} size="small">
+              <Button
+                onClick={() =>
+                  navigate(`/games/discover-the-silhouette/${game.id}`)
+                }
+                size="small"
+              >
                 Ver Más...
               </Button>
             </Box>
 
-            <DataRecord
-              views={n.views}
-              commentsCount={n.commentsCount}
-            />
+            {/*<DataRecord*/}
+            {/*  views={game.views}*/}
+            {/*  // commentsCount={game.commentsCount}*/}
+            {/*/>*/}
           </CardActions>
         </Card>
       ))}
@@ -82,4 +87,4 @@ const NewsList: FC<Props> = (props) => {
   );
 };
 
-export default NewsList;
+export default GameList;

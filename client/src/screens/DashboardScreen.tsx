@@ -5,7 +5,8 @@ import UserIcon from "@mui/icons-material/Person";
 import EventIcon from "@mui/icons-material/Event";
 import NewsIcon from "@mui/icons-material/Newspaper";
 import CommentIcon from "@mui/icons-material/Comment";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import DashboardGeneral from "../components/DashboardGeneral";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -22,13 +23,10 @@ const TabPanel = (props: TabPanelProps) => {
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
+      sx={{ position: "relative", width: 1 }}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Box>{children}</Box>
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 2 }}>{children}</Box>}
     </Box>
   );
 };
@@ -58,22 +56,23 @@ const DashboardScreen = () => {
 
   return (
     <Paper
+      elevation={1}
       sx={{
         flexGrow: 1,
-        borderBottom: 1,
-        borderColor: "divider",
         marginTop: 5,
+        display: "flex",
+        width: "100%",
       }}
     >
       <Tabs
         value={value}
-        orientation="horizontal"
+        orientation="vertical"
         variant="scrollable"
         onChange={handleChange}
         aria-label="basic tabs example"
         sx={{
+          // borderRight: 1,
           borderRight: 1,
-          borderBottom: 1,
           borderColor: "divider",
         }}
       >
@@ -103,7 +102,9 @@ const DashboardScreen = () => {
         />
         <Tab icon={<CommentIcon />} label="Comentarios" {...a11yProps(4)} />
       </Tabs>
-      <TabPanel value={value} index={0}></TabPanel>
+      <TabPanel value={value} index={0}>
+        <DashboardGeneral />
+      </TabPanel>
       <TabPanel value={value} index={1}>
         <Outlet />
       </TabPanel>

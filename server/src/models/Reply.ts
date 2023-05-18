@@ -1,15 +1,17 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../database/database";
 import Comment from "./Comment";
+import { STATUS_ACTIVE } from "../helpers/defineConsts";
 
 class Reply extends Model {
-  public id!: string;
-  public comment!: string;
-  public userId!: string;
-  public elementId?: string;
-  public commentId!: string;
-  public username!: string;
-  public userImg?: string;
+  id!: string;
+  comment!: string;
+  userId!: string;
+  elementId?: string;
+  commentId!: string;
+  username!: string;
+  userImg?: string;
+  status!: string;
 }
 
 Reply.init(
@@ -50,6 +52,10 @@ Reply.init(
 
     userImg: {
       type: DataTypes.STRING,
+    },
+    status: {
+      type: DataTypes.STRING,
+      defaultValue: STATUS_ACTIVE,
     },
   },
   {
