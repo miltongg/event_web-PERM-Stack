@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import User from "../../models/User";
 import { ADMIN_ROLE } from "../../helpers/defineConsts";
+import StatusCodes from "http-status-codes";
+import { Op } from "sequelize";
 
 const updateUser = async (req: Request, res: Response) => {
   try {
@@ -28,6 +30,17 @@ const updateUser = async (req: Request, res: Response) => {
 
       role = user?.dataValues.role;
       status = user?.dataValues.status;
+    }
+
+    if (username) {
+      const getUsername = await User.findOne({
+        where: { username, id: { [Op.not]: id } },
+        attributes: ["id"],
+      });
+      if (getUsername)
+        return res.status(StatusCodes.NOT_ACCEPTABLE).json({
+          message: `El alias ${username} ya está en uso`,
+        });
     }
 
     await User.update(

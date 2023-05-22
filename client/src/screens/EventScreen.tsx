@@ -2,7 +2,6 @@ import {
   Box,
   Card,
   CardMedia,
-  CircularProgress,
   Collapse,
   Divider,
   IconButton,
@@ -23,8 +22,10 @@ import {
   Done,
   Edit,
 } from "@mui/icons-material";
+
 import moment from "moment";
-import { StaticDatePicker } from "@mui/x-date-pickers";
+
+import { StaticDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { EVENT_IMG_URL } from "../helpers/url";
@@ -68,6 +69,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const { slug } = useParams();
+  const [loading, setLoading] = useState<boolean>(true);
   const [showFullDesc, setShowFullDesc] = useState<boolean>(false);
   const [event, setEvent] = useState<IEvent>({
     id: "",
@@ -89,7 +91,6 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
     mainImage: false,
   });
   const [img, setImg] = useState<any>(null);
-  const [reload, setReload] = useState(false);
 
   // GET EVENT //
   useEffect(() => {
@@ -97,8 +98,10 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
       try {
         const { data } = await webApi.get(`/event/${slug}`);
 
-        data.date = moment(data.date).format("DD/MM/YYYY");
+        data.date = moment(data.date).format("DD/MM/YYYY - hh:mm A");
+        console.log(data);
         setEvent(data);
+        setLoading(false);
       } catch (error) {
         navigate("/event");
         toast.error(getError(error));
@@ -109,6 +112,8 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
 
   // UPDATE EVENT //
   const handleUpdate = async () => {
+    setLoading(true);
+
     try {
       await webApi.put(
         `/event/${slug}`,
@@ -139,15 +144,27 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
         navigate(`/event/${slug}`);
       }
 
+      setLoading(false);
       toast.success("Se ha actualizado este evento");
     } catch (error) {
+      setLoading(false);
       toast.error(getError(error));
     }
   };
 
-  // UPDATE STATE FUNCTIONS //
-  const updateCommentsCount = (number: number) => {
-    setEvent({ ...event, commentsCount: number });
+  //// UPDATE STATE FUNCTIONS ////
+  const updateCommentsCount = (operation: string) => {
+    setEvent({
+      ...event,
+      commentsCount:
+        operation === "sum"
+          ? Number(event.commentsCount) + 1
+          : Number(event.commentsCount) - 1,
+    });
+  };
+
+  const updateRating = (rating: number) => {
+    setEvent({ ...event, rating });
   };
 
   const updateEventImages = (images: string[]) => {
@@ -196,7 +213,9 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
     }
   }, [img]);
 
-  return event.id ? (
+  return loading ? (
+    <Loading />
+  ) : (
     <Paper elevation={0} sx={{ marginY: 5 }}>
       <Card sx={{ position: "relative" }}>
         <CardMedia
@@ -257,12 +276,14 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
         <ListItem>
           {edit?.date ? (
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <StaticDatePicker
+              <StaticDateTimePicker
                 sx={{ width: 1 }}
                 onChange={(date) =>
                   setEvent({
                     ...event,
-                    date: moment(date!.toString()).format("DD/MM/YYYY"),
+                    date: moment(date!.toString()).format(
+                      "DD/MM/YYYY - hh:mm A"
+                    ),
                   })
                 }
                 onAccept={handleUpdate}
@@ -278,7 +299,7 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
                 justifyContent: "space-between",
               }}
             >
-              <Box sx={{ display: "flex" }}>
+              <Box sx={{ display: "flex", width: 1 }}>
                 <CalendarMonth />
                 <Typography>{event.date.toString()}</Typography>
                 {role === "admin" ? (
@@ -295,14 +316,13 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
                   ""
                 )}
               </Box>
-
-              <EventDataRecord
-                views={event.views}
-                rating={event.rating}
-                commentsCount={event.commentsCount}
-              />
             </Box>
           )}
+          <EventDataRecord
+            views={event.views}
+            rating={event.rating}
+            commentsCount={event.commentsCount}
+          />
         </ListItem>
 
         <Divider sx={{ marginY: 2 }} />
@@ -399,12 +419,11 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
         token={token}
         id={event.id}
         updateCommentsCount={updateCommentsCount}
+        updateRating={updateRating}
         userImg={userImg}
         role={role}
       />
     </Paper>
-  ) : (
-    <Loading />
   );
 };
 

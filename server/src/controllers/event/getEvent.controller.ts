@@ -3,6 +3,7 @@ import Event from "../../models/Event";
 import Comment from "../../models/Comment";
 import sequelize from "sequelize";
 import { StatusCodes } from "http-status-codes";
+import Reply from "../../models/Reply";
 
 const getEvent = async (req: Request, res: Response) => {
   const { slug } = req.params;
@@ -21,7 +22,9 @@ const getEvent = async (req: Request, res: Response) => {
       attributes: {
         include: [
           [
-            sequelize.fn("COUNT", sequelize.col("Comments.id")),
+            sequelize.literal(
+              `(SELECT COUNT(*) FROM "comments" AS "Comment" WHERE "Comment"."eventId" = "Event"."id") + (SELECT COUNT(*) FROM "replies" AS "Reply" JOIN "comments" AS "Comment" ON "Reply"."commentId" = "Comment"."id" WHERE "Comment"."eventId" = "Event"."id")`
+            ),
             "commentsCount",
           ],
           [sequelize.fn("AVG", sequelize.col("Comments.rating")), "rating"],
@@ -36,7 +39,6 @@ const getEvent = async (req: Request, res: Response) => {
       ],
       group: ["Event.id"],
     });
-    
 
     if (!event)
       return res

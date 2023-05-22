@@ -4,11 +4,20 @@ import randomId from "../../libs/randomId";
 import { StatusCodes } from "http-status-codes";
 import { EVENT_PREFIX } from "../../helpers/defineConsts";
 import unidecode from "unidecode";
+import moment from "moment";
 
 const createEvent = async (req: Request, res: Response) => {
   try {
-    const { name, date, description } = req.body;
+    let { name, date, description } = req.body;
     const { id } = req.headers;
+
+    date = new Date(date);
+
+    console.log(date);
+
+    date = moment(date, "DD/MM/YYYY - hh:mm A");
+
+    console.log(date);
 
     const event = await Event.create({
       id: EVENT_PREFIX + randomId(),

@@ -2,11 +2,8 @@ import {
   Box,
   Card,
   CardMedia,
-  CircularProgress,
-  Collapse,
   Divider,
   IconButton,
-  ListItem,
   Paper,
   TextField,
   Typography,
@@ -46,6 +43,7 @@ interface INews {
   description: string;
   tag: string;
   userId: string;
+  rating: number;
   mainImage: string;
   date: string | {};
   views: number;
@@ -77,6 +75,7 @@ const NewsScreen = ({ role, userId, userImg }: Props) => {
     date: "",
     tag: "",
     userId: "",
+    rating: 0,
     description: "",
     commentsCount: 0,
     views: 0,
@@ -91,7 +90,7 @@ const NewsScreen = ({ role, userId, userImg }: Props) => {
         data.date = moment(data.date).format("DD/MM/YYYY");
         setNews(data);
       } catch (error) {
-        navigate('/news')
+        navigate("/news");
         toast.error(getError(error));
       }
     };
@@ -140,8 +139,19 @@ const NewsScreen = ({ role, userId, userImg }: Props) => {
     }
   };
 
-  const updateCommentsCount = (number: number) => {
-    setNews({ ...news, commentsCount: number });
+  //// UPDATE STATE FUNCTIONS ////
+  const updateCommentsCount = (operation: string) => {
+    setNews({
+      ...news,
+      commentsCount:
+        operation === "sum"
+          ? Number(news.commentsCount) + 1
+          : Number(news.commentsCount) - 1,
+    });
+  };
+
+  const updateRating = (rating: number) => {
+    setNews({ ...news, rating });
   };
 
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -283,7 +293,11 @@ const NewsScreen = ({ role, userId, userImg }: Props) => {
               )}
             </Box>
 
-            <DataRecord views={news.views} commentsCount={news.commentsCount} />
+            <DataRecord
+              rating={news.rating}
+              views={news.views}
+              commentsCount={news.commentsCount}
+            />
           </Box>
         )}
       </Box>
@@ -372,6 +386,7 @@ const NewsScreen = ({ role, userId, userImg }: Props) => {
         userId={userId}
         token={token}
         updateCommentsCount={updateCommentsCount}
+        updateRating={updateRating}
         id={news.id}
         userImg={userImg}
         role={role}

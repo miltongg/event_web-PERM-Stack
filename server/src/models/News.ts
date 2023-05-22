@@ -12,7 +12,6 @@ class News extends Model {
   public slug!: string;
   public date!: Date;
   public description!: string;
-  public rating!: number;
   public status!: string;
   public mainImage!: string;
   public images?: string[];
@@ -77,11 +76,6 @@ News.init(
     status: {
       type: DataTypes.STRING,
       defaultValue: STATUS_ACTIVE,
-    },
-
-    rating: {
-      type: DataTypes.DOUBLE,
-      defaultValue: 0,
     },
   },
   {

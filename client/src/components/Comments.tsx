@@ -18,6 +18,8 @@ import {
   Box,
   Button,
   Divider,
+  IconButton,
+  ListItem,
   Paper,
   Rating,
   TextField,
@@ -40,7 +42,8 @@ interface Props {
   token: string | null;
   role: string | null;
   userImg: string | null | undefined;
-  updateCommentsCount: (number: number) => void;
+  updateCommentsCount: (operation: string) => void;
+  updateRating: (rating: number) => void;
 }
 
 interface IComment {
@@ -73,6 +76,7 @@ const Comments = ({
   token,
   role,
   updateCommentsCount,
+  updateRating,
 }: Props) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<IComment[]>([]);
@@ -92,6 +96,8 @@ const Comments = ({
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [showReplies, setShowReplies] = useState<number | null>(null);
+
+  let ratingMedia = 0;
 
   const showHideReplies = (commentId: string, index: number) => {
     if (showReplies === index) {
@@ -120,22 +126,25 @@ const Comments = ({
 
   // GET COMMENTS //
   useEffect(() => {
+    setLoading(true);
     try {
       const callComments = async () => {
         const { data } = await webApi.get(`/comment/${id}`);
         setComments(data);
+        setLoading(false);
       };
       callComments();
     } catch (error) {
+      setLoading(false);
       console.log(error);
       toast.error(getError(error));
     }
   }, []);
 
   // UPDATE EVENTS COMMENTS COUNT //
-  useEffect(() => {
-    updateCommentsCount(comments?.length);
-  }, [comments]);
+  // useEffect(() => {
+  //   updateCommentsCount(comments?.length);
+  // }, [comments]);
 
   // POST COMMENT //
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -159,9 +168,15 @@ const Comments = ({
       );
 
       setComments([...comments, data]);
-      setComment("");
-      setLoading(false);
 
+      comments.map((com: any) => {
+        ratingMedia += com.rating;
+      });
+
+      setComment("");
+      updateCommentsCount("sum");
+      setLoading(false);
+      await updateRating((ratingMedia + rating!) / (comments.length + 1));
       toast.success("Comentario añadido");
     } catch (error: any) {
       setLoading(false);
@@ -178,6 +193,7 @@ const Comments = ({
 
   // UPDATE COMMENT //
   const handleUpdatedComment = async (commentId: string) => {
+    setLoading(true);
     try {
       await webApi.put(
         `/comment/${commentId}`,
@@ -196,12 +212,18 @@ const Comments = ({
           com.comment = editedComment;
           com.rating = rating;
         }
+
+        ratingMedia += com.rating;
       });
+
+      await updateRating(ratingMedia / comments.length);
 
       setComments(comments);
       setEdit({ edit: false });
+      setLoading(false);
       toast.success("Has actualizado tu comentario");
     } catch (error: any) {
+      setLoading(false);
       console.error(error);
       toast.error(getError(error));
     }
@@ -231,6 +253,7 @@ const Comments = ({
         }
       );
 
+      updateCommentsCount("sum");
       toast.success("Respondido");
       setReply({ ...reply, index: null });
       setComments(
@@ -294,10 +317,19 @@ const Comments = ({
             headers: { token },
           });
 
-          setComments(comments.filter((com) => com.id !== id));
+          const remainsComments = comments.filter((com) => com.id !== id);
+
+          setComments(remainsComments);
 
           toast.success("Has borrado el comentario");
+          updateCommentsCount("minus");
+
+          remainsComments.map((com) => {
+            ratingMedia += com.rating!;
+          });
+
           setEdit({ index: null, edit: false });
+          await updateRating(ratingMedia / remainsComments.length);
         },
         () => {},
         {
@@ -321,9 +353,9 @@ const Comments = ({
           </Typography>
           <Divider />
         </>
+      ) : loading ? (
+        ""
       ) : (
-        // ) : comments.find((i) => i.userId === userId) ? (
-        //   ""
         <Paper
           component="form"
           elevation={1}
@@ -394,40 +426,50 @@ const Comments = ({
                     {moment(comment.createdAt).fromNow()}
                   </Box>
                 </Box>
-                <Box sx={{ position: "absolute", right: 5 }}>
-                  <Rating
-                    disabled={edit.index !== index}
-                    value={
-                      edit.edit && edit.index === index
-                        ? rating
-                        : comment.rating
-                    }
-                    onChange={(e, newValue) => {
-                      setRating(newValue);
-                    }}
-                  />
-                  {userId === comment.userId || role === "admin" ? (
-                    <Edit
-                      sx={editButtonStyle}
-                      onClick={() => editToggle(index)}
+                <Box sx={{ position: "absolute", right: 5, top: 0 }}>
+                  <ListItem>
+                    <Rating
+                      disabled={edit.index !== index}
+                      value={
+                        edit.edit && edit.index === index
+                          ? rating
+                          : comment.rating
+                      }
+                      onChange={(e, newValue) => {
+                        setRating(newValue);
+                      }}
                     />
-                  ) : (
-                    ""
-                  )}
-                  {edit.index === index && edit.edit ? (
-                    <>
-                      <Done
-                        sx={doneButtonStyle}
-                        onClick={() => handleUpdatedComment(comment.id)}
-                      />
-                      <Delete
-                        sx={deleteButtonStyle}
-                        onClick={() => handleDeleteComment(comment.id)}
-                      />
-                    </>
-                  ) : (
-                    ""
-                  )}
+                    {userId === comment.userId || role === "admin" ? (
+                      <IconButton
+                        sx={editButtonStyle}
+                        onClick={() => editToggle(index)}
+                      >
+                        <Edit />
+                      </IconButton>
+                    ) : (
+                      ""
+                    )}
+                    {edit.index === index && edit.edit ? (
+                      <>
+                        <IconButton
+                          disabled={loading}
+                          sx={doneButtonStyle}
+                          onClick={() => handleUpdatedComment(comment.id)}
+                        >
+                          <Done />
+                        </IconButton>
+                        <IconButton
+                          disabled={loading}
+                          sx={deleteButtonStyle}
+                          onClick={() => handleDeleteComment(comment.id)}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </>
+                    ) : (
+                      ""
+                    )}
+                  </ListItem>
                 </Box>
               </Box>
               {edit.index === index && edit.edit ? (
@@ -593,6 +635,7 @@ const Comments = ({
                 userId={userId}
                 token={token}
                 role={role}
+                updateCommentsCount={updateCommentsCount}
                 commentData={commentData}
                 actualizeCommentReplyStatus={actualizeCommentReplyStatus}
               />

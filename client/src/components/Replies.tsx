@@ -29,6 +29,7 @@ interface Props {
   role: string | null;
   commentData: { id: string | null; repCount: number; index: number | null };
   actualizeCommentReplyStatus: (incRep: boolean) => void;
+  updateCommentsCount: (operation: string) => void;
 }
 
 interface IReplies {
@@ -50,6 +51,7 @@ const Replies = ({
   userId,
   commentData,
   actualizeCommentReplyStatus,
+  updateCommentsCount,
   role,
 }: Props) => {
   const [replies, setReplies] = useState<IReplies[]>([]);
@@ -155,8 +157,8 @@ const Replies = ({
       );
 
       actualizeCommentReplyStatus(true);
-
       setReplies([...replies, data]);
+      updateCommentsCount("sum");
 
       toast.success("Respondido");
       setRep({ ...rep, index: null });
@@ -182,6 +184,7 @@ const Replies = ({
           setReplies(replies.filter((reply) => reply.id !== id));
           setEdit({ ...edit, edit: false });
           actualizeCommentReplyStatus(false);
+          updateCommentsCount("minus");
           toast.success("Has borrado el comentario");
           setLoading(false);
         },

@@ -16,7 +16,9 @@ const getNewsList = async (req: Request, res: Response) => {
       attributes: {
         include: [
           [
-            sequelize.fn("COUNT", sequelize.col("Comments.id")),
+            sequelize.literal(
+              `(SELECT COUNT(*) FROM "comments" AS "Comment" WHERE "Comment"."newsId" = "News"."id") + (SELECT COUNT(*) FROM "replies" AS "Reply" JOIN "comments" AS "Comment" ON "Reply"."commentId" = "Comment"."id" WHERE "Comment"."newsId" = "News"."id")`
+            ),
             "commentsCount",
           ],
         ],

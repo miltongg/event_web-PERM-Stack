@@ -40,22 +40,16 @@ const DataRecord = ({ views, rating, commentsCount }: Props) => {
         <Typography>{views}</Typography>
       </Box>
 
-      {!rating ? (
-        ""
-      ) : (
-        <Box
-          sx={{
-            mx: 1,
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <StarRounded sx={{ color: "orange" }} />
-          <Typography>
-            {rating === 0 || !rating ? (rating = 0) : rating.toFixed(1)}
-          </Typography>
-        </Box>
-      )}
+      <Box
+        sx={{
+          mx: 1,
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <StarRounded sx={{ color: "orange" }} />
+        <Typography>{!rating ? 0 : rating.toFixed(1)}</Typography>
+      </Box>
     </Box>
   );
 };

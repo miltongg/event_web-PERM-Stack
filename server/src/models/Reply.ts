@@ -1,6 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../database/database";
 import Comment from "./Comment";
+import Event from "./Event";
 import { STATUS_ACTIVE } from "../helpers/defineConsts";
 
 class Reply extends Model {

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Game from "../../models/Game";
+import { StatusCodes } from "http-status-codes";
 
 const updateGame = async (req: Request, res: Response) => {
   try {
@@ -23,7 +24,7 @@ const updateGame = async (req: Request, res: Response) => {
     res.json(game);
   } catch (error: any) {
     console.error(error?.message);
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: error.message,
     });
   }

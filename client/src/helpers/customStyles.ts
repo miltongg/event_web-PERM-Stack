@@ -12,7 +12,7 @@ export const doneButtonStyle = {
 export const editButtonStyle = {
   color: "orange",
   marginX: 1,
-  ml: 1,
+  // ml: 1,
   "&:hover": {
     color: "red",
     cursor: "pointer",

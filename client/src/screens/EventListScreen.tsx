@@ -25,6 +25,8 @@ const EventListScreen = ({ role }: Props) => {
   let query = new URLSearchParams(search);
   const pageNumber = Number(query.get("page")) || 1;
 
+  const token = localStorage.getItem("token");
+
   const [page, setPage] = useState<number>(pageNumber);
   const [events, setEvents] = useState([]);
   const [limit, setLimit] = useState(3);
@@ -57,7 +59,7 @@ const EventListScreen = ({ role }: Props) => {
       const getEvents = async () => {
         setLoading(true);
         let { data } = await webApi(`/event?page=${page}`, {
-          headers: { limit, offset },
+          headers: { limit, offset, token },
         });
 
         const { eventsList, count } = data;

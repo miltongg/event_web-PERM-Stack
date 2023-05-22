@@ -64,13 +64,13 @@ export const SideBar = () => {
         </Typography>
       </Divider>
       {/*<Divider/>*/}
-      {loading ? (
-        <Backdrop open={loading} sx={{ zIndex: 1 }}>
-          <Loading />
-        </Backdrop>
-      ) : (
-        ""
-      )}
+      {/*{loading ? (*/}
+      {/*  <Backdrop open={loading} sx={{ zIndex: 1 }}>*/}
+      {/*    <Loading />*/}
+      {/*  </Backdrop>*/}
+      {/*) : (*/}
+      {/*  ""*/}
+      {/*)}*/}
       {!loading && events?.length === 0 ? (
         <Typography variant="h6" sx={{ textAlign: "center", my: 3 }}>
           No hay eventos que mostrar

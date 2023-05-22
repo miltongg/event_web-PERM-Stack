@@ -216,7 +216,7 @@ const DashboardEvent = () => {
   return loading ? (
     <Loading />
   ) : (
-    <TableContainer component={Paper} elevation={1}>
+    <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>

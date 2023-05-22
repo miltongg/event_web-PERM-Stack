@@ -13,7 +13,7 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
-import { EVENT_IMG_URL, USER_IMG_URL } from "../helpers/url";
+import { USER_IMG_URL } from "../helpers/url";
 import EditIcon from "@mui/icons-material/Edit";
 import DoneIcon from "@mui/icons-material/Done";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -24,8 +24,6 @@ import { userStatusList, roleList } from "../helpers/tasgList";
 import { Confirm } from "notiflix/build/notiflix-confirm-aio";
 import Loading from "./Loading";
 import {
-  dashboardImgGrow,
-  dashboardImgStandard,
   dashboardTableBodyStyle,
   dashboardTableHeadStyle,
 } from "../helpers/customStyles";
@@ -60,16 +58,16 @@ const tableHead: ITableHead[] = [
     label: "Foto",
     style: cellStyle,
   },
-  {
-    id: "id",
-    label: "ID",
-    style: cellStyle,
-  },
-  {
-    id: "name",
-    label: "Nombre",
-    style: cellStyle,
-  },
+  // {
+  //   id: "id",
+  //   label: "ID",
+  //   style: cellStyle,
+  // },
+  // {
+  //   id: "name",
+  //   label: "Nombre",
+  //   style: cellStyle,
+  // },
   {
     id: "username",
     label: "Apodo",
@@ -106,7 +104,6 @@ const DashboardUser = () => {
   const token = localStorage.getItem("token");
   const [users, setUsers] = useState<IUsers[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [imgGrow, setImgGrow] = useState<number | null>(null);
   const [edit, setEdit] = useState<{ edit: boolean; index: number | null }>({
     edit: false,
     index: null,
@@ -246,8 +243,8 @@ const DashboardUser = () => {
                   <Avatar />
                 )}
               </TableCell>
-              <TableCell sx={dashboardTableBodyStyle}>{user.id}</TableCell>
-              <TableCell sx={dashboardTableBodyStyle}>{user.name}</TableCell>
+              {/*<TableCell sx={dashboardTableBodyStyle}>{user.id}</TableCell>*/}
+              {/*<TableCell sx={dashboardTableBodyStyle}>{user.name}</TableCell>*/}
               <TableCell sx={dashboardTableBodyStyle}>
                 {user.username}
               </TableCell>

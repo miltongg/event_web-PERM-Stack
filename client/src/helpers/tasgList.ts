@@ -32,8 +32,8 @@ export const roleList = [
 
 export const userStatusList = [
   {
-    value: "visible",
-    label: "visible",
+    value: "active",
+    label: "activo",
   },
   {
     value: "hided",
@@ -51,12 +51,12 @@ export const userStatusList = [
 
 export const statusList = [
   {
-    value: "visible",
-    label: "visible",
+    value: "active",
+    label: "activo",
   },
   {
     value: "hided",
-    label: "ocultar",
+    label: "oculto",
   },
   {
     value: "pending",

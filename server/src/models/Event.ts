@@ -1,6 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
 import Comment from "./Comment";
+import Reply from "./Reply";
 
 class Event extends Model {
   public id!: string;
@@ -8,7 +9,6 @@ class Event extends Model {
   public name!: string;
   public date!: Date;
   public description!: string;
-  public rating!: number;
   public mainImage!: string;
   public eventImages?: string[];
   public status!: string;
@@ -40,11 +40,6 @@ Event.init(
     date: {
       type: DataTypes.DATE,
       allowNull: false,
-    },
-
-    rating: {
-      type: DataTypes.DOUBLE,
-      defaultValue: 0,
     },
 
     description: {

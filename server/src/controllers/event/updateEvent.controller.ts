@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import Event from "../../models/Event";
 import unidecode from "unidecode";
+import { StatusCodes } from "http-status-codes";
+import moment from "moment";
 
 const updateEvent = async (req: Request, res: Response) => {
   try {
@@ -18,10 +20,7 @@ const updateEvent = async (req: Request, res: Response) => {
     const paramSlug = req.params.slug;
     const headerId = req.headers.id;
 
-    if (date && date.includes("/")) {
-      const [day, month, year] = date.split("/");
-      date = `${year}/${month}/${day}`;
-    }
+    if (date) date = moment(date, "DD/MM/YYYY - hh:mm A");
 
     const slugId = paramSlug ? paramSlug : headerId;
     const slug = name
@@ -52,7 +51,7 @@ const updateEvent = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error(error?.message);
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: error.message,
     });
   }
