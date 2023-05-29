@@ -6,15 +6,19 @@ import { StatusCodes } from "http-status-codes";
 
 const addGame = async (req: Request, res: Response) => {
   try {
-    const { name, description, image, music, date, type } = req.body;
+    const { name, description, answer, image, music, date, type } = req.body;
 
-    console.log(req.body);
+    if (!date || !name || !type)
+      return res.status(StatusCodes.FORBIDDEN).json({
+        message: "Faltan datos por rellenar",
+      });
 
     const newGame = await Game.create({
       id: GAME_PREFIX + randomId(),
       name,
       description,
       image,
+      answer,
       music,
       date,
       type,

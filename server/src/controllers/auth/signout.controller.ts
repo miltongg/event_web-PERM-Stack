@@ -7,7 +7,7 @@ export default async function signout(req: Request, res: Response) {
   try {
     const id = req.headers.id as string;
     const token = req.headers['token'] as string;
-  
+    
     const decodedToken = verifyToken(token);
     
     if (id !== decodedToken.id)

@@ -32,9 +32,9 @@ export default async function verify (req: Request, res: Response) {
     
     res.json(token);
     
-  } catch ({message}) {
+  } catch (error: any) {
     res.status(500).json({
-      message
+      message: error.message
     });
   }
   

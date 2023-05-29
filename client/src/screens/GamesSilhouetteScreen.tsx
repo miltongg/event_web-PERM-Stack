@@ -62,10 +62,6 @@ const GamesSilhouetteScreen = ({ role }: Props) => {
 
         const { gamesList, count } = data;
 
-        for (let element of gamesList) {
-          element.date = moment(element.date).format("DD/MM/YYYY");
-        }
-
         setGames(gamesList);
         setCount(parseInt(String(count / 2)));
         setLoading(false);
@@ -94,7 +90,7 @@ const GamesSilhouetteScreen = ({ role }: Props) => {
             startIcon={<AddCircle />}
             onClick={() => navigate("/game/add")}
           >
-            Añadir evento
+            Añadir Juego
           </Button>
         </Box>
       ) : (
@@ -109,7 +105,7 @@ const GamesSilhouetteScreen = ({ role }: Props) => {
       )}
       {!loading && games?.length === 0 ? (
         <Typography variant="h4" sx={{ textAlign: "center", mt: 10 }}>
-          No hay elemetos que mostrar
+          No hay juegos que mostrar
         </Typography>
       ) : (
         <Box sx={{ mt: 5 }}>

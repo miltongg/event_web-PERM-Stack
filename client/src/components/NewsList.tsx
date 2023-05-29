@@ -12,6 +12,7 @@ import {
 import { NEWS_IMG_URL } from "../helpers/url";
 import DataRecord from "./DataRecord";
 import { CalendarMonth } from "@mui/icons-material";
+import moment from "moment";
 
 interface Props {
   news: {
@@ -23,6 +24,7 @@ interface Props {
     slug: string;
     commentsCount: number;
     views: number;
+    rating: number;
   }[];
   role: string | null;
 }
@@ -47,7 +49,9 @@ const NewsList: FC<Props> = (props) => {
             </Typography>
             <Box sx={{ display: "flex", my: 1 }}>
               <CalendarMonth sx={{ mr: 1 }} />
-              <Typography>{n.date}</Typography>
+              <Typography>
+                {moment(n.date.toString()).format("DD/MM/YYYY")}
+              </Typography>
             </Box>
 
             <Typography
@@ -72,6 +76,7 @@ const NewsList: FC<Props> = (props) => {
             </Box>
 
             <DataRecord
+              rating={n.rating}
               views={n.views}
               commentsCount={n.commentsCount}
             />

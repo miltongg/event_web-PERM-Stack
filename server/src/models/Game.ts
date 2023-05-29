@@ -2,13 +2,16 @@ import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
 import { STATUS_ACTIVE } from "../helpers/defineConsts";
 import Comment from "./Comment";
+import News from "./News";
 
 class Game extends Model {
   id!: string;
   name!: string;
   description?: string;
   image?: string;
+  answerImage?: string;
   music?: string;
+  answer!: string;
   type!: string;
   points!: number;
   date!: Date;
@@ -44,9 +47,19 @@ Game.init(
       allowNull: true,
     },
 
+    answerImage: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
     music: {
       type: DataTypes.STRING,
       allowNull: true,
+    },
+
+    answer: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
 
     date: {
@@ -54,7 +67,7 @@ Game.init(
       allowNull: false,
     },
 
-    view: {
+    views: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
       allowNull: false,
@@ -81,6 +94,11 @@ Game.init(
 Game.hasMany(Comment, {
   foreignKey: "gameId",
   sourceKey: "id",
+});
+
+Comment.belongsTo(Game, {
+  foreignKey: "gameId",
+  targetKey: "id",
 });
 
 export default Game;

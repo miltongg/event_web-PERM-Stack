@@ -1,8 +1,6 @@
 import {
   Box,
-  Button,
   Card,
-  CardActions,
   CardContent,
   CardMedia,
   Grid,
@@ -16,14 +14,14 @@ const gameList = [
     description:
       "Adivina la silueta de las imagenes, demuestra tu conocimiento",
     img: "/game-imgs/silhouette-img.png",
-    link: "/game/discover-the-silhouette",
+    link: "/game/silhouette",
   },
   {
     title: "Adivina la música",
     description:
       "Prepara bien los oidos para descubrir a que anime o videojuego pertenece el fragmento de la música",
     img: "/game-imgs/music-girl.jpg",
-    link: "/game/discover-the-music",
+    link: "/game/music",
   },
 ];
 

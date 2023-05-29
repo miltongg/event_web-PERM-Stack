@@ -1,5 +1,6 @@
 import React, { FormEvent, useState } from "react";
 import {
+  Box,
   Button,
   Grid,
   ListItem,
@@ -9,7 +10,12 @@ import {
   Typography,
 } from "@mui/material";
 import { gameTypeList } from "../helpers/tasgList";
-import { AddCircle, MusicNote, Photo } from "@mui/icons-material";
+import {
+  AddCircle,
+  MusicNote,
+  Photo,
+  PhotoAlbumOutlined,
+} from "@mui/icons-material";
 import { addFormStyle, buttonFormStyle } from "../helpers/customStyles";
 import { webApi } from "../helpers/animeApi";
 import { toast } from "react-toastify";
@@ -17,29 +23,32 @@ import { getError } from "../helpers/handleErrors";
 import { useNavigate } from "react-router-dom";
 import definedConst from "../helpers/definedConst";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { MobileDatePicker, MobileDateTimePicker } from "@mui/x-date-pickers";
+import { MobileDateTimePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import dayjs from "dayjs";
-import moment from "moment";
 
 const AddGameScreen = () => {
   const token = localStorage.getItem("token");
   const [loading, setLoading] = useState<boolean>(false);
   const [image, setImage] = useState<any>(null);
+  const [answerImage, setAnswerImage] = useState<any>(null);
   const [game, setGame] = useState<{
     name: string;
     type: string;
     points: number;
     description: string;
     image: any;
+    answerImage: any;
+    answer: string;
     music: File | null;
     date: string | null;
   }>({
     name: "",
     type: "",
     points: 100,
+    answer: "",
     description: "",
     image: null,
+    answerImage: null,
     music: null,
     date: "",
   });
@@ -66,6 +75,19 @@ const AddGameScreen = () => {
     }
   };
 
+  const handleSelectAnswerImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setGame({
+      ...game,
+      answerImage: e.target.files ? e.target.files[0] : null,
+    });
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => setAnswerImage(e.target?.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
   // SELECT MUSIC //
   const handleSelectMusic = (e: React.ChangeEvent<HTMLInputElement>) => {
     setGame({ ...game, music: e.target.files ? e.target.files[0] : null });
@@ -82,23 +104,56 @@ const AddGameScreen = () => {
 
     formData.append("date", game.date!);
 
+    formData.append("file1", game.image!);
+
+    formData.append("file2", game.answerImage!);
+
     try {
       // Post game //
       const { data } = await webApi.post("/game", formData, {
         headers: { token },
       });
 
-      console.log(data);
+      // Upload images to server //
+      const image = await webApi.post(
+        "/iupload",
+        { file: formData.get("file1") },
+        {
+          headers: {
+            token,
+            id: data.id,
+            "Content-Type": "multipart/form-data",
+            prefix: "game",
+            folder: "game/",
+          },
+        }
+      );
 
-      // Upload image to server //
-      const image = await webApi.post("/iupload", formData, {
-        headers: { token, id: data.id, prefix: "game", folder: "game/" },
-      });
+      const answerImage = await webApi.post(
+        "/iupload",
+        { file: formData.get("file2") },
+        {
+          headers: {
+            token,
+            id: data.id,
+            "Content-Type": "multipart/form-data",
+            prefix: "game",
+            folder: "game/",
+          },
+        }
+      );      
 
       // Update game img with image name //
-      await webApi.put(`/game/${data.id}`, image.data, {
-        headers: { token },
-      });
+      await webApi.put(
+        `/game/${data.id}`,
+        {
+          image: image.data.image,
+          answerImage: answerImage.data.image,
+        },
+        {
+          headers: { token },
+        }
+      );
 
       toast.success("Juego añadido satisfactoriamente");
       navigate(`/game/${data.id}`);
@@ -144,8 +199,21 @@ const AddGameScreen = () => {
             ))}
           </TextField>
         </Grid>
+
         <Grid item xs={12}>
           <TextField
+            required
+            label="Respuesta"
+            name="answer"
+            value={game.answer}
+            fullWidth
+            onChange={(e) => setGame({ ...game, answer: e.target.value })}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            required
             label="Puntos"
             name="points"
             type="number"
@@ -164,7 +232,7 @@ const AddGameScreen = () => {
               value={game.date}
               onChange={(date) => setGame({ ...game, date: date! })}
               format="DD-MM-YYYY HH:mm"
-              label="Fecha límite"
+              label="Fecha límite *"
             />
           </LocalizationProvider>
         </Grid>
@@ -181,30 +249,66 @@ const AddGameScreen = () => {
           />
         </Grid>
 
-        {game.image ? (
-          <ListItem sx={{ display: "block" }}>
-            <img
-              src={image}
-              alt={game.image?.name}
-              style={{ height: 100, borderRadius: 2 }}
-            />
-            <Typography>{game.image?.name}</Typography>
-          </ListItem>
-        ) : (
-          ""
-        )}
+        <Box>
+          {game.image ? (
+            <ListItem sx={{ display: "block" }}>
+              <img
+                src={image}
+                alt={game.image?.name}
+                style={{ height: 100, borderRadius: 2 }}
+              />
+              <Typography>{game.image?.name}</Typography>
+            </ListItem>
+          ) : (
+            ""
+          )}
+          {game.answerImage ? (
+            <ListItem sx={{ display: "block" }}>
+              <img
+                src={answerImage}
+                alt={game.answerImage?.name}
+                style={{ height: 100, borderRadius: 2 }}
+              />
+              <Typography>{game.answerImage?.name}</Typography>
+            </ListItem>
+          ) : (
+            ""
+          )}
+        </Box>
       </Grid>
 
       {game.type === definedConst.GAME_SILHOUETTE ? (
-        <Button
-          startIcon={<Photo />}
-          sx={buttonFormStyle}
-          variant="contained"
-          component="label"
-        >
-          Elegir Imagen
-          <input hidden type="file" name="file" onChange={handleSelectImage} />
-        </Button>
+        <>
+          <Button
+            startIcon={<Photo />}
+            sx={buttonFormStyle}
+            variant="contained"
+            component="label"
+          >
+            Seleccionar Imagen de Silueta
+            <input
+              hidden
+              type="file"
+              name="file1"
+              onChange={handleSelectImage}
+            />
+          </Button>
+          <Button
+            startIcon={<PhotoAlbumOutlined />}
+            sx={buttonFormStyle}
+            variant="contained"
+            component="label"
+          >
+            {" "}
+            Seleccionar Imagen de Respuesta
+            <input
+              hidden
+              type="file"
+              name="file2"
+              onChange={handleSelectAnswerImage}
+            />
+          </Button>
+        </>
       ) : game.type === definedConst.GAME_MUSIC ? (
         <Button
           startIcon={<MusicNote />}

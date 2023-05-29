@@ -5,24 +5,24 @@ import Comment from "./Comment";
 import Reply from "./Reply";
 
 class User extends Model {
-  public id!: string;
-  public username!: string;
-  public email!: string;
-  public password!: string;
-  public role!: string;
-  public string!: string;
-  public token?: string;
-  public cell?: string;
-  public socials?: string[];
-  public userImg?: string;
-  public score?: number;
-  public likes?: string[];
-  public dislikes?: string[];
+  id!: string;
+  username!: string;
+  email!: string;
+  password!: string;
+  role!: string;
+  token?: string;
+  cell?: string;
+  socials?: string[];
+  userImg?: string;
+  status!: string;
+  score?: number;
+  likes?: string[];
+  dislikes?: string[];
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
-  public readonly comments?: Comment[];
-  public readonly replies?: Reply[];
+  readonly createdAt!: Date;
+  readonly updatedAt!: Date;
+  readonly comments?: Comment[];
+  readonly replies?: Reply[];
 }
 
 User.init(

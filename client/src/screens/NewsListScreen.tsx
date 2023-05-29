@@ -3,7 +3,6 @@ import { webApi } from "../helpers/animeApi";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getError } from "../helpers/handleErrors";
-import moment from "moment";
 import { AddCircle } from "@mui/icons-material";
 import {
   Backdrop,
@@ -73,10 +72,6 @@ const NewsListScreen = ({ role }: Props) => {
         });
 
         const { newsList, count } = data;
-
-        for (let element of newsList) {
-          element.date = moment(element.date).format("DD/MM/YYYY");
-        }
 
         setNews(newsList);
         setCount(parseInt(String(count / 2)));

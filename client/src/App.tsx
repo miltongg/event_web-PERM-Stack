@@ -35,6 +35,7 @@ import DashboardEvent from "./components/DashboardEvent";
 import DashboardNews from "./components/DashboardNews";
 import AddGameScreen from "./screens/AddGameScreen";
 import GamesSilhouetteScreen from "./screens/GamesSilhouetteScreen";
+import GameScreen from "./screens/GameScreen";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -174,8 +175,14 @@ function App() {
                 <Route path="/game" element={<GamesListScreen />} />
                 <Route path="/game/add" element={<AddGameScreen />} />
                 <Route
-                  path="/game/discover-the-silhouette"
+                  path="/game/silhouette"
                   element={<GamesSilhouetteScreen role={role} />}
+                />
+                <Route
+                  path="/game/silhouette/:id"
+                  element={
+                    <GameScreen userId={id} role={role} userImg={userImg} />
+                  }
                 />
 
                 <Route path="*" element={<Navigate to="/" replace />} />

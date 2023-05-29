@@ -14,9 +14,9 @@ export default async function verifyUserToken (req: Request, res: Response) {
       res.json(decodedToken);
     } else
       res.status(404).json({message: "Token no encontrado"})
-  } catch ({message}) {
+  } catch (error: any) {
     res.status(500).json({
-      message
+      message: error.message
     })
   }
   

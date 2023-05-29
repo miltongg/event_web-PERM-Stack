@@ -2,11 +2,11 @@ import {
   Box,
   Card,
   CardMedia,
-  CircularProgress,
   Collapse,
   Divider,
   IconButton,
   ListItem,
+  Chip,
   Paper,
   TextField,
   Typography,
@@ -24,16 +24,12 @@ import {
   Edit,
 } from "@mui/icons-material";
 import moment from "moment";
-import { StaticDatePicker } from "@mui/x-date-pickers";
+import { StaticDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { EVENT_IMG_URL } from "../helpers/url";
-import Carousel from "../components/Carousel";
-import UploadImages from "../components/UploadImages";
+import { GAME_IMG_URL } from "../helpers/url";
 import EventDataRecord from "../components/DataRecord";
-import unidecode from "unidecode";
 import Loading from "../components/Loading";
-import { IEvent } from "../interfaces/interfaces";
 
 const doneButtonStyle = {
   color: "orange",
@@ -69,17 +65,32 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
   const navigate = useNavigate();
   // const { slug } = useParams();
   const { id } = useParams();
+
   const [showFullDesc, setShowFullDesc] = useState<boolean>(false);
-  const [game, setGame] = useState<any>({
+  const [game, setGame] = useState<{
+    id: string;
+    name: string;
+    date: Date | null | string;
+    points: number;
+    answer: string;
+    description: string;
+    commentsCount: number;
+    rating: number;
+    views: number;
+    image: File | string;
+    answerImage: File | string;
+  }>({
     id: "",
     name: "",
     date: "",
-    points: null,
+    points: 0,
+    answer: "",
     description: "",
     commentsCount: 0,
     rating: 0,
     views: 0,
     image: "",
+    answerImage: "",
   });
 
   const [edit, setEdit] = useState({
@@ -91,13 +102,13 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
   const [img, setImg] = useState<any>(null);
   const [reload, setReload] = useState(false);
 
-  // GET EVENT //
+  // GET GAME //
   useEffect(() => {
     const getEvent = async () => {
       try {
         const { data } = await webApi.get(`/game/${id}`);
 
-        data.date = moment(data.date).format("DD/MM/YYYY");
+        // data.date = moment(data.date).format("DD/MM/YYYY - hh:mm A");
         setGame(data);
       } catch (error) {
         navigate("/event");
@@ -107,7 +118,12 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
     getEvent();
   }, []);
 
-  // UPDATE EVENT //
+  // console.log(new Date() >= moment(game.date).toDate())
+
+  // console.log(game.date)
+  // console.log(moment(game.date, 'DD/MM/YYYY - hh:mm A').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (zz)'))
+
+  // UPDATE GAME //
   const handleUpdate = async () => {
     try {
       await webApi.put(
@@ -131,27 +147,33 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
         description: false,
       });
 
-      if (game.name) {
-        const slug = unidecode(game.name)
-          .replace(/[^a-zA-Z0-9]/g, "-")
-          .toLowerCase();
+      // if (game.name) {
+      //   const slug = unidecode(game.name)
+      //     .replace(/[^a-zA-Z0-9]/g, "-")
+      //     .toLowerCase();
+      //
+      //   navigate(`/game/${id}`);
+      // }
 
-        navigate(`/game/${id}`);
-      }
-
-      toast.success("Se ha actualizado este evento");
+      toast.success("Se ha actualizado este juego");
     } catch (error) {
       toast.error(getError(error));
     }
   };
 
   // UPDATE STATE FUNCTIONS //
-  const updateCommentsCount = (number: number) => {
-    setGame({ ...game, commentsCount: number });
+  const updateCommentsCount = (operation: string) => {
+    setGame({
+      ...game,
+      commentsCount:
+        operation === "sum"
+          ? Number(game.commentsCount) + 1
+          : Number(game.commentsCount) - 1,
+    });
   };
 
-  const updateEventImages = (images: string[]) => {
-    setGame({ ...game, eventImages: images });
+  const updateRating = (rating: number) => {
+    setGame({ ...game, rating });
   };
 
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -176,7 +198,7 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
             },
           });
 
-          // UPDATE EVENT IMAGE //
+          // UPDATE GAME IMAGE //
           await webApi.put(
             `/game/${id}`,
             { image: data.image },
@@ -186,7 +208,7 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
           );
 
           setGame({ ...game, image: data.image });
-          toast.success("Se ha actualizado este evento");
+          toast.success("Se ha actualizado este juego");
         } catch (error) {
           toast.error(getError(error));
         }
@@ -196,11 +218,13 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
     }
   }, [img]);
 
+  console.log(game.date);
+
   return game.id ? (
     <Paper elevation={0} sx={{ marginY: 5 }}>
       <Card sx={{ position: "relative" }}>
         <CardMedia
-          image={`${EVENT_IMG_URL}${game.id}/${game.mainImage}`}
+          image={`${GAME_IMG_URL}${game.id}/${game.image}`}
           component="img"
           alt={game.name}
           height="350"
@@ -257,12 +281,12 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
         <ListItem>
           {edit?.date ? (
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <StaticDatePicker
+              <StaticDateTimePicker
                 sx={{ width: 1 }}
-                onChange={(date) =>
+                onChange={(date: any) =>
                   setGame({
                     ...game,
-                    date: moment(date!.toString()).format("DD/MM/YYYY"),
+                    date: date?.toISOString(),
                   })
                 }
                 onAccept={handleUpdate}
@@ -278,9 +302,11 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
                 justifyContent: "space-between",
               }}
             >
-              <Box sx={{ display: "flex" }}>
+              <Box sx={{ display: "flex", width: 1 }}>
                 <CalendarMonth />
-                <Typography>{game.date.toString()}</Typography>
+                <Typography>
+                  {moment(game.date).format("DD/MM/YYYY - hh:mm A")}
+                </Typography>
                 {role === "admin" ? (
                   <Edit
                     sx={editButtonStyle}
@@ -368,10 +394,36 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
       <Divider />
 
       {/* Render Comments */}
+
+      {new Date().toISOString() >= game.date! ? (
+        <>
+          <Card sx={{ position: "relative" }}>
+            <CardMedia
+              image={`${GAME_IMG_URL}${game.id}/${game.answerImage}`}
+              component="img"
+              alt={game.name}
+              height="350"
+            />
+          </Card>
+          <ListItem sx={{ display: "flex", justifyContent: "center" }}>
+            <Typography>La respuesta es: &nbsp;</Typography>
+            <Chip
+              sx={{ fontSize: 25, p: 2 }}
+              color="success"
+              label={game.answer}
+            />
+          </ListItem>
+        </>
+      ) : (
+        ""
+      )}
+
       <Comments
         userId={userId}
         token={token}
+        dateEnd={game.date}
         id={game.id}
+        updateRating={updateRating}
         updateCommentsCount={updateCommentsCount}
         userImg={userImg}
         role={role}

@@ -3,16 +3,17 @@ import { sequelize } from "../database/database";
 import { STATUS_ACTIVE } from "../helpers/defineConsts";
 
 class Comment extends Model {
-  public id!: string;
-  public comment!: string;
-  public rating!: number;
-  public userId!: string;
-  public newsId?: string;
-  public eventId?: string;
-  public username!: string;
-  public userImg?: string;
-  public repliesCount?: number;
-  public status!: string;
+  id!: string;
+  comment!: string;
+  rating!: number;
+  userId!: string;
+  newsId?: string;
+  eventId?: string;
+  gameId?: string;
+  username!: string;
+  userImg?: string;
+  repliesCount?: number;
+  status!: string;
 }
 
 Comment.init(
@@ -37,6 +38,9 @@ Comment.init(
       type: DataTypes.STRING,
     },
     newsId: {
+      type: DataTypes.STRING,
+    },
+    gameId: {
       type: DataTypes.STRING,
     },
     // userId: {

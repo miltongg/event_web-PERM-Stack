@@ -33,6 +33,7 @@ import { USER_IMG_URL } from "../helpers/url";
 import moment from "moment";
 import "moment/locale/es";
 import { Confirm } from "notiflix/build/notiflix-confirm-aio";
+import { useParams } from "react-router-dom";
 
 moment.locale("es");
 
@@ -41,6 +42,7 @@ interface Props {
   userId: string | undefined;
   token: string | null;
   role: string | null;
+  dateEnd?: string | null | Date;
   userImg: string | null | undefined;
   updateCommentsCount: (operation: string) => void;
   updateRating: (rating: number) => void;
@@ -53,7 +55,7 @@ interface IComment {
   comment: string;
   userImg: string | null;
   repliesCount: number;
-  rating: number | null;
+  rating: number;
   createdAt: string;
 }
 
@@ -77,6 +79,7 @@ const Comments = ({
   role,
   updateCommentsCount,
   updateRating,
+  dateEnd,
 }: Props) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<IComment[]>([]);
@@ -96,6 +99,7 @@ const Comments = ({
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [showReplies, setShowReplies] = useState<number | null>(null);
+  const paramId = useParams();
 
   let ratingMedia = 0;
 
@@ -110,6 +114,7 @@ const Comments = ({
       setShowReplies(index);
     }
   };
+  
 
   const [reply, setReply] = useState<{
     index?: number | null;
@@ -130,6 +135,7 @@ const Comments = ({
     try {
       const callComments = async () => {
         const { data } = await webApi.get(`/comment/${id}`);
+
         setComments(data);
         setLoading(false);
       };
@@ -169,7 +175,7 @@ const Comments = ({
 
       setComments([...comments, data]);
 
-      comments.map((com: any) => {
+      comments.map((com) => {
         ratingMedia += com.rating;
       });
 
@@ -345,15 +351,21 @@ const Comments = ({
   };
 
   return (
-    <>
+    <Box sx={{ mt: 5 }}>
+      <Divider variant="middle" textAlign="left" sx={{ mb: 2 }}>
+        <Typography variant="h6" color="gray" gutterBottom>
+          {paramId.id?.includes("game") ? "Respuestas" : "Comentarios"}
+        </Typography>
+      </Divider>
       {!userId ? (
         <>
           <Typography variant="h5" sx={{ p: 5, textAlign: "center" }}>
             Inicia sesión para comentar
           </Typography>
-          <Divider />
         </>
-      ) : loading ? (
+      ) : comments.find((com) => com.userId === userId) ? (
+        ""
+      ) : dateEnd && new Date().toISOString() >= dateEnd ? (
         ""
       ) : (
         <Paper
@@ -440,12 +452,16 @@ const Comments = ({
                       }}
                     />
                     {userId === comment.userId || role === "admin" ? (
-                      <IconButton
-                        sx={editButtonStyle}
-                        onClick={() => editToggle(index)}
-                      >
-                        <Edit />
-                      </IconButton>
+                      dateEnd && new Date().toISOString() >= dateEnd ? (
+                        ""
+                      ) : (
+                        <IconButton
+                          sx={editButtonStyle}
+                          onClick={() => editToggle(index)}
+                        >
+                          <Edit />
+                        </IconButton>
+                      )
                     ) : (
                       ""
                     )}
@@ -482,54 +498,58 @@ const Comments = ({
                   onChange={(e) => handleEditComment(index, e.target.value)}
                 />
               ) : (
-                <Typography sx={{ pl: 9, pr: 2, pb: 1 }}>
+                <Typography sx={{ pl: 7, pr: 2, pb: 1 }}>
                   {comment.comment}
                 </Typography>
               )}
 
               <Divider />
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  w: 1,
-                  justifyContent: "space-between",
-                }}
-              >
-                <Button
-                  onClick={
-                    comment.repliesCount !== 0
-                      ? () => showHideReplies(comment.id, index)
-                      : () => null
-                  }
-                  variant="text"
-                  sx={{ px: 1, textTransform: "lowercase" }}
-                  startIcon={
-                    comment.id === arrIndex ? <ExpandLess /> : <ExpandMore />
-                  }
-                  size="small"
+              {!paramId.id?.includes("game_") ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    w: 1,
+                    justifyContent: "space-between",
+                  }}
                 >
-                  {comment.repliesCount <= 1
-                    ? `${comment.repliesCount} respuesta`
-                    : `${comment.repliesCount} respuestas`}
-                </Button>
-                <Box sx={{ pl: 1 }}>
                   <Button
-                    size="small"
-                    variant="text"
-                    sx={{ textTransform: "capitalize" }}
-                    onClick={() =>
-                      setReply({
-                        index,
-                        commentId: comment.id,
-                        text: "",
-                      })
+                    onClick={
+                      comment.repliesCount !== 0
+                        ? () => showHideReplies(comment.id, index)
+                        : () => null
                     }
+                    variant="text"
+                    sx={{ px: 1, textTransform: "lowercase" }}
+                    startIcon={
+                      comment.id === arrIndex ? <ExpandLess /> : <ExpandMore />
+                    }
+                    size="small"
                   >
-                    Responder
+                    {comment.repliesCount <= 1
+                      ? `${comment.repliesCount} respuesta`
+                      : `${comment.repliesCount} respuestas`}
                   </Button>
+                  <Box sx={{ pl: 1 }}>
+                    <Button
+                      size="small"
+                      variant="text"
+                      sx={{ textTransform: "capitalize" }}
+                      onClick={() =>
+                        setReply({
+                          index,
+                          commentId: comment.id,
+                          text: "",
+                        })
+                      }
+                    >
+                      Responder
+                    </Button>
+                  </Box>
                 </Box>
-              </Box>
+              ) : (
+                <></>
+              )}
               <Divider />
 
               {/*// REPLY FORM //*/}
@@ -645,7 +665,7 @@ const Comments = ({
           </Box>
         ))
       )}
-    </>
+    </Box>
   );
 };
 

@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import Game from "../../models/Game";
 import { StatusCodes } from "http-status-codes";
+import moment from "moment";
 
 const updateGame = async (req: Request, res: Response) => {
   try {
-    const { name, description, date, image, points, views, rating } = req.body;
+    let { name, description, date, image, answerImage, points, views, rating } = req.body;
 
-    const { id } = req.params;
+    const { id } = req.params;    
 
     const game = await Game.update(
       {
@@ -14,6 +15,7 @@ const updateGame = async (req: Request, res: Response) => {
         description,
         date,
         image,
+        answerImage,
         points,
         views,
         rating,

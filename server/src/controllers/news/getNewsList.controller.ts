@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import News from "../../models/News";
 import sequelize from "sequelize";
 import Comment from "../../models/Comment";
+import Reply from "../../models/Reply";
 
 const getNewsList = async (req: Request, res: Response) => {
   try {
@@ -21,6 +22,7 @@ const getNewsList = async (req: Request, res: Response) => {
             ),
             "commentsCount",
           ],
+          [sequelize.fn("AVG", sequelize.col("Comments.rating")), "rating"],
         ],
       },
       include: [
@@ -28,6 +30,13 @@ const getNewsList = async (req: Request, res: Response) => {
           model: Comment,
           as: "Comments",
           attributes: [],
+          include: [
+            {
+              model: Reply,
+              as: "Replies",
+              attributes: [],
+            },
+          ],
         },
       ],
       subQuery: false,

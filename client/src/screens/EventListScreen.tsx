@@ -64,9 +64,9 @@ const EventListScreen = ({ role }: Props) => {
 
         const { eventsList, count } = data;
 
-        for (let element of eventsList) {
-          element.date = moment(element.date).format("DD/MM/YYYY");
-        }
+        // for (let element of eventsList) {
+        //   element.date = moment(element.date).format("DD/MM/YYYY");
+        // }
 
         setEvents(eventsList);
         setCount(parseInt(String(count / 2)));

@@ -14,6 +14,7 @@ import {
 import { EVENT_IMG_URL } from "../helpers/url";
 import DataRecord from "./DataRecord";
 import { CalendarMonth } from "@mui/icons-material";
+import moment from "moment";
 
 interface Props {
   events: {
@@ -50,7 +51,9 @@ const EventList: FC<Props> = (props) => {
             </Typography>
             <Box sx={{ display: "flex", my: 1 }}>
               <CalendarMonth sx={{ mr: 1 }} />
-              <Typography>{event.date}</Typography>
+              <Typography>
+                {moment(event.date.toString()).format("DD/MM/YYYY - hh:mm A")}
+              </Typography>
             </Box>
 
             <Typography

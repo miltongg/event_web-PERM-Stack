@@ -19,6 +19,7 @@ const getGamesList = async (req: Request, res: Response) => {
             sequelize.fn("COUNT", sequelize.col("Comments.id")),
             "commentsCount",
           ],
+          [sequelize.fn("AVG", sequelize.col("Comments.rating")), "rating"],
         ],
       },
       include: [
