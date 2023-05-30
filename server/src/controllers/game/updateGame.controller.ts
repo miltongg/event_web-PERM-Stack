@@ -17,10 +17,7 @@ const updateGame = async (req: Request, res: Response): Promise<void> => {
       usersId,
     } = req.body;
 
-    const { id } = req.params;
-
-    console.log(usersId);
-    
+    const { id } = req.params;    
 
     let game;
 

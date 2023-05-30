@@ -79,7 +79,7 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
     views: number;
     image: File | string;
     answerImage: File | string;
-    usersId: string[]
+    usersId: string[];
   }>({
     id: "",
     name: "",
@@ -92,7 +92,7 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
     views: 0,
     image: "",
     answerImage: "",
-    usersId: []
+    usersId: [],
   });
 
   const [edit, setEdit] = useState({
@@ -119,7 +119,6 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
     };
     getEvent();
   }, []);
-
 
   // UPDATE GAME //
   const handleUpdate = async () => {
@@ -176,11 +175,10 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
 
   const updateGameUsersId = () => {
     setGame({
-      ...game, usersId: [...game.usersId, userId!]
-    })
-  }
-
-
+      ...game,
+      usersId: [...game.usersId, userId!],
+    });
+  };
 
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -224,16 +222,17 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
     }
   }, [img]);
 
-
   return game.id ? (
     <Paper elevation={0} sx={{ marginY: 5 }}>
-      <Card sx={{ position: "relative" }}>
-        <CardMedia
-          image={`${GAME_IMG_URL}${game.id}/${game.image}`}
-          component="img"
-          alt={game.name}
-          height="350"
-        />
+      <Box sx={{ position: "relative" }}>
+        <Box sx={{display: 'flex', justifyContent: 'center'}}>
+          <img
+            src={`${GAME_IMG_URL}${game.id}/${game.image}`}
+            alt={game.name}
+            style={{height: '400px'}}
+          />
+        </Box>
+
         <IconButton
           sx={{ position: "absolute", zIndex: 2, top: 0, right: 0 }}
           aria-label="upload picture"
@@ -255,7 +254,7 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
             }}
           />
         </IconButton>
-      </Card>
+      </Box>
       <Box sx={{ paddingY: 2 }}>
         <ListItem>
           {edit?.name ? (
@@ -401,15 +400,14 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
       {/* Render Comments */}
 
       {new Date().toISOString() >= game.date! ? (
-        <>
-          <Card sx={{ position: "relative" }}>
-            <CardMedia
-              image={`${GAME_IMG_URL}${game.id}/${game.answerImage}`}
-              component="img"
+        <Box>
+          <Box sx={{ position: "relative", display: 'flex', justifyContent: 'center' }}>
+            <img
+              src={`${GAME_IMG_URL}${game.id}/${game.answerImage}`}
               alt={game.name}
-              height="350"
+              style={{height: "400px"}}
             />
-          </Card>
+          </Box>
           <ListItem sx={{ display: "flex", justifyContent: "center" }}>
             <Typography>La respuesta es: &nbsp;</Typography>
             <Chip
@@ -418,7 +416,7 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
               label={game.answer}
             />
           </ListItem>
-        </>
+        </Box>
       ) : (
         ""
       )}

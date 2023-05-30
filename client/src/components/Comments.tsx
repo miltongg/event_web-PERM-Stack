@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import {
   AccessTime,
+  AddCircle,
   Comment,
   Delete,
   Done,
@@ -17,6 +18,7 @@ import {
   Avatar,
   Box,
   Button,
+  CircularProgress,
   Divider,
   IconButton,
   ListItem,
@@ -394,7 +396,6 @@ const Comments = ({
     }
   };
 
-
   return (
     <Box sx={{ mt: 5 }}>
       {/* Claim points button */}
@@ -409,8 +410,11 @@ const Comments = ({
             comment.comment.toLowerCase() === answer?.toLowerCase()
         ) ? (
           <Button
+            startIcon={
+              !loading ? "" : <CircularProgress size={20} />
+            }
             sx={{ mb: 2, width: "max-content" }}
-            disabled={!!usersId.find((id) => id === userId)}
+            disabled={!!usersId.find((id) => id === userId) || loading}
             onClick={handlePoints}
             // fullWidth
             color="error"
@@ -474,7 +478,7 @@ const Comments = ({
               startIcon={<Comment />}
               disabled={loading}
             >
-              Comentar
+              {paramId.id?.includes("game") ? "Responder" : "Comentar"}
             </Button>
           </Box>
         </Paper>

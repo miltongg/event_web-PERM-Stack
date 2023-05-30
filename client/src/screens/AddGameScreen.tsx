@@ -2,6 +2,7 @@ import React, { FormEvent, useState } from "react";
 import {
   Box,
   Button,
+  CircularProgress,
   Grid,
   ListItem,
   MenuItem,
@@ -154,6 +155,8 @@ const AddGameScreen = () => {
           headers: { token },
         }
       );
+
+      setLoading(false);
 
       toast.success("Juego añadido satisfactoriamente");
       navigate(`/game/silhouette/${data.id}`);
@@ -324,7 +327,8 @@ const AddGameScreen = () => {
       )}
 
       <Button
-        startIcon={<AddCircle />}
+        startIcon={!loading ? <AddCircle /> : <CircularProgress size={20} />}
+        disabled={loading}
         sx={buttonFormStyle}
         variant="contained"
         type="submit"
