@@ -60,9 +60,9 @@ const editButtonStyle = {
 };
 
 interface Props {
-  userId: string;
-  role: string;
-  userImg: string | null | undefined;
+  userId?: string;
+  role?: string;
+  userImg?: string | null | undefined;
 }
 
 const EventScreen = ({ userId, role, userImg }: Props) => {
@@ -99,7 +99,6 @@ const EventScreen = ({ userId, role, userImg }: Props) => {
         const { data } = await webApi.get(`/event/${slug}`);
 
         data.date = moment(data.date).format("DD/MM/YYYY - hh:mm A");
-        console.log(data);
         setEvent(data);
         setLoading(false);
       } catch (error) {

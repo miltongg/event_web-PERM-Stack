@@ -8,7 +8,7 @@ import getGame from "../controllers/game/getGame.controller";
 const router = Router();
 
 router.post("/game", verifyToken, isAdmin, addGame);
-router.put("/game/:id", verifyToken, isAdmin, updateGame);
+router.put("/game/:id", verifyToken, updateGame);
 router.get("/game", getGamesList);
 router.get("/game/:id", getGame);
 

@@ -30,7 +30,7 @@ import Loading from "../components/Loading";
 // }
 
 interface Props {
-  role: string;
+  role?: string;
 }
 
 const NewsListScreen = ({ role }: Props) => {

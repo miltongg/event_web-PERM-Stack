@@ -125,7 +125,7 @@ function App() {
                   path="/event/add"
                   element={
                     role === "admin" ? (
-                      <AddEventScreen id={id} />
+                      <AddEventScreen id={id!} />
                     ) : (
                       <Navigate to="/" />
                     )
@@ -144,7 +144,7 @@ function App() {
                   path="/news/add"
                   element={
                     role === "admin" ? (
-                      <AddNewsScreen id={id} />
+                      <AddNewsScreen id={id!} />
                     ) : (
                       <Navigate to="/" />
                     )

@@ -30,9 +30,9 @@ import unidecode from "unidecode";
 import Loading from "../components/Loading";
 
 interface Props {
-  userId: string;
-  role: string;
-  userImg: string | null | undefined;
+  userId?: string;
+  role?: string;
+  userImg?: string | null | undefined;
 }
 
 interface INews {

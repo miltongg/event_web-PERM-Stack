@@ -17,7 +17,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 
 interface Props {
-  role: string;
+  role?: string;
 }
 
 const EventListScreen = ({ role }: Props) => {

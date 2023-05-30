@@ -28,7 +28,7 @@ interface Props {
     rating: number;
     views: number;
   }[];
-  role: string | null;
+  role?: string | null;
 }
 
 const EventList: FC<Props> = (props) => {

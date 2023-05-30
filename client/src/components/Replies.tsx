@@ -23,10 +23,10 @@ import moment from "moment";
 
 interface Props {
   id: string;
-  userImg: string | undefined | null;
-  userId: string | undefined;
-  token: string | null;
-  role: string | null;
+  userImg?: string | undefined | null;
+  userId?: string | undefined;
+  token?: string | null;
+  role?: string | null;
   commentData: { id: string | null; repCount: number; index: number | null };
   actualizeCommentReplyStatus: (incRep: boolean) => void;
   updateCommentsCount: (operation: string) => void;

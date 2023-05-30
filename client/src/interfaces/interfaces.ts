@@ -1,13 +1,17 @@
 export interface IRootState {
   user: {
     user: {
-      id: string;
-      name: string;
-      username: string;
-      role: string;
-      email: string;
-      cell: string;
+      id?: string;
+      name?: string;
+      username?: string;
+      role?: string;
+      email?: string;
+      cell?: string;
       userImg?: string | null | undefined;
+      points?: number;
+      likes?: string[],
+      dislikes?: string[];
+      socials?: string[];
     };
   };
   isLoading: boolean;
@@ -21,6 +25,9 @@ export interface IState {
   email?: string;
   cell?: string;
   userImg?: string | null | undefined;
+  points?: number;
+  likes?: string[],
+  dislikes?: string[];
   socials?: string[];
 }
 

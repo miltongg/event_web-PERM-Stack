@@ -26,7 +26,7 @@ interface Props {
     views: number;
     rating: number;
   }[];
-  role: string | null;
+  role?: string | null;
 }
 
 const NewsList: FC<Props> = (props) => {

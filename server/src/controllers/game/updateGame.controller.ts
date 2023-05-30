@@ -1,27 +1,49 @@
 import { Request, Response } from "express";
 import Game from "../../models/Game";
 import { StatusCodes } from "http-status-codes";
-import moment from "moment";
+import { ADMIN_ROLE, MODERATOR_ROLE } from "../../helpers/defineConsts";
 
-const updateGame = async (req: Request, res: Response) => {
+const updateGame = async (req: Request, res: Response): Promise<void> => {
   try {
-    let { name, description, date, image, answerImage, points, views, rating } = req.body;
+    let {
+      name,
+      description,
+      date,
+      image,
+      answerImage,
+      points,
+      views,
+      rating,
+      usersId,
+    } = req.body;
 
-    const { id } = req.params;    
+    const { id } = req.params;
 
-    const game = await Game.update(
-      {
-        name,
-        description,
-        date,
-        image,
-        answerImage,
-        points,
-        views,
-        rating,
-      },
-      { where: { id } }
-    );
+    console.log(usersId);
+    
+
+    let game;
+
+    !usersId
+      ? (game = await Game.update(
+          {
+            name,
+            description,
+            date,
+            image,
+            answerImage,
+            points,
+            views,
+            rating,
+          },
+          { where: { id } }
+        ))
+      : (game = await Game.update(
+          {
+            usersId: [...usersId, req.user.id],
+          },
+          { where: { id } }
+        ));
 
     res.json(game);
   } catch (error: any) {

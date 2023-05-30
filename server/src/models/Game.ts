@@ -2,7 +2,6 @@ import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
 import { STATUS_ACTIVE } from "../helpers/defineConsts";
 import Comment from "./Comment";
-import News from "./News";
 
 class Game extends Model {
   id!: string;
@@ -15,6 +14,7 @@ class Game extends Model {
   type!: string;
   points!: number;
   date!: Date;
+  usersId!: string[];
   views!: number;
   status!: string;
   rating!: number;
@@ -57,6 +57,11 @@ Game.init(
       allowNull: true,
     },
 
+    points: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+
     answer: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -83,6 +88,11 @@ Game.init(
       type: DataTypes.STRING,
       defaultValue: STATUS_ACTIVE,
     },
+
+    usersId: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: []
+    }
   },
   {
     tableName: "games",

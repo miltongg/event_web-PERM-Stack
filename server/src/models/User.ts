@@ -15,7 +15,7 @@ class User extends Model {
   socials?: string[];
   userImg?: string;
   status!: string;
-  score?: number;
+  points?: number;
   likes?: string[];
   dislikes?: string[];
 
@@ -91,7 +91,7 @@ User.init(
       defaultValue: []
     },
 
-    score: {
+    points: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },

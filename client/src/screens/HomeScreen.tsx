@@ -15,7 +15,7 @@ import Loading from "../components/Loading";
 import NewsList from "../components/NewsList";
 
 interface Props {
-  role: string | null;
+  role?: string | null;
 }
 
 const HomeScreen = ({ role }: Props) => {

@@ -6,7 +6,7 @@ import { StatusCodes } from "http-status-codes";
 
 const addGame = async (req: Request, res: Response) => {
   try {
-    const { name, description, answer, image, music, date, type } = req.body;
+    const { name, description, answer, image, points, music, date, type } = req.body;
 
     if (!date || !name || !type)
       return res.status(StatusCodes.FORBIDDEN).json({
@@ -18,10 +18,11 @@ const addGame = async (req: Request, res: Response) => {
       name,
       description,
       image,
+      points,
       answer,
       music,
       date,
-      type,
+      type
     });
 
     res.json(newGame);

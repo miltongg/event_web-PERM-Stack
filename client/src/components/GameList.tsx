@@ -26,7 +26,7 @@ interface Props {
     commentsCount: number;
     views: number;
   }[];
-  role: string | null;
+  role?: string | null;
 }
 
 const GameList: FC<Props> = (props) => {

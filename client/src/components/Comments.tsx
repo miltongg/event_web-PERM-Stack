@@ -41,11 +41,15 @@ interface Props {
   id: string;
   userId: string | undefined;
   token: string | null;
-  role: string | null;
+  role?: string | null;
+  answer?: string | null;
+  points?: number;
   dateEnd?: string | null | Date;
   userImg: string | null | undefined;
+  usersId?: string[];
   updateCommentsCount: (operation: string) => void;
   updateRating: (rating: number) => void;
+  updateGameUsersId?: () => void;
 }
 
 interface IComment {
@@ -77,9 +81,13 @@ const Comments = ({
   userImg,
   token,
   role,
+  answer,
+  points,
   updateCommentsCount,
   updateRating,
+  updateGameUsersId,
   dateEnd,
+  usersId,
 }: Props) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<IComment[]>([]);
@@ -114,7 +122,6 @@ const Comments = ({
       setShowReplies(index);
     }
   };
-  
 
   const [reply, setReply] = useState<{
     index?: number | null;
@@ -350,8 +357,74 @@ const Comments = ({
     }
   };
 
+  const handlePoints = async () => {
+    try {
+      setLoading(true);
+
+      // update users points //
+      await webApi.put(
+        `/user/${userId}`,
+        {
+          points,
+        },
+        {
+          headers: { token },
+        }
+      );
+
+      // update game usersId //
+      await webApi.put(
+        `/game/${id}`,
+        {
+          usersId,
+        },
+        {
+          headers: { token },
+        }
+      );
+
+      updateGameUsersId!();
+
+      setLoading(false);
+
+      toast.success(`Felicidades. Has ganado ${points} puntos`);
+    } catch (error) {
+      setLoading(false);
+      toast.error(getError(error));
+    }
+  };
+
+
   return (
     <Box sx={{ mt: 5 }}>
+      {/* Claim points button */}
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        {usersId &&
+        userId &&
+        dateEnd &&
+        new Date().toISOString() >= dateEnd &&
+        comments.find(
+          (comment) =>
+            comment.userId === userId &&
+            comment.comment.toLowerCase() === answer?.toLowerCase()
+        ) ? (
+          <Button
+            sx={{ mb: 2, width: "max-content" }}
+            disabled={!!usersId.find((id) => id === userId)}
+            onClick={handlePoints}
+            // fullWidth
+            color="error"
+            variant="contained"
+          >
+            {!!usersId.find((id) => id === userId)
+              ? `Has ganado ${points} puntos`
+              : "Reclamar Puntos"}
+          </Button>
+        ) : (
+          ""
+        )}
+      </Box>
+
       <Divider variant="middle" textAlign="left" sx={{ mb: 2 }}>
         <Typography variant="h6" color="gray" gutterBottom>
           {paramId.id?.includes("game") ? "Respuestas" : "Comentarios"}
@@ -360,7 +433,9 @@ const Comments = ({
       {!userId ? (
         <>
           <Typography variant="h5" sx={{ p: 5, textAlign: "center" }}>
-            Inicia sesión para comentar
+            {paramId.id?.includes("game")
+              ? "Inicia sesión para responder"
+              : "Inicia sesión para comentar"}
           </Typography>
         </>
       ) : comments.find((com) => com.userId === userId) ? (
@@ -408,7 +483,9 @@ const Comments = ({
       {/* RENDER COMMENTS */}
       {comments.length === 0 ? (
         <Typography sx={{ textAlign: "center" }}>
-          No hay comentarios, se el primero en comentar
+          {!paramId.id?.includes("game")
+            ? "No hay comentarios, se el primero en comentar"
+            : "No hay respuestas, se el primero en responder"}
         </Typography>
       ) : (
         comments.map((comment, index) => (
@@ -498,13 +575,13 @@ const Comments = ({
                   onChange={(e) => handleEditComment(index, e.target.value)}
                 />
               ) : (
-                <Typography sx={{ pl: 7, pr: 2, pb: 1 }}>
+                <Typography sx={{ pl: 9, pr: 2, pb: 1 }}>
                   {comment.comment}
                 </Typography>
               )}
 
               <Divider />
-              {!paramId.id?.includes("game_") ? (
+              {!paramId.id?.includes("game") ? (
                 <Box
                   sx={{
                     display: "flex",

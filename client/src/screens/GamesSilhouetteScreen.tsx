@@ -17,7 +17,7 @@ import Loading from "../components/Loading";
 import GameList from "../components/GameList";
 
 interface Props {
-  role: string;
+  role?: string;
 }
 
 const GamesSilhouetteScreen = ({ role }: Props) => {

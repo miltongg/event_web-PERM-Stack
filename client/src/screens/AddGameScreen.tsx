@@ -156,7 +156,7 @@ const AddGameScreen = () => {
       );
 
       toast.success("Juego añadido satisfactoriamente");
-      navigate(`/game/${data.id}`);
+      navigate(`/game/silhouette/${data.id}`);
     } catch (error) {
       setLoading(false);
       toast.error(getError(error));

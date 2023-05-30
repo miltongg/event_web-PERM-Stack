@@ -55,9 +55,9 @@ const editButtonStyle = {
 };
 
 interface Props {
-  userId: string;
-  role: string;
-  userImg: string | null | undefined;
+  userId?: string;
+  role?: string;
+  userImg?: string | null | undefined;
 }
 
 const GameScreen = ({ userId, role, userImg }: Props) => {
@@ -79,6 +79,7 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
     views: number;
     image: File | string;
     answerImage: File | string;
+    usersId: string[]
   }>({
     id: "",
     name: "",
@@ -91,6 +92,7 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
     views: 0,
     image: "",
     answerImage: "",
+    usersId: []
   });
 
   const [edit, setEdit] = useState({
@@ -118,10 +120,6 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
     getEvent();
   }, []);
 
-  // console.log(new Date() >= moment(game.date).toDate())
-
-  // console.log(game.date)
-  // console.log(moment(game.date, 'DD/MM/YYYY - hh:mm A').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (zz)'))
 
   // UPDATE GAME //
   const handleUpdate = async () => {
@@ -176,6 +174,14 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
     setGame({ ...game, rating });
   };
 
+  const updateGameUsersId = () => {
+    setGame({
+      ...game, usersId: [...game.usersId, userId!]
+    })
+  }
+
+
+
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) setImg(file);
@@ -218,7 +224,6 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
     }
   }, [img]);
 
-  console.log(game.date);
 
   return game.id ? (
     <Paper elevation={0} sx={{ marginY: 5 }}>
@@ -420,11 +425,15 @@ const GameScreen = ({ userId, role, userImg }: Props) => {
 
       <Comments
         userId={userId}
+        usersId={game.usersId}
         token={token}
-        dateEnd={game.date}
+        dateEnd={game?.date}
         id={game.id}
+        answer={game?.answer}
+        points={game?.points}
         updateRating={updateRating}
         updateCommentsCount={updateCommentsCount}
+        updateGameUsersId={updateGameUsersId}
         userImg={userImg}
         role={role}
       />

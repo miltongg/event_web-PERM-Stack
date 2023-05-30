@@ -8,10 +8,10 @@ const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    let { name, username, email, cell, socials, userImg } = req.body;
+    let { name, username, email, cell, socials, userImg, points, gameId } =
+      req.body;
 
     if (req.user.id !== id && req.user.role !== ADMIN_ROLE) {
-      console.log("User not found");
       return res.status(404).json({
         message: "Usuario no encontrado",
       });
@@ -43,8 +43,29 @@ const updateUser = async (req: Request, res: Response) => {
         });
     }
 
+    if (points) {
+      await User.increment({ points }, { where: { id } });
+
+      // const gameFounded = req.user.gameId.find((id) => id === gameId);
+
+      // if (!gameFounded) {
+      //   await User.update(
+      //     {
+      //       points: sequelize.literal(`points + ${points}`),
+      //       gameId: sequelize.fn(
+      //         "array_append",
+      //         sequelize.col("gameID"),
+      //         gameId
+      //       ),
+      //     },
+      //     { where: { id: req.user.id } }
+      //   );
+      // }
+      return res.json({message: "success"});
+    }
+
     await User.update(
-      { name, username, email, cell, role, status, socials, userImg },
+      { name, username, email, cell, socials, role, status, userImg },
       {
         where: { id },
       }
